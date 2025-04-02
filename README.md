@@ -1,93 +1,149 @@
 # 2025-group-04
 
+This repository contains our group's solution for the PrimeChecker project in the DIT638 course at Chalmers. 
+It demonstrates Git-based development using terminal workflows, version control best practices, and C++ programming.
 
+## Requirements and Dependencies
 
-## Getting started
+To build and run this project, the following dependencies are required:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- A terminal environment (macOS Terminal, Windows PowerShell or Git Bash)
+- C++17-compliant compiler:
+  - macOS: `clang++` (included with Xcode Command Line Tools)
+  - Windows: `g++` (install via MinGW or WSL)
+- `make` (required to use the provided Makefile)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Set up on macOS and Windows
 
-## Add your files
+This project uses a terminal-based workflow and requires a C++17 compiler and make. Follow the instructions below to set up your environment.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+### Linux
 
+1. Open your terminal.
+2. Install development tools using your package manager:
+
+#### Debian/Ubuntu-based:
+```bash
+sudo apt update
+sudo apt install build-essential
 ```
-cd existing_repo
-git remote add origin https://git.chalmers.se/courses/dit638/students/2025-group-04.git
-git branch -M main
-git push -uf origin main
+
+#### Fedora-based:
+```bash
+sudo dnf groupinstall "Development Tools"
 ```
 
-## Integrate with your tools
+#### Arch-based:
+```bash
+sudo pacman -S base-devel
+```
 
-- [ ] [Set up project integrations](https://git.chalmers.se/courses/dit638/students/2025-group-04/-/settings/integrations)
+3. Verify installation:
+```bash
+g++ --version
+make --version
+```
 
-## Collaborate with your team
+You are now ready to build the project using the provided Makefile.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+---
 
-## Test and Deploy
+### Windows
 
-Use the built-in continuous integration in GitLab.
+1. Install **WSL** (e.g., Ubuntu)  
+   https://learn.microsoft.com/en-us/windows/wsl/install
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+2. Open your WSL terminal.
 
-***
+3. Install build tools:
 
-# Editing this README
+```bash
+sudo apt update
+sudo apt install build-essential
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+4. Verify installation:
 
-## Suggestions for a good README
+```bash
+g++ --version
+make --version
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+You can now clone and build the project from within WSL.
 
-## Name
-Choose a self-explaining name for your project.
+---
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### macOS
+1. Open **Terminal**.
+2. Install Xcode Command Line Tools:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```bash
+xcode-select --install
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+This installs:
+- `clang++` (C++17-compliant compiler)
+- `make`
+- Developer headers and other essential tools
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+3. Verify installation:
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```bash
+clang++ --version
+make --version
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+You are now ready to build the project using the provided Makefile.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+---
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## Way of Working
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+We follow an agile Scrum methodology. Our work is organized on a shared Trello board where we track tasks as tickets.
+Team members pick up tickets from the "Backlog" column, move them to "In Progress" during development, which moves on to "Code Review" upon opening a pull request, 
+and finally to "Done" after successful peer review and merge.
+Our team uses Git with a feature-branch workflow, peer reviews, and consistent commit message conventions. 
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Adding New Features
+1. Pick a ticket from the Trello board (**Backlog** column)
+2. Create a branch using the ticket name: `git checkout -b <ticket-name>`. We do not include prefixes like `feature/` or `fix/`; the ticket name is enough.
+3. Implement the feature in the `demo/` folder (soon to be`src/` upon actual development)
+4. Commit changes using the Angular commit style [(see below)](#commit-messages)
+5. Push the branch and open a Pull Request (PR) on GitLab
+6. At least one team member must review and approve before merging to `main`
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### Bug Fixes
+1. Immediately create a ticket on Trello when a bug is identified
+2. Create a fix branch using the ticket name:git checkout -b <ticket-name>
+3. Apply and test the fix
+4. Commit with a descriptive message using the Angular commit style
+5. Push and create a Pull Request
+6. Peer review required before merging
 
-## License
-For open source projects, say how it is licensed.
+### Commit Messages
+Branch names reflect ticket names from Trello. The type of change (feature, bug fix, docs, etc.) is indicated through the commit message using the Angular commit style.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+We follow the Angular commit message style:
+`<type>(<scope>): <short description>`
+
+#### Common types:
+- `feat`: new feature
+- `fix`: bug fix
+- `docs`: documentation only
+- `style`: formatting (no logic changes)
+- `refactor`: code refactoring
+- `test`: adding/modifying tests
+- `chore`: project maintenance
+
+Read more here: [Angular Commit Message Guidelines](https://gist.github.com/pmutua/7008c22908f89eb8bd21b36e4f92b04f)
+
+### Code Reviews
+All Pull Requests must be reviewed by at least one team member. Reviewers check:
+- Correctness
+- Compilation success
+- Style and documentation
+- Clear, meaningful commit messages
+
+### Merging Strategy
+- All branches must be merged into `main` via Pull Requests (PRs) on GitLab.
+- Every PR must be reviewed and approved by at least one teammate.
