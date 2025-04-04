@@ -34,6 +34,7 @@ before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 # This section describes what shall be done to build and test the project.
+# rules: project must be built and tested on any push, except for tagged releases. https://docs.gitlab.com/ci/yaml/
 build-and-test:
   tags:
     - docker-build
@@ -53,7 +54,7 @@ release:
   script:
     - docker build -f Dockerfile -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" .
     - docker push "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG"
-  needs: ["build-and-test"]
+  needs: ["build-and-test"] #release should only run if build-and-test succeeds
   rules:
-    - if: "$CI_COMMIT_TAG"
+    - if: "$CI_COMMIT_TAG" #only run this job on tags
   when: on_success
