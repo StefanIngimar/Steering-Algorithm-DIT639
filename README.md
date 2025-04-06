@@ -3,6 +3,12 @@
 This repository contains our group's solution for the PrimeChecker project in the DIT638 course at Chalmers. 
 It demonstrates Git-based development using terminal workflows, version control best practices, and C++ programming.
 
+## Pipeline status
+
+[![pipeline status](https://git.chalmers.se/courses/dit638/students/2025-group-04/badges/main/pipeline.svg)](https://git.chalmers.se/courses/dit638/students/2025-group-04/-/commits/main)
+
+The status of this badge reflects the health of the project's CI/CD pipeline. A passing status ensures that the code in the repository is up to date and tested. A red badge indicates that the latest commit has failed the pipeline checks.
+
 ## Requirements and Dependencies
 
 To build and run this project, the following dependencies are required:
