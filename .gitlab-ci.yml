@@ -51,9 +51,6 @@ release:
   tags:
     - docker-build
   stage: deploy
-  needs: 
-    - job: build-and-test #release should only run if build-and-test succeeds
-      optional: false
   script:
     - echo "Create release"
     - docker build -f Dockerfile -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" .
