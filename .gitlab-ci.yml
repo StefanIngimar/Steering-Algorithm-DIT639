@@ -46,6 +46,54 @@ build-and-test:
         when: never
       - when: always
 
+# Generate code coverage reports and visualization 
+# https://docs.gitlab.com/ci/testing/code_coverage/
+#
+# - should build the executables to emit coverage data
+#   - value of CMAKE_BUILD_TYPE determines the flags passed to the compiler 
+#   - in this case, it is necessary to set the value to Profile so that the 
+#     necessary coverage flags will be passed to the compiler 
+# - gcovr uses the generated coverage data to creat the test coverage reports 
+#   in different file formats which will be stored as artifacts on GitLab
+# - artificats will be generated on 'merge_request_event' and expire after 45 days 
+# - can browse, download, and view the report artifacts locally  
+# - intended to publish the coverage.html but GitLab Pages is not enabled for the 
+#   project by admin 
+code-coverage:
+  tags:
+    - docker-build
+  stage: build
+  image: alpine:3.14
+  before_script:
+    - apk add --update build-base cmake gcovr
+  variables:
+    SRC_DIR: "${CI_PROJECT_DIR}/demo"
+    OBJ_DIR: "${CI_PROJECT_DIR}/demo/build/CMakeFiles/main-Runner.dir" 
+  script:
+    - cd demo && mkdir build && cd build
+    - cmake -D CMAKE_BUILD_TYPE=Profile ..
+    - make && make test
+    - gcovr -r ${SRC_DIR} -e '.*/catch.*|.*/Test.*' ${OBJ_DIR}
+    - > 
+      gcovr -r ${SRC_DIR} -e '.*/catch.*|.*/Test.*' --exclude-unreachable-branches --print-summary
+      --xml-pretty -o coverage.xml --html=coverage.html ${OBJ_DIR}
+  coverage: '/lines: (\s*\d+.\d+\%)/'
+  artifacts:
+    name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+    expire_in: 45 days
+    paths:
+      - demo/build/coverage.xml
+      - demo/build/coverage.html
+      - demo/build/test-report.xml
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: demo/build/coverage.xml
+      junit: demo/build/test-report.xml
+  rules:
+    - if: ($CI_PIPELINE_SOURCE == "merge_request_event")
+      when: always
+
 # This section describes what shall be done to deploy artefacts from the project.
 release:
   tags:
@@ -59,4 +107,3 @@ release:
     - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/' #only run this job on tags
       when: on_success
     - when: never #dont run on non-matching tags
-

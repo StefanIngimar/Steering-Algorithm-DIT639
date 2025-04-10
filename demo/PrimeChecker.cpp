@@ -3,7 +3,8 @@
 bool PrimeChecker::isPrime(uint16_t n) {
     bool returnValue = true;
 
-    if (n == 2) return true;
+    if (n == 2) 
+        return true;
 
     if (n < 2 || n % 2 == 0) {
         returnValue = false;
