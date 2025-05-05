@@ -99,6 +99,7 @@ code-coverage:
       when: always
 
 # This section describes what shall be done to deploy artefacts from the project.
+#test
 release:
   tags:
     - docker-build
