@@ -1,6 +1,6 @@
 ##################################################
 # Section 1: Build the application
-FROM alpine:3.14 as builder
+FROM alpine:3.14 AS builder
 LABEL maintainer="Stefan Ingimarsson stefanla@student.chalmers.se"
 RUN apk add --no-cache cmake build-base
 
