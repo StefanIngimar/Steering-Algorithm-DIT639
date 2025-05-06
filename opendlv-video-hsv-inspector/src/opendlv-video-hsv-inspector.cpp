@@ -10,6 +10,8 @@
 #include <mutex>
 #include <sys/ioctl.h>
 #include <vector>
+#include <chrono>
+#include <numeric>
 /*
  * This video-hsv-inspector detects cones with the help of a ML model. The model has been converted from pytorch (.pt) format to ONNX (.onnx) format. 
  * Information on ONNX: https://medium.com/@shivprataprai11/understanding-onnx-an-open-standard-for-deep-learning-models-350a72714660
@@ -41,10 +43,26 @@ int32_t main(int32_t argc, char **argv) {
         cv::namedWindow("ONNX Runtime Output", cv::WINDOW_AUTOSIZE);
         cv::Mat img(HEIGHT, WIDTH, CV_8UC4);
 
+        std::deque<double> fps_history;
+        const size_t max_history = 30;
+        auto last_time = std::chrono::steady_clock::now();
+
+
         while (cv::waitKey(10) != 27) {
             sharedMemory->lock();
             std::memcpy(img.data, sharedMemory->data(), WIDTH * HEIGHT * 4);
             sharedMemory->unlock();
+            // fps counter. current average fps on my machine is 11. will revisit this and check if it can be improved.
+            auto current_time = std::chrono::steady_clock::now();
+            double frame_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_time).count();
+            last_time = current_time;
+
+            double fps = frame_time_ms > 0.0 ? 1000.0 / frame_time_ms : 0.0;
+            fps_history.push_back(fps);
+            if(fps_history.size() > max_history){
+              fps_history.pop_front();
+            }
+
             // the boxes for the cones are below. should be fixed in the future
             // TODO separate the classes and output the color of the cones. this solution was just to create an MVP
             cv::Mat bgr;
