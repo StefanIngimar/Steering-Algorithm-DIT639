@@ -37,7 +37,10 @@ int32_t main(int32_t argc, char **argv) {
         // model is initialized here
         Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "yolo");
         Ort::SessionOptions session_options;
-        session_options.SetIntraOpNumThreads(1);
+        //session_options.SetIntraOpNumThreads(1);
+        // changed the thread logic. instead of using a single thread, check how many are available and use them
+        session_options.SetIntraOpNumThreads(std::thread::hardware_concurrency());
+        session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
         Ort::Session session(env, "/usr/share/models/color_cones_yolov5n.onnx", session_options); // path in docker env
 
         cv::namedWindow("ONNX Runtime Output", cv::WINDOW_AUTOSIZE);
@@ -62,6 +65,7 @@ int32_t main(int32_t argc, char **argv) {
             if(fps_history.size() > max_history){
               fps_history.pop_front();
             }
+            std::clog << "fps: " << fps << std::endl;
 
             // the boxes for the cones are below. should be fixed in the future
             // TODO separate the classes and output the color of the cones. this solution was just to create an MVP
@@ -76,11 +80,19 @@ int32_t main(int32_t argc, char **argv) {
             std::vector<const char*> input_names = {"images"};
             std::vector<const char*> output_names = {"output"};
             // rgb color.
-            std::vector<cv::Mat> channels(3);
-            cv::split(resized, channels);
-            std::memcpy(input_tensor_values.data(), channels[0].data, 640 * 640 * sizeof(float));
+            //std::vector<cv::Mat> channels(3);
+            //cv::split(resized, channels);
+            size_t idx = 0;
+            for(int c = 0; c < 3; c++){
+              for(int y = 0; y < resized.rows; y++){
+                for(int x = 0; x < resized.cols; x++){
+                  input_tensor_values[idx++] = resized.at<cv::Vec3f>(y, x)[c];
+                }
+              }
+            }
+            /*std::memcpy(input_tensor_values.data(), channels[0].data, 640 * 640 * sizeof(float));
             std::memcpy(input_tensor_values.data() + 640 * 640, channels[1].data, 640 * 640 * sizeof(float));
-            std::memcpy(input_tensor_values.data() + 2 * 640 * 640, channels[2].data, 640 * 640 * sizeof(float));
+            std::memcpy(input_tensor_values.data() + 2 * 640 * 640, channels[2].data, 640 * 640 * sizeof(float));*/
 
             Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
             Ort::Value input_tensor = Ort::Value::CreateTensor<float>(memory_info, input_tensor_values.data(), input_tensor_values.size(), input_shape.data(), input_shape.size());
