@@ -2,6 +2,9 @@
 # Section 1: Build the application
 FROM alpine:3.14 AS builder
 LABEL maintainer="Stefan Ingimarsson stefanla@student.chalmers.se"
+
+ENV TMPDIR=/opt/tmp 
+
 RUN apk add --no-cache cmake build-base
 
 WORKDIR /opt/sources
