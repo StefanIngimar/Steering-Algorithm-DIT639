@@ -47,7 +47,7 @@ build-and-test:
     # Fallback tag: use ref name if no tag is available
     - export IMAGE_TAG=${CI_COMMIT_TAG:-$CI_COMMIT_REF_SLUG}
     # Build for multiple platforms (amd64 and arm64) and push to the registry
-    - docker buildx build --no-cache --progress=plain --provenance=false --platform linux/amd64,linux/arm/v7 -f Dockerfile -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" --load .
+    - docker buildx build --no-cache --progress=plain --provenance=false --platform linux/amd64,linux/arm/v7 -f Dockerfile -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
   rules: #rules: build and test on any push, except tagged releases
       - if: "$CI_COMMIT_TAG"
         when: never
