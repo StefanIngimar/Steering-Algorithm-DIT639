@@ -57,4 +57,3 @@ std::vector<cv::Rect> MlObjectDetector::detect(const cv::Mat& frame) const {
 
     return detected_objects;
 }
-
