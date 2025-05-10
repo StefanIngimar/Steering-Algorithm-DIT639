@@ -46,6 +46,7 @@ include_directories(SYSTEM ${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/external)
 include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/external/spdlog/include)
+include_directories(SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/include)
 
 set(LIBRARIES Threads::Threads)
 
@@ -60,6 +61,8 @@ endif()
 find_package(OpenCV REQUIRED core highgui imgproc dnn)
 include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 set(LIBRARIES ${LIBRARIES} ${OpenCV_LIBS})
+
+set(LIBRARIES ${LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/lib/libonnxruntime.so)
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
