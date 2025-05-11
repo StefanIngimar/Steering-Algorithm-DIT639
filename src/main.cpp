@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
         logger->error("Main: Raised exception: {}", e.what());
         return 1;
     } catch (...) {
-        logger->error("Main: Riased unknown exception");
+        logger->error("Main: Raised unknown exception");
         return 1;
     }
 
