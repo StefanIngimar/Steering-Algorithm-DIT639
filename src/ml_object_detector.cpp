@@ -2,16 +2,16 @@
 
 #include "ml_object_detector.hpp"
 
-MlObjectDetector::MlObjectDetector(std::shared_ptr<MlModel> model, const float confidence_threshold, const float nms_threshold)
-    : m_confidence_threshold(confidence_threshold), m_nms_threshold(nms_threshold), m_model(model) {
-    if (!m_model) {
+MlObjectDetector::MlObjectDetector(std::shared_ptr<MlModelRuntime> model_runtime, const float confidence_threshold, const float nms_threshold)
+    : m_confidence_threshold(confidence_threshold), m_nms_threshold(nms_threshold), m_model_runtime(model_runtime) {
+    if (!m_model_runtime) {
         throw std::invalid_argument("[ObjectDetector] Model pointer cannot be null");
     }
-    m_model->load();
+    m_model_runtime->load();
 }
 
 std::vector<cv::Rect> MlObjectDetector::detect(const cv::Mat& frame) const {
-    const std::vector<cv::Mat> outputs = m_model->predict(frame);
+    const std::vector<cv::Mat> outputs = m_model_runtime->predict(frame);
 
     const cv::Mat& output = outputs[0];
     const int rows = output.size[1];
@@ -29,8 +29,8 @@ std::vector<cv::Rect> MlObjectDetector::detect(const cv::Mat& frame) const {
         float combined_confidence = objectness * confidence;
 
         if (combined_confidence >= m_confidence_threshold) {
-            const float scale_x = static_cast<float>(frame.cols) / m_model->get_trained_frame_width();
-            const float scale_y = static_cast<float>(frame.rows) / m_model->get_trained_frame_height();
+            const float scale_x = static_cast<float>(frame.cols) / m_model_runtime->get_trained_frame_width();
+            const float scale_y = static_cast<float>(frame.rows) / m_model_runtime->get_trained_frame_height();
 
             const float x = data[static_cast<int>(DetectionAttribute::CenterX)] * scale_x;
             const float y = data[static_cast<int>(DetectionAttribute::CenterY)] * scale_y;

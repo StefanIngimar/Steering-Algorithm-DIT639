@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ml_model.hpp"
+#include "ml_model_runtime.hpp"
 #include "object_detector.hpp"
 
 class MlObjectDetector : public ObjectDetector {
@@ -16,7 +16,7 @@ public:
         Confidence = 5
     };
 
-    MlObjectDetector(std::shared_ptr<MlModel> model, float confidence_threshold = 0.5f, float nms_threshold = 0.4f);
+    MlObjectDetector(std::shared_ptr<MlModelRuntime> model_runtime, float confidence_threshold = 0.5f, float nms_threshold = 0.4f);
     ~MlObjectDetector() = default;
 
     std::vector<cv::Rect> detect(const cv::Mat& frame) const override;
@@ -24,7 +24,7 @@ private:
     float m_confidence_threshold;
     float m_nms_threshold;
 
-    std::shared_ptr<MlModel> m_model;
+    std::shared_ptr<MlModelRuntime> m_model_runtime;
 };
 
 

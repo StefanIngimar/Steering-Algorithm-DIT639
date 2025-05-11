@@ -11,30 +11,30 @@
  * and make it easy to change the logger in the future --- an overkill for now though
  * */
 class Logger {
-    public:
-        static Logger& get_instance() {
-            static Logger instance;
-            return instance;
-        }
-    
-        std::shared_ptr<spdlog::logger> get_logger() const {
-            return m_logger;
-        }
-    
-    private:
-        Logger() {
-            auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-            console_sink->set_level(spdlog::level::info);
-    
-            // Create a synchronous logger
-            auto logger = std::make_shared<spdlog::logger>("nutmeg", console_sink);
-            logger->set_level(spdlog::level::debug);
-            spdlog::register_logger(logger);
-    
-            logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [thread %t] %v");
-    
-            m_logger = logger;
-        }
-    
-        std::shared_ptr<spdlog::logger> m_logger;
-    };
+public:
+    static Logger& get_instance() {
+        static Logger instance;
+        return instance;
+    }
+
+    std::shared_ptr<spdlog::logger> get_logger() const {
+        return m_logger;
+    }
+
+private:
+    Logger() {
+        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        console_sink->set_level(spdlog::level::info);
+        
+        // NOTE(sw): Create a synchronous logger - the asynchronous logger messes-up with the multi-threading parts of the application
+        auto logger = std::make_shared<spdlog::logger>("nutmeg", console_sink);
+        logger->set_level(spdlog::level::debug);
+        spdlog::register_logger(logger);
+
+        logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [thread %t] %v");
+
+        m_logger = logger;
+    }
+
+    std::shared_ptr<spdlog::logger> m_logger;
+};

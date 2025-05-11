@@ -1,3 +1,4 @@
+#include <exception>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -28,10 +29,25 @@ void ImageProcessor::add_message_handler(std::shared_ptr<MessageHandler> message
 }
 
 void ImageProcessor::run() {
+    auto logger = Logger::get_instance().get_logger();
+    
+    logger->info("ImageProcessor: Setting up message handlers");
     setup_message_handlers();
+
+    logger->info("ImageProcessor: Starting image processing");
     while (m_od4->isRunning()) {
-        process_frame();
+        try {
+            process_frame();
+        } catch (const std::exception& e) {
+            logger->error("ImageProcessor: Raised exception: {}", e.what());
+            throw;
+        } catch (...) {
+            logger->error("ImageProcessor: Raised unknown exception");
+            throw;
+        }
     }
+
+    logger->info("ImageProcessor: Closing image processing");
 }
 
 void ImageProcessor::setup_message_handlers() {
@@ -41,20 +57,33 @@ void ImageProcessor::setup_message_handlers() {
 }
 
 void ImageProcessor::process_frame() {
+    auto logger = Logger::get_instance().get_logger();
+
     m_shared_memory->wait();
     cv::Mat image;
-    
+
     {
         m_shared_memory->lock();
+        if (!m_shared_memory->valid() || !m_shared_memory->data()) {
+            logger->error("ImageProcessor: Invalid shared memory data");
+            m_shared_memory->unlock();
+            return;
+        }
+
         cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4, m_shared_memory->data());
         image = wrapped.clone();
         auto sample_time_point = cluon::time::toMicroseconds(m_shared_memory->getTimeStamp().second);
         m_shared_memory->unlock();
 
+        if (image.empty()) {
+            logger->error("ImageProcessor: Cloned image is empty");
+            return;
+        }
+
         if (image.channels() == 4) {
             cv::cvtColor(image, image, cv::COLOR_BGRA2BGR);
         }
-        
+
         if (m_detector) {
             std::vector<cv::Rect> detected_objects = m_detector->detect(image);
             for (auto object : detected_objects) {
