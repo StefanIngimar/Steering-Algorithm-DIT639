@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Which Docker image shall be used on the GitLab runner?
-image: docker:19.03.3
+image: docker:24.0
 
 # Details about how to connect to the Docker service to run this build.
 variables:
@@ -22,7 +22,8 @@ variables:
   DOCKER_TLS_CERTDIR: ""
 
 services:
-  - name: docker:19.03.3-dind
+  - name: docker:24.0-dind
+    command: ["--experimental=false"]
 
 stages:
   - build
@@ -30,6 +31,7 @@ stages:
 
 # Display information before we start the build.
 before_script:
+  - docker --version
   - docker info
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
