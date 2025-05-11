@@ -3,6 +3,8 @@ FROM ubuntu:22.04 AS builder
 ENV TMPDIR=/opt/tmp 
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN mkdir -p /opt/tmp && chmod 1777 /opt/tmp
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && apt-get install -y --no-install-recommends \
