@@ -1,11 +1,12 @@
-FROM ubuntu:22.04 AS builder
+# Builder stage
+FROM --platform=linux/amd64 ubuntu:20.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
-    libopencv-dev \
+    libopencv-dev=4.2.0+dfsg-5 \
     libspdlog-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -18,15 +19,16 @@ RUN rm -rf build && \
     cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/tmp .. && \
     make && make install
 
-FROM ubuntu:22.04
+# Runtime stage
+FROM --platform=linux/amd64 ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    libopencv-core4.5 \
-    libopencv-imgproc4.5 \
-    libopencv-highgui4.5 \
-    libopencv-dnn4.5 \
+    libopencv-core4.2=4.2.0+dfsg-5 \
+    libopencv-imgproc4.2=4.2.0+dfsg-5 \
+    libopencv-highgui4.2=4.2.0+dfsg-5 \
+    libopencv-dnn4.2=4.2.0+dfsg-5 \
     libstdc++6 \
     && rm -rf /var/lib/apt/lists/*
 
