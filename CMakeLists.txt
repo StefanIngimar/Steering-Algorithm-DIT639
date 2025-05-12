@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 project(nutmeg LANGUAGES CXX)
 
 set(OPENDLV_STANDARD_MESSAGE_SET opendlv-standard-message-set-v0.9.6.odvd)
@@ -29,6 +29,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64)")
+    set(ONNX_ARCH_DIR "amd64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(armv7l|arm)")
+    set(ONNX_ARCH_DIR "armv7")
+else()
+    message(FATAL_ERROR "Unsupported architecture: ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+message(STATUS "Using ONNX Runtime for architecture: ${ONNX_ARCH_DIR}")
 
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/cluon-msc
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -62,7 +72,8 @@ find_package(OpenCV REQUIRED core highgui imgproc dnn)
 include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 set(LIBRARIES ${LIBRARIES} ${OpenCV_LIBS})
 
-set(LIBRARIES ${LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/lib/libonnxruntime.so)
+set(ONNX_RUNTIME_LIB "${CMAKE_CURRENT_SOURCE_DIR}/external/onnxruntime/lib/libonnxruntime.so")
+set(LIBRARIES ${LIBRARIES} ${ONNX_RUNTIME_LIB})
 
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

@@ -1,5 +1,7 @@
 FROM ubuntu:22.04 AS builder
 
+ARG TARGETARCH
+
 ENV TMPDIR=/opt/tmp 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -7,7 +9,6 @@ RUN mkdir -p /opt/tmp && chmod 1777 /opt/tmp
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
-    && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     libopencv-dev \
@@ -17,6 +18,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ADD . /opt/sources
 WORKDIR /opt/sources
+
+RUN set -eux; \
+    ARCH_DIR=""; \
+    case "$TARGETARCH" in \
+        amd64) ARCH_DIR="amd64";; \
+        arm) ARCH_DIR="armv7";; \
+        *) echo "Unsupported architecture: $TARGETARCH" && exit 1;; \
+    esac && \
+    mkdir -p external/onnxruntime/include && \
+    cp -r external/onnxruntime/${ARCH_DIR}/include/* external/onnxruntime/include && \
+    cp -r external/onnxruntime/${ARCH_DIR}/lib external/onnxruntime/lib
 
 RUN rm -rf build && \
     mkdir build && \
