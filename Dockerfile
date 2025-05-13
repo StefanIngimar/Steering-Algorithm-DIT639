@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* /var/lib/dpkg/*-old
 
+RUN mkdir -p /usr/lib && \
+    cp /usr/lib/*/libspdlog.so* /usr/lib/ || \
+    cp /usr/lib/libspdlog.so* /usr/lib/ || true
+
 ADD . /opt/sources
 WORKDIR /opt/sources
 
@@ -40,6 +44,6 @@ WORKDIR /usr/bin
 
 COPY --from=builder /tmp/bin/nutmeg .
 COPY --from=builder /opt/sources/res /usr/bin/res
-COPY --from=builder /usr/lib/x86_64-linux-gnu/libspdlog.so* /usr/lib/
+COPY --from=builder /usr/lib/libspdlog.so* /usr/lib/
 
 ENTRYPOINT ["/usr/bin/nutmeg"]
