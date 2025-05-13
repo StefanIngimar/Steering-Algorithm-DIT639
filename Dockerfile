@@ -1,26 +1,49 @@
-##################################################
-# Section 1: Build the application
-FROM alpine:3.14 AS builder
-LABEL maintainer="Stefan Ingimarsson stefanla@student.chalmers.se"
+FROM ubuntu:22.04 AS builder
 
 ENV TMPDIR=/opt/tmp 
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apk add --no-cache cmake build-base
+RUN mkdir -p /opt/tmp && chmod 1777 /opt/tmp
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    build-essential \
+    cmake \
+    libopencv-dev \
+    libspdlog-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* /var/lib/dpkg/*-old
+
+RUN mkdir -p /usr/lib && \
+    cp /usr/lib/*/libspdlog.so* /usr/lib/ || \
+    cp /usr/lib/libspdlog.so* /usr/lib/ || true
+
+ADD . /opt/sources
 WORKDIR /opt/sources
-COPY demo/ /opt/sources/
+
 RUN rm -rf build && \
     mkdir build && \
     cd build && \
-    cmake -D CMAKE_BUILD_TYPE=Release .. && \
-    make && make test && \
-    strip main && \
-    cp main /tmp/main
+    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/tmp .. && \
+    make && make install
 
-#################################################
-# Section 2: Bundle the application.
-FROM scratch
-LABEL maintainer="Stefan Ingimarsson stefanla@student.chalmers.se"
-WORKDIR /opt
-COPY --from=builder /tmp/main /opt/main
-ENTRYPOINT ["/opt/main"]
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libopencv-core4.5 \
+    libopencv-imgproc4.5 \
+    libopencv-highgui4.5 \
+    libopencv-dnn4.5 \
+    libstdc++6 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* /var/lib/dpkg/*-old
+
+WORKDIR /usr/bin
+
+COPY --from=builder /tmp/bin/nutmeg .
+COPY --from=builder /opt/sources/res /usr/bin/res
+COPY --from=builder /usr/lib/libspdlog.so* /usr/lib/
+
+ENTRYPOINT ["/usr/bin/nutmeg"]
