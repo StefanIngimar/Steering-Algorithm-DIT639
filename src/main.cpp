@@ -14,7 +14,6 @@
 
 #include "ml_model_runtime.hpp"
 #include "cv_dnn_runtime.hpp"
-#include "onnx_runtime.hpp"
 
 #include "ml_object_detector.hpp"
 
@@ -26,7 +25,7 @@ int main(int argc, char** argv) {
     auto config = Config::parse_config(argc, argv);
     
     try {
-        std::shared_ptr<MlModelRuntime> model_runtime = std::make_shared<OnnxRuntime>("res/ml_models/nano.onnx", 320, 320);
+        std::shared_ptr<MlModelRuntime> model_runtime = std::make_shared<CvDnnRuntime>("res/ml_models/nano.onnx", 320, 320);
         auto detector = std::make_unique<MlObjectDetector>(model_runtime);
 
         std::unique_ptr<cluon::SharedMemory> shared_memory(new cluon::SharedMemory{config.shared_memory_name});
