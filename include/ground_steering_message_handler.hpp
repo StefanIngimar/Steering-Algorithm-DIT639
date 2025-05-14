@@ -9,10 +9,11 @@
 
 class GroundSteeringMessageHandler : public MessageHandler {
 public:
-    GroundSteeringMessageHandler();
+  GroundSteeringMessageHandler();
 
-    void setup(cluon::OD4Session& od4) override;
+  void setup(cluon::OD4Session &od4) override;
+  float get_actual_steering_angle(); // expose getter for the steering
 private:
-    std::mutex m_handler_mutex;
-    opendlv::proxy::GroundSteeringRequest m_ground_steering_request;
+  std::mutex m_handler_mutex;
+  opendlv::proxy::GroundSteeringRequest m_ground_steering_request;
 };
