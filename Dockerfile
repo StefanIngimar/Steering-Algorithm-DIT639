@@ -1,22 +1,16 @@
-FROM ubuntu:22.04 AS builder
+FROM alpine:3.21 AS builder
 
-ENV TMPDIR=/opt/tmp 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV TMPDIR=/opt/tmp
 
 RUN mkdir -p /opt/tmp && chmod 1777 /opt/tmp
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    build-essential \
+RUN apk add --no-cache \
+    build-base \
     cmake \
-    libopencv-dev \
-    libspdlog-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* /var/lib/dpkg/*-old
-
-RUN mkdir -p /usr/lib && \
-    cp /usr/lib/*/libspdlog.so* /usr/lib/ || \
-    cp /usr/lib/libspdlog.so* /usr/lib/ || true
+    git \
+    opencv-dev \
+    pkgconfig \
+    && mkdir -p /usr/lib
 
 ADD . /opt/sources
 WORKDIR /opt/sources
@@ -27,23 +21,15 @@ RUN rm -rf build && \
     cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/tmp .. && \
     make && make install
 
-FROM ubuntu:22.04
+FROM alpine:3.21
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libopencv-core4.5 \
-    libopencv-imgproc4.5 \
-    libopencv-highgui4.5 \
-    libopencv-dnn4.5 \
-    libstdc++6 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/* /var/lib/dpkg/*-old
+RUN apk add --no-cache \
+    opencv \
+    libstdc++
 
 WORKDIR /usr/bin
 
 COPY --from=builder /tmp/bin/nutmeg .
 COPY --from=builder /opt/sources/res /usr/bin/res
-COPY --from=builder /usr/lib/libspdlog.so* /usr/lib/
 
 ENTRYPOINT ["/usr/bin/nutmeg"]

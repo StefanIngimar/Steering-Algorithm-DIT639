@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     auto config = Config::parse_config(argc, argv);
     
     try {
-        std::shared_ptr<MlModelRuntime> model_runtime = std::make_shared<CvDnnRuntime>("res/ml_models/nano.onnx", 320, 320);
+        std::shared_ptr<MlModelRuntime> model_runtime = std::make_shared<CvDnnRuntime>("res/ml_models/colored_cones_nano.onnx", 320, 320);
         auto detector = std::make_unique<MlObjectDetector>(model_runtime);
         auto path_finder = std::make_unique<AverageXPathFinder>();
 

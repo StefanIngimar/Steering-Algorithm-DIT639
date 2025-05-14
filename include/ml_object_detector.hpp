@@ -5,15 +5,16 @@
 
 class MlObjectDetector : public ObjectDetector {
 public:
-    // NOTE(sw): this takes into account only a single class - in our case a cone detection.
-    // The confidence describes how confident the model is about 'finding' the cone.
+    // Describes the data layout of the model trained to detect and classify cones based on their colors
     enum class DetectionAttribute {
         CenterX = 0,
         CenterY = 1,
         Width = 2,
         Height = 3,
         Objectness = 4,
-        Confidence = 5
+        BlueConeProbability = 5,
+        YellowConeProbability = 6,
+        RedConeProbability = 7,
     };
 
     MlObjectDetector(std::shared_ptr<MlModelRuntime> model_runtime, float confidence_threshold = 0.5f, float nms_threshold = 0.4f);
@@ -26,5 +27,3 @@ private:
 
     std::shared_ptr<MlModelRuntime> m_model_runtime;
 };
-
-
