@@ -10,13 +10,17 @@
 #include "object_detector.hpp"
 
 ImageProcessor::ImageProcessor(
-    const Config& config, std::shared_ptr<cluon::OD4Session> od4, std::unique_ptr<ObjectDetector> detector
+    const Config& config, 
+    std::shared_ptr<cluon::OD4Session> od4, 
+    std::unique_ptr<ObjectDetector> detector, 
+    std::unique_ptr<PathFinder> path_finder
 )
     : m_config(config),
       m_od4(od4),
       m_detector(std::move(detector)),
       m_shared_memory(std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
-      m_message_handlers() {
+      m_message_handlers(),
+      m_path_finder(std::move(path_finder)) {
 
     auto logger = Logger::get_instance().get_logger();
     if (!m_detector) {
@@ -89,6 +93,12 @@ void ImageProcessor::process_frame() {
             for (auto object : detected_objects) {
                 cv::rectangle(image, object, cv::Scalar(0, 255, 255), 1);
             }
+
+            cv::Point2f midpoint = m_path_finder->find_midpoint(detected_objects, image);
+            cv::circle(image, midpoint, 3, cv::Scalar(255, 255, 255), cv::FILLED);
+
+            float steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
+            logger->info("Calculated steering angle: {}", steering_angle);
         }
 
         annotate_image(image, sample_time_point);
