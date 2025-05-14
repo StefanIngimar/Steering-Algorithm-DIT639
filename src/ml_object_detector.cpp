@@ -18,16 +18,22 @@ std::vector<cv::Rect> MlObjectDetector::detect(const cv::Mat& frame) const {
     const int cols = output.size[2];
     const auto* data = reinterpret_cast<float*>(output.data);
 
-    // Those variables will be used for the Non-Maximum Suppression (NMS) to remove all the overlapping
-    // boxes/rectangles for the same object.
     std::vector<cv::Rect> boxes;
     std::vector<float> confidences;
 
     for (int i = 0; i < rows; i++) {
         float objectness = data[static_cast<int>(DetectionAttribute::Objectness)];
-        float confidence = data[static_cast<int>(DetectionAttribute::Confidence)];
-        float combined_confidence = objectness * confidence;
 
+        std::vector<float> probabilities = {
+            data[static_cast<int>(DetectionAttribute::BlueConeProbability)],
+            data[static_cast<int>(DetectionAttribute::YellowConeProbability)],
+            data[static_cast<int>(DetectionAttribute::RedConeProbability)],
+        };
+
+        auto highest_probability_item = std::max_element(probabilities.begin(), probabilities.end());
+        float highest_probability = *highest_probability_item;
+
+        float combined_confidence = objectness * highest_probability;
         if (combined_confidence >= m_confidence_threshold) {
             const float scale_x = static_cast<float>(frame.cols) / m_model_runtime->get_trained_frame_width();
             const float scale_y = static_cast<float>(frame.rows) / m_model_runtime->get_trained_frame_height();
@@ -41,7 +47,7 @@ std::vector<cv::Rect> MlObjectDetector::detect(const cv::Mat& frame) const {
             const int top = static_cast<int>(y - h / 2);
 
             boxes.emplace_back(left, top, static_cast<int>(w), static_cast<int>(h));
-            confidences.emplace_back(confidence);
+            confidences.emplace_back(combined_confidence);
         }
 
         data += cols;

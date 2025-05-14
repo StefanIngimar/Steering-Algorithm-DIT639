@@ -1,13 +1,30 @@
 #include "cv_dnn_runtime.hpp"
+#include "logger.hpp"
 
 CvDnnRuntime::CvDnnRuntime(const std::string& model_path, int trained_frame_width, int trained_frame_height) 
     : m_model_path(model_path), m_trained_frame_width(trained_frame_width), m_trained_frame_height(trained_frame_height) {
 }
 
 void CvDnnRuntime::load() {
-    m_net = cv::dnn::readNetFromONNX(m_model_path);
-    m_net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-    m_net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+    auto logger = Logger::get_instance().get_logger();
+    logger->info("Loading model using CV DNN Runtime at '{}'", m_model_path);
+
+    try {
+        logger->info("reading from onnx");
+        m_net = cv::dnn::readNetFromONNX(m_model_path);
+        logger->info("setting backend");
+        m_net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
+        logger->info("setting target");
+        m_net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+    } catch (const std::exception& e) {
+        logger->error("Error while loading model using CV DNN Runtime: {}", e.what());
+        throw;
+    } catch (...) {
+        logger->error("Unknown error while loading model using CV DNN Runtime");
+        throw;
+    }
+
+    logger->info("Model loaded");
 }
 
 std::vector<cv::Mat> CvDnnRuntime::predict(const cv::Mat& image) {
