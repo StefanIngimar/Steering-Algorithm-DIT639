@@ -16,6 +16,7 @@
 #include "cv_dnn_runtime.hpp"
 
 #include "ml_object_detector.hpp"
+#include "average_x_path_finder.hpp"
 
 #include "image_processor.hpp"
 #include "ground_steering_message_handler.hpp"
@@ -27,6 +28,7 @@ int main(int argc, char** argv) {
     try {
         std::shared_ptr<MlModelRuntime> model_runtime = std::make_shared<CvDnnRuntime>("res/ml_models/nano.onnx", 320, 320);
         auto detector = std::make_unique<MlObjectDetector>(model_runtime);
+        auto path_finder = std::make_unique<AverageXPathFinder>();
 
         std::unique_ptr<cluon::SharedMemory> shared_memory(new cluon::SharedMemory{config.shared_memory_name});
         if (!shared_memory || !shared_memory->valid()) {
@@ -36,7 +38,7 @@ int main(int argc, char** argv) {
         logger->info("{}: Attached to shared memory '{}' ({} bytes).", argv[0], shared_memory->name(), shared_memory->size());
 
         std::shared_ptr<cluon::OD4Session> od4 = std::make_shared<cluon::OD4Session>(config.cid);
-        ImageProcessor processor(config, od4, std::move(detector));
+        ImageProcessor processor(config, od4, std::move(detector), std::move(path_finder));
 
         auto gs_msg_handler = std::make_shared<GroundSteeringMessageHandler>();
         processor.add_message_handler(gs_msg_handler);
