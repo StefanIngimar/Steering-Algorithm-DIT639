@@ -1,7 +1,7 @@
 #!/bin/bash
 
 docker_image_exists() {
-    docker image insepect "$1" > /dev/null 2>&1
+    docker image inspect "$1" > /dev/null 2>&1
 }
 
 xhost +local:

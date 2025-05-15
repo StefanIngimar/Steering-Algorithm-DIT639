@@ -89,10 +89,7 @@ void ImageProcessor::process_frame() {
         }
 
         if (m_detector) {
-            std::vector<cv::Rect> detected_objects = m_detector->detect(image);
-            for (auto object : detected_objects) {
-                cv::rectangle(image, object, cv::Scalar(0, 255, 255), 1);
-            }
+            ColorClassifiedCones detected_objects = m_detector->detect(image);
 
             cv::Point2f midpoint = m_path_finder->find_midpoint(detected_objects, image);
             cv::circle(image, midpoint, 3, cv::Scalar(255, 255, 255), cv::FILLED);
