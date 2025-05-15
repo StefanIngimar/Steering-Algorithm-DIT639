@@ -28,6 +28,7 @@ private:
   std::shared_ptr<GroundSteeringMessageHandler> m_gs_handler;
   void setup_message_handlers();
   void process_frame();
+  void log_steering(int64_t timestamp, float predicted, float actual);
   void annotate_image(cv::Mat &image, int sample_time_point,
                       float actual_steering, float steering_angle) const;
 };

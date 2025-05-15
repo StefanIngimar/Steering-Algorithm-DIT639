@@ -1,3 +1,5 @@
+#include <cerrno>
+#include <cstring>
 #include <exception>
 #include <memory>
 #include <opencv2/core/mat.hpp>
@@ -120,12 +122,30 @@ void ImageProcessor::process_frame() {
     }
 
     annotate_image(image, sample_time_point, actual_steering, steering_angle);
+    log_steering(sample_time_point, actual_steering, steering_angle);
   }
 
   if (m_config.is_verbose) {
     cv::imshow(m_config.shared_memory_name, image);
     cv::waitKey(1);
   }
+}
+// Added logging in the image_processor since all the variables needed were here
+// already
+void ImageProcessor::log_steering(int64_t timestamp, float actual,
+                                  float predicted) {
+  static bool written = false;
+  static std::ofstream outputFile(
+      "/usr/bin/res/steering_data/steeringAngles.csv",
+      std::ios::out | std::ios::trunc);
+  if (!outputFile.is_open()) {
+    std::cerr << "failed to open .csv file" << std::endl;
+  }
+  if (!written) {
+    outputFile << "Timestamp;PredictedSteeringAngle;ActualSteeringAngle\n";
+    written = true;
+  }
+  outputFile << timestamp << ";" << predicted << ";" << actual << "\n";
 }
 
 void ImageProcessor::annotate_image(cv::Mat &image, int sample_time_point,
@@ -142,22 +162,17 @@ void ImageProcessor::annotate_image(cv::Mat &image, int sample_time_point,
   std::tm *utc_time = std::gmtime(&seconds);
   std::ostringstream time_stream;
   time_stream << "Now: " << std::put_time(utc_time, "%Y-%m-%dT%H:%M:%SZ");
-  // cv::putText(image, time_stream.str(), cv::Point(10, 20), font, font_scale,
-  //             text_color, text_thickness);
 
   // display frame time stamp
   std::ostringstream ts_stream;
   ts_stream << "TS: " << sample_time_point;
-  // cv::putText(image, ts_stream.str(), cv::Point(10, 37), font, font_scale,
-  //             text_color, text_thickness);
 
   // display steering
-  std::ostringstream steering_stream;
-  steering_stream << "Current steering: " << steering_angle
-                  << "\nActual steering: " << actual_steering;
-  // cv::putText(image, steering_stream.str(), cv::Point(10, 54), font,
-  // font_scale,
-  //             text_color, text_thickness);
+  std::ostringstream steering_line1;
+  std::ostringstream steering_line2;
+  steering_line1 << "Current steering: " << steering_angle;
+  steering_line2 << "Actual steering: " << actual_steering;
+
   int line_height = 20;
   int base_y = 20;
 
@@ -165,7 +180,10 @@ void ImageProcessor::annotate_image(cv::Mat &image, int sample_time_point,
               text_color, text_thickness);
   cv::putText(image, ts_stream.str(), cv::Point(10, base_y + line_height), font,
               font_scale, text_color, text_thickness);
-  cv::putText(image, steering_stream.str(),
+  cv::putText(image, steering_line1.str(),
               cv::Point(10, base_y + 2 * line_height), font, font_scale,
+              text_color, text_thickness);
+  cv::putText(image, steering_line2.str(),
+              cv::Point(10, base_y + 3 * line_height), font, font_scale,
               text_color, text_thickness);
 }
