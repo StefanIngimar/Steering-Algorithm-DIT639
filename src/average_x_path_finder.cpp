@@ -1,42 +1,48 @@
 #include "average_x_path_finder.hpp"
 #include "logger.hpp"
 
-cv::Point2f AverageXPathFinder::find_midpoint(const std::vector<cv::Rect> detection_result, const cv::Mat& frame) {
+cv::Point2f AverageXPathFinder::find_midpoint(const ColorClassifiedCones& detection_result, const cv::Mat& frame) {
     auto logger = Logger::get_instance().get_logger();
-    
-    std::vector<cv::Point2f> left_object_centers;
-    std::vector<cv::Point2f> right_object_centers;
-    separate_detected_objects(frame, detection_result, left_object_centers, right_object_centers);
 
-    sort_by_y_desc(left_object_centers);
-    sort_by_y_desc(right_object_centers);
+    auto blue_cones = detection_result.blue_cones;
+    auto yellow_cones = detection_result.yellow_cones;
+    sort_by_y_desc(blue_cones);
+    sort_by_y_desc(yellow_cones);
 
-    std::vector<cv::Point2f> closest_left_centers;
-    std::vector<cv::Point2f> closest_right_centers;
-    find_closest_objects(left_object_centers, closest_left_centers);
-    find_closest_objects(right_object_centers, closest_right_centers);
+    filter_out_objects_outside_threshold(blue_cones, frame);
+    filter_out_objects_outside_threshold(yellow_cones, frame);
+
+    std::vector<cv::Rect> closest_blue_cones;
+    std::vector<cv::Rect> closest_yellow_cones;
+    find_closest_objects(blue_cones, closest_blue_cones);
+    find_closest_objects(yellow_cones, closest_yellow_cones);
+
+    std::vector<cv::Point2f> closest_blue_cone_centers;
+    std::vector<cv::Point2f> closest_yellow_cone_centers;
+    find_object_centers(closest_blue_cones, closest_blue_cone_centers);
+    find_object_centers(closest_yellow_cones, closest_yellow_cone_centers);
 
     logger->info(
-        "Detected cones: left {}, right {}; Closest cones: left {}, right {}", 
-        left_object_centers.size(), 
-        right_object_centers.size(),
-        closest_left_centers.size(),
-        closest_right_centers.size()
+        "Found cones: left {}, right {}; Closest cones: left {}, right {}", 
+        blue_cones.size(), 
+        yellow_cones.size(),
+        closest_blue_cones.size(),
+        closest_yellow_cones.size()
     );
 
     cv::Point2f midpoint(0.0f, 0.0f);
-    if (!closest_left_centers.empty() && !closest_right_centers.empty()) {
+    if (!closest_blue_cone_centers.empty() && !closest_yellow_cone_centers.empty()) {
         cv::Point2f left_pos_avg(0.0f, 0.0f);
-        for (const auto& clc : closest_left_centers) {
+        for (const auto& clc : closest_blue_cone_centers) {
             left_pos_avg += clc;
         }
-        left_pos_avg /= static_cast<float>(closest_left_centers.size());
+        left_pos_avg /= static_cast<float>(closest_blue_cone_centers.size());
 
         cv::Point2f right_pos_avg(0.0f, 0.0f);
-        for (const auto& crc : closest_right_centers) {
+        for (const auto& crc : closest_yellow_cone_centers) {
             right_pos_avg += crc;
         }
-        right_pos_avg /= static_cast<float>(closest_right_centers.size());
+        right_pos_avg /= static_cast<float>(closest_yellow_cone_centers.size());
 
         midpoint.x = (left_pos_avg.x + right_pos_avg.x) / 2;
         midpoint.y = (left_pos_avg.y + right_pos_avg.y) / 2;
@@ -71,51 +77,43 @@ float AverageXPathFinder::calculate_steering_angle(const cv::Point2f& midpoint, 
  * Select only the specified number of objects and use those objects to popule the 'closest_objects' vector.
  * */
 void AverageXPathFinder::find_closest_objects(
-    const std::vector<cv::Point2f>& all_objects, std::vector<cv::Point2f>& closest_objects, int to_find
+    const std::vector<cv::Rect>& all_objects, std::vector<cv::Rect>& closest_objects, int to_find
 ) {
     closest_objects.assign(
         all_objects.begin(), all_objects.begin() + std::min<size_t>(to_find, all_objects.size())
     );
 }
 
-/*
- * Separate detected objects in place by comparing the object position with the middle of the frame.
- * Only objects within a given threshold (lower bottom of the frame to the bumper of the car) will be taken
- * into consideration.
- * */
-void AverageXPathFinder::separate_detected_objects(
-    const cv::Mat& frame, const std::vector<cv::Rect>& objects, std::vector<cv::Point2f>& left, std::vector<cv::Point2f>& right
-) {
-    left.clear();
-    right.clear();
-
-    // only the detected cones that are between the thresholds will be taken into
-    // consideration while finding the midpoint
-    int bottom_threshold = static_cast<int>(frame.rows * 0.5);
-    int upper_threshold = frame.rows - 125;
-
-    float image_center_x = frame.cols / 2.0f;
-
-    for (const auto& obj : objects) {
-        cv::Point2f obj_center(obj.x + obj.width / 2.0f, obj.y + obj.height / 2.0f);
-
-        if (obj.y + obj.height < bottom_threshold || obj.y + obj.height > upper_threshold) {
-            continue;
-        }
-
-        if (obj_center.x < image_center_x) {
-            left.push_back(obj_center);
-        } else if (obj_center.x > image_center_x) {
-            right.push_back(obj_center);
-        }
+void AverageXPathFinder::find_object_centers(const std::vector<cv::Rect>& all_objects, std::vector<cv::Point2f>& object_centers) {
+    for (const auto& obj : all_objects) {
+        cv::Point2f center_point(obj.x + obj.width / 2.0f, obj.y + obj.height / 2.0f);
+        object_centers.emplace_back(center_point);
     }
 }
 
 /*
  * Sort detected objects vector to put detected objects that are closest to the car at the beginning of the vector.
  * */
-void AverageXPathFinder::sort_by_y_desc(std::vector<cv::Point2f>& objects) {
-    std::sort(objects.begin(), objects.end(), [](const cv::Point2f& a, const cv::Point2f& b) {
+void AverageXPathFinder::sort_by_y_desc(std::vector<cv::Rect>& objects) {
+    std::sort(objects.begin(), objects.end(), [](const cv::Rect& a, const cv::Rect& b) {
         return a.y > b.y;
     });
+}
+
+/**
+ * Remove objects from the array that are outside the defined threshold.
+ * 
+ * The valid threshold is described as the area between car's bumper and the middle of the frame.
+ */
+void AverageXPathFinder::filter_out_objects_outside_threshold(std::vector<cv::Rect>& objects, const cv::Mat& frame) {
+    int bottom_threshold = static_cast<int>(frame.rows * 0.5f);
+    int upper_threshold = static_cast<int>(frame.rows - 125);
+
+    for (auto obj = objects.begin(); obj != objects.end();) {
+        if (obj->y + obj->height < bottom_threshold || obj->y + obj->height > upper_threshold) {
+            obj = objects.erase(obj);
+        } else {
+            obj += 1;
+        }
+    }
 }
