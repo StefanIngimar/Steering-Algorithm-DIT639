@@ -12,8 +12,6 @@ private:
     const float m_max_steering_angle = 0.3f;
     const float m_sensitivity = 0.5f;
 
-    void sort_by_y_desc(std::vector<cv::Rect>& objects);
-    void filter_out_objects_outside_threshold(std::vector<cv::Rect>& objects, const cv::Mat& frame);
-    void find_closest_objects(const std::vector<cv::Rect>& all_objects, std::vector<cv::Rect>& closest_objects, int to_find = 1);
-    void find_object_centers(const std::vector<cv::Rect>& all_objects, std::vector<cv::Point2f>& object_centerse);
+    std::vector<cv::Point2f> get_closest_centers(const std::vector<cv::Rect>& objects, int to_find = 1);
+    void sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame);
 };
