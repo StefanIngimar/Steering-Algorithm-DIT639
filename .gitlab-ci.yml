@@ -33,6 +33,9 @@ before_script:
   - docker --version
   - docker info
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  # persistent builder
+  - docker buildx use mybuilder || docker buildx create --name mybuilder --use
+  - docker buildx inspect mybuilder --bootstrap
 
 # This section describes what shall be done to build and test the project.
 # rules: project must be built and tested on any push, except for tagged releases. https://docs.gitlab.com/ci/yaml/
@@ -42,13 +45,16 @@ build-and-test:
   stage: build
   script:
     # Ensure experimental features are enabled for buildx
-    - docker buildx version || (echo "Installing buildx..." && mkdir -p ~/.docker/cli-plugins && wget -qO ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.11.2/buildx-v0.11.2.linux-amd64 && chmod +x ~/.docker/cli-plugins/docker-buildx)
-    - docker buildx create --use
+    # trying without this part. buildx should be included already in docker 24.0.5 i think
+    # - docker buildx version || (echo "Installing buildx..." && mkdir -p ~/.docker/cli-plugins && wget -qO ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.11.2/buildx-v0.11.2.linux-amd64 && chmod +x ~/.docker/cli-plugins/docker-buildx)
+    # - docker buildx create --use
     - docker buildx inspect --bootstrap
     # Fallback tag: use ref name if no tag is available
     - export IMAGE_TAG=${CI_COMMIT_TAG:-$CI_COMMIT_REF_SLUG}
     # Build for multiple platforms (amd64 and arm64) and push to the registry
-    - docker buildx build --no-cache --progress=plain --provenance=false --platform linux/amd64,linux/arm/v7 -f Dockerfile -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
+    # Replaced --no-cache with remote caching for faster performance.
+    - docker buildx build --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE:cache --cache-to=type=registry,ref=$CI_REGISTRY_IMAGE:cache,mode=max --progress=plain --provenance=false --platform linux/amd64,linux/arm/v7 -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
+    #- docker buildx build --no-cache --progress=plain --provenance=false --platform linux/amd64,linux/arm/v7 -f Dockerfile -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG" .
   rules: #rules: build and test on any push, except tagged releases
       - if: "$CI_COMMIT_TAG"
         when: never
