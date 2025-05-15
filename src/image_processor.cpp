@@ -77,39 +77,12 @@ void ImageProcessor::process_frame() {
   m_shared_memory->wait();
   cv::Mat image;
 
-    {
-        m_shared_memory->lock();
-        if (!m_shared_memory->valid() || !m_shared_memory->data()) {
-            logger->error("ImageProcessor: Invalid shared memory data");
-            m_shared_memory->unlock();
-            return;
-        }
-
-        cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4, m_shared_memory->data());
-        image = wrapped.clone();
-        auto sample_time_point = cluon::time::toMicroseconds(m_shared_memory->getTimeStamp().second);
-        m_shared_memory->unlock();
-
-        if (image.empty()) {
-            logger->error("ImageProcessor: Cloned image is empty");
-            return;
-        }
-
-        if (image.channels() == 4) {
-            cv::cvtColor(image, image, cv::COLOR_BGRA2BGR);
-        }
-
-        if (m_detector) {
-            ColorClassifiedCones detected_objects = m_detector->detect(image);
-
-            cv::Point2f midpoint = m_path_finder->find_midpoint(detected_objects, image);
-            cv::circle(image, midpoint, 3, cv::Scalar(255, 255, 255), cv::FILLED);
-
-            float steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
-            logger->info("Calculated steering angle: {}", steering_angle);
-        }
-
-        annotate_image(image, sample_time_point);
+  {
+    m_shared_memory->lock();
+    if (!m_shared_memory->valid() || !m_shared_memory->data()) {
+      logger->error("ImageProcessor: Invalid shared memory data");
+      m_shared_memory->unlock();
+      return;
     }
 
     cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4,
@@ -132,10 +105,7 @@ void ImageProcessor::process_frame() {
     float steering_angle = 0.0f;
 
     if (m_detector) {
-      std::vector<cv::Rect> detected_objects = m_detector->detect(image);
-      for (auto object : detected_objects) {
-        cv::rectangle(image, object, cv::Scalar(0, 255, 255), 1);
-      }
+      ColorClassifiedCones detected_objects = m_detector->detect(image);
 
       cv::Point2f midpoint =
           m_path_finder->find_midpoint(detected_objects, image);
@@ -144,19 +114,21 @@ void ImageProcessor::process_frame() {
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
       logger->info("Calculated steering angle: {}", steering_angle);
     }
+
     if (m_gs_handler) {
       actual_steering = m_gs_handler->get_actual_steering_angle();
     }
 
     annotate_image(image, sample_time_point, actual_steering, steering_angle);
     log_steering(sample_time_point, actual_steering, steering_angle);
-  }
 
-  if (m_config.is_verbose) {
-    cv::imshow(m_config.shared_memory_name, image);
-    cv::waitKey(1);
+    if (m_config.is_verbose) {
+      cv::imshow(m_config.shared_memory_name, image);
+      cv::waitKey(1);
+    }
   }
 }
+
 // Added logging in the image_processor since all the variables needed were here
 // already
 void ImageProcessor::log_steering(int64_t timestamp, float actual,
