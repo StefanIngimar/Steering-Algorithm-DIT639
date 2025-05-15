@@ -85,17 +85,37 @@ std::vector<cv::Point2f> AverageXPathFinder::get_closest_centers(const std::vect
  * 
  * After filering, sort detected objects vector to put detected objects that are closest to the car at the beginning of the vector.
  * */
+// void AverageXPathFinder::sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame) {
+//     int bottom_threshold = static_cast<int>(frame.rows * 0.5f);
+//     int upper_threshold = static_cast<int>(frame.rows - 125);
+// 
+//     objects.erase(
+//         std::remove_if(objects.begin(), objects.end(), [bottom_threshold, upper_threshold](const cv::Rect& obj) {
+//             return obj.y + obj.height < bottom_threshold || obj.y + obj.height > upper_threshold;
+//         }), objects.end()
+//     );
+// 
+//     std::sort(objects.begin(), objects.end(), [](const cv::Rect& a, const cv::Rect& b) {
+//         return a.y > b.y;
+//     });
+// }
+
 void AverageXPathFinder::sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame) {
     int bottom_threshold = static_cast<int>(frame.rows * 0.5f);
     int upper_threshold = static_cast<int>(frame.rows - 125);
-
-    objects.erase(
-        std::remove_if(objects.begin(), objects.end(), [bottom_threshold, upper_threshold](const cv::Rect& obj) {
-            return obj.y + obj.height < bottom_threshold || obj.y + obj.height > upper_threshold;
-        }), objects.end()
-    );
-
-    std::sort(objects.begin(), objects.end(), [](const cv::Rect& a, const cv::Rect& b) {
-        return a.y > b.y;
-    });
+    std::vector<cv::Rect> filtered;
+    for (const auto& obj : objects) {
+        int y_end = obj.y + obj.height;
+        if (y_end >= bottom_threshold && y_end <= upper_threshold) {
+            filtered.push_back(obj);
+        }
+    }
+    objects = filtered;
+    for (size_t i = 0; i < objects.size(); ++i) {
+        for (size_t j = i + 1; j < objects.size(); ++j) {
+            if (objects[i].y < objects[j].y) {
+                std::swap(objects[i], objects[j]);
+            }
+        }
+    }
 }
