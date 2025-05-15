@@ -77,12 +77,39 @@ void ImageProcessor::process_frame() {
   m_shared_memory->wait();
   cv::Mat image;
 
-  {
-    m_shared_memory->lock();
-    if (!m_shared_memory->valid() || !m_shared_memory->data()) {
-      logger->error("ImageProcessor: Invalid shared memory data");
-      m_shared_memory->unlock();
-      return;
+    {
+        m_shared_memory->lock();
+        if (!m_shared_memory->valid() || !m_shared_memory->data()) {
+            logger->error("ImageProcessor: Invalid shared memory data");
+            m_shared_memory->unlock();
+            return;
+        }
+
+        cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4, m_shared_memory->data());
+        image = wrapped.clone();
+        auto sample_time_point = cluon::time::toMicroseconds(m_shared_memory->getTimeStamp().second);
+        m_shared_memory->unlock();
+
+        if (image.empty()) {
+            logger->error("ImageProcessor: Cloned image is empty");
+            return;
+        }
+
+        if (image.channels() == 4) {
+            cv::cvtColor(image, image, cv::COLOR_BGRA2BGR);
+        }
+
+        if (m_detector) {
+            ColorClassifiedCones detected_objects = m_detector->detect(image);
+
+            cv::Point2f midpoint = m_path_finder->find_midpoint(detected_objects, image);
+            cv::circle(image, midpoint, 3, cv::Scalar(255, 255, 255), cv::FILLED);
+
+            float steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
+            logger->info("Calculated steering angle: {}", steering_angle);
+        }
+
+        annotate_image(image, sample_time_point);
     }
 
     cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4,
