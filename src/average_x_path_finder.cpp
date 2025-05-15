@@ -71,7 +71,7 @@ float AverageXPathFinder::calculate_steering_angle(const cv::Point2f& midpoint, 
 std::vector<cv::Point2f> AverageXPathFinder::get_closest_centers(const std::vector<cv::Rect>& objects, int to_find) {
     std::vector<cv::Point2f> centers;
     auto end = objects.begin() + std::min<int>(to_find, objects.size());
-    for (auto iter = objects.begin(); iter != objects.end(); iter += 1) {
+    for (auto iter = objects.begin(); iter != end; iter += 1) {
         cv::Point2f center(iter->x + iter->width / 2.0f, iter->y + iter->height / 2.0f);
         centers.emplace_back(center);
     }
