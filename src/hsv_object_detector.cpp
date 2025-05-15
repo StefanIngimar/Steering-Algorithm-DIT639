@@ -5,12 +5,10 @@
 HsvObjectDetector::HsvObjectDetector() {}
 
 ColorClassifiedCones HsvObjectDetector::detect(const cv::Mat& frame) const {
-    // OpenCV data structures to hold an image
     cv::Mat HSVFrame, yellowMask, blueMask, combinedMask;
 
     // Image coordinates are zero-indexed in OpenCV
     float frameRows = frame.rows - 1.0f;   
-    //float frameCols = frame.cols - 1.0f;
 
     // Stage (1) === Preprocessing ===
 
@@ -19,7 +17,7 @@ ColorClassifiedCones HsvObjectDetector::detect(const cv::Mat& frame) const {
     // Create CLAHE object for contrast enhancement
     cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(2.0, cv::Size(8, 8));
 
-    // Contrast adjustment: ppply CLAHE on the Y channel
+    // Contrast adjustment: appply CLAHE on the Y channel
     cv::Mat ycrcb;
     cv::cvtColor(frame, ycrcb, cv::COLOR_BGR2YCrCb);
     std::vector<cv::Mat> channels;
@@ -31,7 +29,7 @@ ColorClassifiedCones HsvObjectDetector::detect(const cv::Mat& frame) const {
 
     // Region of interest (ROI) mask
     cv::Mat roiMask = cv::Mat::zeros(contrastEnhanced.size(), contrastEnhanced.type());
-    // Define ROI polygon (central area of frame, trapezoid if possible)
+    // Define ROI polygon
     std::vector<cv::Point> roiPolygon = {
         cv::Point(0, 380),      // Bottom left
         cv::Point(640, 380),    // Bottom right
@@ -94,10 +92,6 @@ ColorClassifiedCones HsvObjectDetector::detect(const cv::Mat& frame) const {
     std::vector<cv::Rect> blueBoxes;
     std::vector<cv::Rect> yellowBoxes;
 
-    // Store cone centers
-    //std::vector<cv::Point2f> blueConeBottomCenters;
-    //std::vector<cv::Point2f> yellowConeBottomCenters;
-
     // Filter contours based on area
     // Classify contours based on color 
     // Draw bounding boxes and add labels 
@@ -109,7 +103,6 @@ ColorClassifiedCones HsvObjectDetector::detect(const cv::Mat& frame) const {
 
         // Bounding box 
         cv::Rect bbox = cv::boundingRect(contour);
-        //cv::Point coneCenter{bbox.x + bbox.width / 2, bbox.y + bbox.height / 2};
         cv::Point2f coneBottomCenter(bbox.x + bbox.width / 2, bbox.y + bbox.height);
 
         // Get amount of yellow and blue within bounding box
@@ -126,12 +119,10 @@ ColorClassifiedCones HsvObjectDetector::detect(const cv::Mat& frame) const {
             if (yellowAmount > blueAmount) {
                 label = "yellow";
                 bbColor = cv::Scalar(0, 255, 255);  // Yellow
-                //yellowConeBottomCenters.push_back(coneBottomCenter);
                 yellowBoxes.push_back(bbox);
             } else if (blueAmount > yellowAmount) {
                 label = "blue";
                 bbColor = cv::Scalar(255, 0, 0);  // Blue
-                //blueConeBottomCenters.push_back(coneBottomCenter);
                 blueBoxes.push_back(bbox);
             } else {
                 continue; // uncertain, skip
