@@ -32,8 +32,7 @@ int main(int argc, char **argv) {
     std::shared_ptr<MlModelRuntime> model_runtime =
         std::make_shared<CvDnnRuntime>("res/ml_models/colored_cones_nano.onnx",
                                        320, 320);
-    auto detector =
-        std::make_unique<MlObjectDetector>(model_runtime, 0.5f, 0.4f);
+    auto detector = std::make_unique<MlObjectDetector>(model_runtime);
     // auto detector = std::make_unique<HsvObjectDetector>();
     auto path_finder = std::make_unique<AverageXPathFinder>();
 
