@@ -62,3 +62,7 @@ dkms.conf
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Plots and data
+res/steering_data/**/*.csv
+res/steering_data/**/*.png

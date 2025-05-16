@@ -20,6 +20,7 @@ image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.
 variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
+  DOCKER_CLI_EXPERIMENTAL: enabled
 
 services:
   - name: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5-dind
