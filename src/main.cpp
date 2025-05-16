@@ -48,10 +48,9 @@ int main(int argc, char **argv) {
 
     std::shared_ptr<cluon::OD4Session> od4 =
         std::make_shared<cluon::OD4Session>(config.cid);
+    gs_msg_handler->setup(*od4);
     ImageProcessor processor(config, od4, std::move(detector),
                              std::move(path_finder), gs_msg_handler);
-
-    processor.add_message_handler(gs_msg_handler);
 
     processor.run();
   } catch (const std::exception &e) {

@@ -1,28 +1,38 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-INPUT_PATH = "/app/data/steeringAngles.csv"
-OUTPUT_PATH = "/app/data/steering_plot.png"
+CSV_DIR = Path("/data/csv")
+PLOT_DIR = Path("/data/plots")
+PLOT_DIR.mkdir(parents=True, exist_ok=True)
 
-assert os.path.exists(INPUT_PATH), f"Input file not found: {INPUT_PATH}"
+csv_files = sorted(CSV_DIR.glob("steeringAngles_*.csv"))
 
-df = pd.read_csv(INPUT_PATH, sep=";")
+if not csv_files:
+    raise FileNotFoundError(f"No CSV files found in {CSV_DIR}")
+# generate plot for each csv file available. if a csv already has a corresponding plot, skip it
+for csv_path in csv_files:
+    timestamp = csv_path.stem.replace("steeringAngles_", "")
+    output_path = PLOT_DIR / f"steering_plot_{timestamp}.png"
 
-print("Data preview:")
-print(df.head())
+    if output_path.exists():
+        print(f"plot already exists for {csv_path.name}, skipping.")
+        continue
 
-if df.empty:
-    print("Dataset is empty")
-else:
+    df = pd.read_csv(csv_path, sep=";")
+    if df.empty:
+        print(f"{csv_path} is empty")
+        continue
+
     plt.figure(figsize=(10, 5))
     plt.plot(df["Timestamp"], df["PredictedSteeringAngle"], label="Predicted")
     plt.plot(df["Timestamp"], df["ActualSteeringAngle"], label="Actual")
-    plt.xlabel("Elapsed time in microseconds")
+    plt.xlabel("sampleTime in microseconds")
     plt.ylabel("Steering Angle")
     plt.legend()
     plt.title("Steering Angle over time")
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig(OUTPUT_PATH)
-    print(f"Saved plot to {OUTPUT_PATH}")
+    plt.savefig(output_path)
+    print(f"Saved plot to {output_path}")

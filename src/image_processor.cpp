@@ -1,6 +1,9 @@
 #include <cerrno>
+#include <chrono>
 #include <cstring>
 #include <exception>
+#include <filesystem>
+#include <iomanip>
 #include <memory>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/highgui.hpp>
@@ -13,6 +16,7 @@
 #include "image_processor.hpp"
 #include "logger.hpp"
 #include "object_detector.hpp"
+#include <filesystem>
 
 ImageProcessor::ImageProcessor(
     const Config &config, std::shared_ptr<cluon::OD4Session> od4,
@@ -31,17 +35,6 @@ ImageProcessor::ImageProcessor(
                  "detection will be omitted");
   }
 };
-
-void ImageProcessor::add_message_handler(
-    std::shared_ptr<MessageHandler> message_handler) {
-  m_message_handlers.push_back(message_handler);
-
-  auto casted =
-      std::dynamic_pointer_cast<GroundSteeringMessageHandler>(message_handler);
-  if (casted) {
-    m_gs_handler = casted;
-  }
-}
 
 void ImageProcessor::run() {
   auto logger = Logger::get_instance().get_logger();
@@ -134,11 +127,27 @@ void ImageProcessor::process_frame() {
 void ImageProcessor::log_steering(int64_t timestamp, float actual,
                                   float predicted) {
   static bool written = false;
-  static std::ofstream outputFile(
-      "/usr/bin/res/steering_data/steeringAngles.csv",
-      std::ios::out | std::ios::trunc);
+
+  static std::string filename = []() {
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    std::tm now_tm = *std::localtime(&now_c);
+
+    std::ostringstream oss;
+    oss << std::put_time(&now_tm, "%Y%m%d_%H%M%S");
+    std::string datetime_str = oss.str();
+
+    std::string dir = "/data/csv";
+    std::filesystem::create_directories(dir);
+
+    std::string fullpath = dir + "/steeringAngles_" + datetime_str + ".csv";
+    std::cerr << "Writing log to: " << fullpath << std::endl;
+    return fullpath;
+  }();
+  static std::ofstream outputFile(filename, std::ios::out | std::ios::trunc);
   if (!outputFile.is_open()) {
-    std::cerr << "failed to open .csv file" << std::endl;
+    std::cerr << "failed to open .csv file at " << filename << std::endl;
+    return;
   }
   if (!written) {
     outputFile << "Timestamp;PredictedSteeringAngle;ActualSteeringAngle\n";
