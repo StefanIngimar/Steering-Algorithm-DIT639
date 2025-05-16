@@ -113,7 +113,10 @@ void ImageProcessor::process_frame() {
     }
 
     annotate_image(image, sample_time_point, actual_steering, steering_angle);
-    log_steering(sample_time_point, actual_steering, steering_angle);
+
+    if (m_config.should_generate_plot) {
+      log_steering(sample_time_point, actual_steering, steering_angle);
+    }
 
     if (m_config.is_verbose) {
       cv::imshow(m_config.shared_memory_name, image);

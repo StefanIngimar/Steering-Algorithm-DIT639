@@ -8,6 +8,7 @@ struct Config {
     int height;
     std::string shared_memory_name;
     bool is_verbose;
+    bool should_generate_plot; 
 
     static bool are_arguments_valid(std::map<std::string, std::string>& args) {
         return args.count("cid") == 0 || args.count("name") == 0 || args.count("width") || args.count("height") == 0;
@@ -18,7 +19,7 @@ struct Config {
         if (!are_arguments_valid(args)) {
             throw std::invalid_argument(
                 "Usage: " + std::string(argv[0]) + " --cid=<OD4 session> --name=<shared memory name> --width=<frame width> " "--height=<frame height> [--verbose]\n"
-                "Example: " + std::string(argv[0]) + " --cid=253 --name=img --width=640 --height=480 --verbose"
+                "Example: " + std::string(argv[0]) + " --cid=253 --name=img --width=640 --height=480 --verbose --generate_plot"
             );
         }
         
@@ -28,6 +29,7 @@ struct Config {
         config.width = static_cast<uint32_t>(std::stoi(args["width"]));
         config.height = static_cast<uint32_t>(std::stoi(args["height"]));
         config.is_verbose = args.count("verbose") != 0;
+        config.should_generate_plot = args.count("generate_plot") != 0;
 
         return config;
     };
