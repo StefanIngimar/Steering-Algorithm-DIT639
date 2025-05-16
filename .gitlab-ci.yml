@@ -23,6 +23,7 @@ variables:
 
 services:
   - name: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5-dind
+    alias: docker
 
 stages:
   - build
