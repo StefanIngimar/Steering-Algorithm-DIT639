@@ -81,8 +81,7 @@ void ImageProcessor::process_frame() {
     cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4,
                     m_shared_memory->data());
     image = wrapped.clone();
-    auto sample_time_point =
-        cluon::time::toMicroseconds(m_shared_memory->getTimeStamp().second);
+    auto sample_time_point = m_shared_memory->getTimeStamp().second;
     m_shared_memory->unlock();
 
     if (image.empty()) {
@@ -112,10 +111,10 @@ void ImageProcessor::process_frame() {
       actual_steering = m_gs_handler->get_actual_steering_angle();
     }
 
-    annotate_image(image, sample_time_point, actual_steering, steering_angle);
+    annotate_image(image, sample_time_point.seconds(), actual_steering, steering_angle);
 
     if (m_config.should_generate_plot) {
-      log_steering(sample_time_point, actual_steering, steering_angle);
+      log_steering(sample_time_point.seconds(), actual_steering, steering_angle);
     }
 
     if (m_config.is_verbose) {
@@ -162,39 +161,19 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
 void ImageProcessor::annotate_image(cv::Mat &image, int sample_time_point,
                                     float actual_steering,
                                     float steering_angle) const {
-  int font = cv::FONT_HERSHEY_COMPLEX;
-  double font_scale = 0.6;
-  cv::Scalar text_color(255, 255, 255);
-  int text_thickness = 1;
 
-  // display current UTC time
-  auto now = cluon::time::now();
-  std::time_t seconds = now.seconds();
-  std::tm *utc_time = std::gmtime(&seconds);
-  std::ostringstream time_stream;
-  time_stream << "Now: " << std::put_time(utc_time, "%Y-%m-%dT%H:%M:%SZ");
+  const float steering_angle_difference = std::abs(steering_angle - actual_steering);
+  std::array<std::string, 5> words = {
+    "TS: " + std::to_string(sample_time_point),
+    "Calculated: " + std::to_string(steering_angle),
+    "Actual:  " + std::to_string(actual_steering),
+    "Difference: " + std::to_string(steering_angle_difference),
+    std::string("Is Valid: ") + (steering_angle_difference <= 0.09f ? "Yes" : "No")
+  };
 
-  // display frame time stamp
-  std::ostringstream ts_stream;
-  ts_stream << "TS: " << sample_time_point;
+  cv::rectangle(image, cv::Point(0, 0), cv::Point(175, M_BASE_Y * (words.size() + 1)), cv::Scalar(0, 0, 0), cv::FILLED);
 
-  // display steering
-  std::ostringstream steering_line1;
-  std::ostringstream steering_line2;
-  steering_line1 << "Current steering: " << steering_angle;
-  steering_line2 << "Actual steering: " << actual_steering;
-
-  int line_height = 20;
-  int base_y = 20;
-
-  cv::putText(image, time_stream.str(), cv::Point(10, base_y), font, font_scale,
-              text_color, text_thickness);
-  cv::putText(image, ts_stream.str(), cv::Point(10, base_y + line_height), font,
-              font_scale, text_color, text_thickness);
-  cv::putText(image, steering_line1.str(),
-              cv::Point(10, base_y + 2 * line_height), font, font_scale,
-              text_color, text_thickness);
-  cv::putText(image, steering_line2.str(),
-              cv::Point(10, base_y + 3 * line_height), font, font_scale,
-              text_color, text_thickness);
+  for (std::size_t i = 0; i < words.size(); i += 1) {
+    cv::putText(image, words[i], cv::Point(10, M_BASE_Y + i * M_LINE_HEIGHT), M_FONT, M_FONT_SCALE, M_TEXT_COLOR, M_TEXT_THICKNESS);
+  }
 }

@@ -13,10 +13,16 @@ public:
                  std::unique_ptr<PathFinder> path_finder,
                  std::shared_ptr<GroundSteeringMessageHandler> gs_handler);
 
-  void add_message_handler(std::shared_ptr<MessageHandler> message_handler);
   void run();
 
 private:
+  static constexpr int M_FONT = cv::FONT_HERSHEY_PLAIN;
+  static constexpr double M_FONT_SCALE = 0.8;
+  static inline const cv::Scalar M_TEXT_COLOR{255, 255, 255};
+  static constexpr int M_TEXT_THICKNESS = 1;
+  static constexpr int M_LINE_HEIGHT = 20;
+  static constexpr int M_BASE_Y = 20;
+
   const Config &m_config;
   std::shared_ptr<cluon::OD4Session> m_od4;
   std::unique_ptr<ObjectDetector> m_detector;
@@ -26,6 +32,7 @@ private:
   std::vector<std::shared_ptr<MessageHandler>> m_message_handlers;
   std::unique_ptr<PathFinder> m_path_finder;
   std::shared_ptr<GroundSteeringMessageHandler> m_gs_handler;
+
   void setup_message_handlers();
   void process_frame();
   void log_steering(int64_t timestamp, float predicted, float actual);
