@@ -24,8 +24,6 @@ docker run --net=host --ipc=host \
   nutmeg:latest --cid=253 --name=img \
   --width=640 --height=480 --verbose
 
-echo "check the path:"
-ls -l res/steering_data
 
 xhost -
 
