@@ -18,6 +18,7 @@
 #include "ml_model_runtime.hpp"
 
 #include "average_x_path_finder.hpp"
+#include "ml_object_detector.hpp"
 
 #include "hsv_object_detector.hpp"
 
