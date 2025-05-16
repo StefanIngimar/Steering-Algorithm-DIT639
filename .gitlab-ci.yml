@@ -14,8 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Which Docker image shall be used on the GitLab runner?
-# image: docker:24.0.5
-image: registry.git.chalmers.se/courses/dit638/students/docker/docker:19.03.3
+image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5
 
 # Details about how to connect to the Docker service to run this build.
 variables:
@@ -24,8 +23,7 @@ variables:
   DOCKER_CLI_EXPERIMENTAL: enabled
 
 services:
-  #- name: docker:24.0.5-dind
-  - name: registry.git.chalmers.se/courses/dit638/students/docker/docker:19.03.3-dind
+  - name: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5-dind
     alias: docker
 
 stages:
@@ -75,7 +73,7 @@ code-coverage:
   tags:
     - docker-build
   stage: build
-  image: alpine:3.14
+  image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/alpine:3.21
   before_script:
     - apk add --update build-base cmake gcovr
   variables:

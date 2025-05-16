@@ -1,16 +1,8 @@
-FROM alpine:3.21 AS builder
+FROM registry.git.chalmers.se/courses/dit638/students/2025-group-04/opencv-dev:4.10 AS builder
 
 ENV TMPDIR=/opt/tmp
 
 RUN mkdir -p /opt/tmp && chmod 1777 /opt/tmp
-
-RUN apk add --no-cache \
-    build-base \
-    cmake \
-    git \
-    opencv-dev \
-    pkgconfig \
-    && mkdir -p /usr/lib
 
 ADD . /opt/sources
 WORKDIR /opt/sources
@@ -21,11 +13,7 @@ RUN rm -rf build && \
     cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/tmp .. && \
     make -j$(nproc) && make install
 
-FROM alpine:3.21
-
-RUN apk add --no-cache \
-    opencv \
-    libstdc++
+FROM registry.git.chalmers.se/courses/dit638/students/2025-group-04/opencv:4.10
 
 WORKDIR /usr/bin
 
