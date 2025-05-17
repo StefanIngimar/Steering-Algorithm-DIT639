@@ -1,13 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include "config.hpp"
 #include "message_handler.hpp"
 #include "object_detector.hpp"
 #include "path_finder.hpp"
-#include <memory>
 
 class ImageProcessor {
-public:
+ public:
   ImageProcessor(const Config &config, std::shared_ptr<cluon::OD4Session> od4,
                  std::unique_ptr<ObjectDetector> detector,
                  std::unique_ptr<PathFinder> path_finder,
@@ -15,7 +16,7 @@ public:
 
   void run();
 
-private:
+ private:
   static constexpr int M_FONT = cv::FONT_HERSHEY_PLAIN;
   static constexpr double M_FONT_SCALE = 0.8;
   static inline const cv::Scalar M_TEXT_COLOR{255, 255, 255};
@@ -32,6 +33,9 @@ private:
   std::vector<std::shared_ptr<MessageHandler>> m_message_handlers;
   std::unique_ptr<PathFinder> m_path_finder;
   std::shared_ptr<GroundSteeringMessageHandler> m_gs_handler;
+
+  int m_processed_frames;
+  int m_correctly_calculated_steering_angle;
 
   void setup_message_handlers();
   void process_frame();

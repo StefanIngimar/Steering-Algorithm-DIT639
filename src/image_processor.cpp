@@ -1,3 +1,5 @@
+#include "image_processor.hpp"
+
 #include <cerrno>
 #include <chrono>
 #include <cstring>
@@ -13,26 +15,29 @@
 
 #include "config.hpp"
 #include "ground_steering_message_handler.hpp"
-#include "image_processor.hpp"
 #include "logger.hpp"
 #include "object_detector.hpp"
-#include <filesystem>
 
 ImageProcessor::ImageProcessor(
     const Config &config, std::shared_ptr<cluon::OD4Session> od4,
     std::unique_ptr<ObjectDetector> detector,
     std::unique_ptr<PathFinder> path_finder,
     std::shared_ptr<GroundSteeringMessageHandler> gs_handler)
-    : m_config(config), m_od4(od4), m_detector(std::move(detector)),
+    : m_config(config),
+      m_od4(od4),
+      m_detector(std::move(detector)),
       m_shared_memory(
           std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
-      m_message_handlers(), m_path_finder(std::move(path_finder)),
-      m_gs_handler(gs_handler) {
-
+      m_message_handlers(),
+      m_path_finder(std::move(path_finder)),
+      m_gs_handler(gs_handler),
+      m_processed_frames(0),
+      m_correctly_calculated_steering_angle(0) {
   auto logger = Logger::get_instance().get_logger();
   if (!m_detector) {
-    logger->warn("[ImageProcessor] No object detector was provided - object "
-                 "detection will be omitted");
+    logger->warn(
+        "[ImageProcessor] No object detector was provided - object "
+        "detection will be omitted");
   }
 };
 
@@ -46,6 +51,7 @@ void ImageProcessor::run() {
   while (m_od4->isRunning()) {
     try {
       process_frame();
+      m_processed_frames += 1;
     } catch (const std::exception &e) {
       logger->error("ImageProcessor: Raised exception: {}", e.what());
       throw;
@@ -54,6 +60,16 @@ void ImageProcessor::run() {
       throw;
     }
   }
+
+  logger->info("Processed frames: {}", m_processed_frames);
+  logger->info("Correctly calculated steering in: {}",
+               m_correctly_calculated_steering_angle);
+  logger->info("Incorrectly calculated steering in: {}",
+               m_processed_frames - m_correctly_calculated_steering_angle);
+  logger->info("Correctness score: {}%",
+               (m_correctly_calculated_steering_angle /
+                static_cast<double>(m_processed_frames)) *
+                   100);
 
   logger->info("ImageProcessor: Closing image processing");
 }
@@ -104,20 +120,24 @@ void ImageProcessor::process_frame() {
       cv::circle(image, midpoint, 3, cv::Scalar(255, 255, 255), cv::FILLED);
 
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
-      logger->info("Calculated steering angle: {}", steering_angle);
     }
 
     if (m_gs_handler) {
       actual_steering = m_gs_handler->get_actual_steering_angle();
     }
 
-    annotate_image(image, sample_time_point.seconds(), actual_steering, steering_angle);
-
     if (m_config.should_generate_plot) {
-      log_steering(sample_time_point.seconds(), actual_steering, steering_angle);
+      log_steering(sample_time_point.seconds(), actual_steering,
+                   steering_angle);
+    }
+
+    if (std::abs(steering_angle - actual_steering) <= 0.09) {
+      m_correctly_calculated_steering_angle += 1;
     }
 
     if (m_config.is_verbose) {
+      annotate_image(image, sample_time_point.seconds(), actual_steering,
+                     steering_angle);
       cv::imshow(m_config.shared_memory_name, image);
       cv::waitKey(1);
     }
@@ -128,6 +148,8 @@ void ImageProcessor::process_frame() {
 // already
 void ImageProcessor::log_steering(int64_t timestamp, float actual,
                                   float predicted) {
+  auto logger = Logger::get_instance().get_logger();
+
   static bool written = false;
 
   static std::string filename = []() {
@@ -148,7 +170,7 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
   }();
   static std::ofstream outputFile(filename, std::ios::out | std::ios::trunc);
   if (!outputFile.is_open()) {
-    std::cerr << "failed to open .csv file at " << filename << std::endl;
+    logger->error("Failed to open .csv file at '{}'", filename);
     return;
   }
   if (!written) {
@@ -161,19 +183,22 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
 void ImageProcessor::annotate_image(cv::Mat &image, int sample_time_point,
                                     float actual_steering,
                                     float steering_angle) const {
-
-  const float steering_angle_difference = std::abs(steering_angle - actual_steering);
+  const float steering_angle_difference =
+      std::abs(steering_angle - actual_steering);
   std::array<std::string, 5> words = {
-    "TS: " + std::to_string(sample_time_point),
-    "Calculated: " + std::to_string(steering_angle),
-    "Actual:  " + std::to_string(actual_steering),
-    "Difference: " + std::to_string(steering_angle_difference),
-    std::string("Is Valid: ") + (steering_angle_difference <= 0.09f ? "Yes" : "No")
-  };
+      "TS: " + std::to_string(sample_time_point),
+      "Calculated: " + std::to_string(steering_angle),
+      "Actual:  " + std::to_string(actual_steering),
+      "Difference: " + std::to_string(steering_angle_difference),
+      std::string("Is Valid: ") +
+          (steering_angle_difference <= 0.09f ? "Yes" : "No")};
 
-  cv::rectangle(image, cv::Point(0, 0), cv::Point(175, M_BASE_Y * (words.size() + 1)), cv::Scalar(0, 0, 0), cv::FILLED);
+  cv::rectangle(image, cv::Point(0, 0),
+                cv::Point(175, M_BASE_Y * (words.size() + 1)),
+                cv::Scalar(0, 0, 0), cv::FILLED);
 
   for (std::size_t i = 0; i < words.size(); i += 1) {
-    cv::putText(image, words[i], cv::Point(10, M_BASE_Y + i * M_LINE_HEIGHT), M_FONT, M_FONT_SCALE, M_TEXT_COLOR, M_TEXT_THICKNESS);
+    cv::putText(image, words[i], cv::Point(10, M_BASE_Y + i * M_LINE_HEIGHT),
+                M_FONT, M_FONT_SCALE, M_TEXT_COLOR, M_TEXT_THICKNESS);
   }
 }
