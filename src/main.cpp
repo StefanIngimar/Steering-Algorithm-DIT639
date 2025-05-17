@@ -1,29 +1,23 @@
 // Include the GUI and image processing header files from OpenCV
+#include <ctime>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
-#include <ctime>
 
 // Include the single-file, header-only middleware libcluon to create
 // high-performance microservices
 #include "cluon-complete.hpp"
 // Include the OpenDLV Standard Message Set that contains messages that are
 // usually exchanged for automotive or robotic applications
-#include "opendlv-standard-message-set.hpp"
-
-#include "config.hpp"
-#include "logger.hpp"
-
-#include "cv_dnn_runtime.hpp"
-#include "ml_model_runtime.hpp"
-
 #include "average_x_path_finder.hpp"
-#include "ml_object_detector.hpp"
-
-#include "hsv_object_detector.hpp"
-
+#include "config.hpp"
+#include "cv_dnn_runtime.hpp"
 #include "ground_steering_message_handler.hpp"
+#include "hsv_object_detector.hpp"
 #include "image_processor.hpp"
+#include "logger.hpp"
+#include "ml_model_runtime.hpp"
+#include "ml_object_detector.hpp"
+#include "opendlv-standard-message-set.hpp"
 
 int main(int argc, char **argv) {
   auto logger = Logger::get_instance().get_logger();
@@ -33,8 +27,8 @@ int main(int argc, char **argv) {
     std::shared_ptr<MlModelRuntime> model_runtime =
         std::make_shared<CvDnnRuntime>("res/ml_models/colored_cones_nano.onnx",
                                        320, 320);
-    auto detector = std::make_unique<MlObjectDetector>(model_runtime);
-    // auto detector = std::make_unique<HsvObjectDetector>();
+    // auto detector = std::make_unique<MlObjectDetector>(model_runtime);
+    auto detector = std::make_unique<HsvObjectDetector>();
     auto path_finder = std::make_unique<AverageXPathFinder>();
 
     std::unique_ptr<cluon::SharedMemory> shared_memory(
