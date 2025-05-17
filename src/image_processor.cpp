@@ -101,6 +101,9 @@ void ImageProcessor::process_frame() {
 
     float actual_steering = 0.0f;
     float steering_angle = 0.0f;
+    if (m_gs_handler) {
+      actual_steering = m_gs_handler->get_actual_steering_angle();
+    }
 
     if (m_detector) {
       ColorClassifiedCones detected_objects = m_detector->detect(image);
@@ -112,13 +115,8 @@ void ImageProcessor::process_frame() {
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
     }
 
-    if (m_gs_handler) {
-      actual_steering = m_gs_handler->get_actual_steering_angle();
-    }
-
     if (m_config.should_generate_plot) {
-      log_steering(sample_time_point.seconds(), actual_steering,
-                   steering_angle);
+      log_steering(sample_time_point, actual_steering, steering_angle);
     }
 
     if (std::abs(steering_angle - actual_steering) <= 0.09) {
@@ -126,8 +124,7 @@ void ImageProcessor::process_frame() {
     }
 
     if (m_config.is_verbose) {
-      annotate_image(image, sample_time_point.seconds(), actual_steering,
-                     steering_angle);
+      annotate_image(image, sample_time_point, actual_steering, steering_angle);
       cv::imshow(m_config.shared_memory_name, image);
       cv::waitKey(1);
     }
@@ -136,8 +133,8 @@ void ImageProcessor::process_frame() {
 
 // Added logging in the image_processor since all the variables needed were here
 // already
-void ImageProcessor::log_steering(int64_t timestamp, float actual,
-                                  float predicted) {
+void ImageProcessor::log_steering(const cluon::data::TimeStamp &timestamp,
+                                  float actual, float predicted) {
   auto logger = Logger::get_instance().get_logger();
 
   static bool written = false;
@@ -167,16 +164,18 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
     outputFile << "Timestamp;PredictedSteeringAngle;ActualSteeringAngle\n";
     written = true;
   }
-  outputFile << timestamp << ";" << predicted << ";" << actual << "\n";
+  outputFile << timestamp.seconds() << timestamp.microseconds() << ";"
+             << predicted << ";" << actual << "\n";
 }
 
-void ImageProcessor::annotate_image(cv::Mat &image, int sample_time_point,
-                                    float actual_steering,
-                                    float steering_angle) const {
+void ImageProcessor::annotate_image(
+    cv::Mat &image, const cluon::data::TimeStamp &sample_time_point,
+    float actual_steering, float steering_angle) const {
   const float steering_angle_difference =
       std::abs(steering_angle - actual_steering);
   std::array<std::string, 5> words = {
-      "TS: " + std::to_string(sample_time_point),
+      "TS: " + std::to_string(sample_time_point.seconds()) +
+          std::to_string(sample_time_point.microseconds()),
       "Calculated: " + std::to_string(steering_angle),
       "Actual:  " + std::to_string(actual_steering),
       "Difference: " + std::to_string(steering_angle_difference),
