@@ -28,7 +28,6 @@ ImageProcessor::ImageProcessor(
       m_detector(std::move(detector)),
       m_shared_memory(
           std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
-      m_message_handlers(),
       m_path_finder(std::move(path_finder)),
       m_gs_handler(gs_handler),
       m_processed_frames(0),
@@ -43,9 +42,6 @@ ImageProcessor::ImageProcessor(
 
 void ImageProcessor::run() {
   auto logger = Logger::get_instance().get_logger();
-
-  logger->info("ImageProcessor: Setting up message handlers");
-  setup_message_handlers();
 
   logger->info("ImageProcessor: Starting image processing");
   while (m_od4->isRunning()) {
@@ -72,12 +68,6 @@ void ImageProcessor::run() {
                    100);
 
   logger->info("ImageProcessor: Closing image processing");
-}
-
-void ImageProcessor::setup_message_handlers() {
-  for (const auto &handler : m_message_handlers) {
-    handler->setup(*m_od4);
-  }
 }
 
 void ImageProcessor::process_frame() {

@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "config.hpp"
-#include "message_handler.hpp"
+#include "ground_steering_message_handler.hpp"
 #include "object_detector.hpp"
 #include "path_finder.hpp"
 
@@ -29,15 +29,12 @@ class ImageProcessor {
   std::unique_ptr<ObjectDetector> m_detector;
 
   std::unique_ptr<cluon::SharedMemory> m_shared_memory;
-
-  std::vector<std::shared_ptr<MessageHandler>> m_message_handlers;
   std::unique_ptr<PathFinder> m_path_finder;
   std::shared_ptr<GroundSteeringMessageHandler> m_gs_handler;
 
-  int m_processed_frames;
-  int m_correctly_calculated_steering_angle;
+  uint64_t m_processed_frames;
+  uint64_t m_correctly_calculated_steering_angle;
 
-  void setup_message_handlers();
   void process_frame();
   void log_steering(int64_t timestamp, float predicted, float actual);
   void annotate_image(cv::Mat &image, int sample_time_point,
