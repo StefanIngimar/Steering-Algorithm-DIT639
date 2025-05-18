@@ -1,3 +1,5 @@
+#include "image_processor.hpp"
+
 #include <cerrno>
 #include <chrono>
 #include <cstring>
@@ -13,39 +15,39 @@
 
 #include "config.hpp"
 #include "ground_steering_message_handler.hpp"
-#include "image_processor.hpp"
 #include "logger.hpp"
 #include "object_detector.hpp"
-#include <filesystem>
 
 ImageProcessor::ImageProcessor(
     const Config &config, std::shared_ptr<cluon::OD4Session> od4,
     std::unique_ptr<ObjectDetector> detector,
     std::unique_ptr<PathFinder> path_finder,
     std::shared_ptr<GroundSteeringMessageHandler> gs_handler)
-    : m_config(config), m_od4(od4), m_detector(std::move(detector)),
+    : m_config(config),
+      m_od4(od4),
+      m_detector(std::move(detector)),
       m_shared_memory(
           std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
-      m_message_handlers(), m_path_finder(std::move(path_finder)),
-      m_gs_handler(gs_handler) {
-
+      m_path_finder(std::move(path_finder)),
+      m_gs_handler(gs_handler),
+      m_processed_frames(0),
+      m_correctly_calculated_steering_angle(0) {
   auto logger = Logger::get_instance().get_logger();
   if (!m_detector) {
-    logger->warn("[ImageProcessor] No object detector was provided - object "
-                 "detection will be omitted");
+    logger->warn(
+        "[ImageProcessor] No object detector was provided - object "
+        "detection will be omitted");
   }
 };
 
 void ImageProcessor::run() {
   auto logger = Logger::get_instance().get_logger();
 
-  logger->info("ImageProcessor: Setting up message handlers");
-  setup_message_handlers();
-
   logger->info("ImageProcessor: Starting image processing");
   while (m_od4->isRunning()) {
     try {
       process_frame();
+      m_processed_frames += 1;
     } catch (const std::exception &e) {
       logger->error("ImageProcessor: Raised exception: {}", e.what());
       throw;
@@ -55,13 +57,17 @@ void ImageProcessor::run() {
     }
   }
 
-  logger->info("ImageProcessor: Closing image processing");
-}
+  logger->info("Processed frames: {}", m_processed_frames);
+  logger->info("Correctly calculated steering in: {}",
+               m_correctly_calculated_steering_angle);
+  logger->info("Incorrectly calculated steering in: {}",
+               m_processed_frames - m_correctly_calculated_steering_angle);
+  logger->info("Correctness score: {}%",
+               (m_correctly_calculated_steering_angle /
+                static_cast<double>(m_processed_frames)) *
+                   100);
 
-void ImageProcessor::setup_message_handlers() {
-  for (const auto &handler : m_message_handlers) {
-    handler->setup(*m_od4);
-  }
+  logger->info("ImageProcessor: Closing image processing");
 }
 
 void ImageProcessor::process_frame() {
@@ -81,8 +87,7 @@ void ImageProcessor::process_frame() {
     cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4,
                     m_shared_memory->data());
     image = wrapped.clone();
-    auto sample_time_point =
-        cluon::time::toMicroseconds(m_shared_memory->getTimeStamp().second);
+    auto sample_time_point = m_shared_memory->getTimeStamp().second;
     m_shared_memory->unlock();
 
     if (image.empty()) {
@@ -96,6 +101,9 @@ void ImageProcessor::process_frame() {
 
     float actual_steering = 0.0f;
     float steering_angle = 0.0f;
+    if (m_gs_handler) {
+      actual_steering = m_gs_handler->get_actual_steering_angle();
+    }
 
     if (m_detector) {
       ColorClassifiedCones detected_objects = m_detector->detect(image);
@@ -105,17 +113,18 @@ void ImageProcessor::process_frame() {
       cv::circle(image, midpoint, 3, cv::Scalar(255, 255, 255), cv::FILLED);
 
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
-      logger->info("Calculated steering angle: {}", steering_angle);
     }
 
-    if (m_gs_handler) {
-      actual_steering = m_gs_handler->get_actual_steering_angle();
+    if (m_config.should_generate_plot) {
+      log_steering(sample_time_point, actual_steering, steering_angle);
     }
 
-    annotate_image(image, sample_time_point, actual_steering, steering_angle);
-    log_steering(sample_time_point, actual_steering, steering_angle);
+    if (std::abs(steering_angle - actual_steering) <= 0.09) {
+      m_correctly_calculated_steering_angle += 1;
+    }
 
     if (m_config.is_verbose) {
+      annotate_image(image, sample_time_point, actual_steering, steering_angle);
       cv::imshow(m_config.shared_memory_name, image);
       cv::waitKey(1);
     }
@@ -124,8 +133,10 @@ void ImageProcessor::process_frame() {
 
 // Added logging in the image_processor since all the variables needed were here
 // already
-void ImageProcessor::log_steering(int64_t timestamp, float actual,
-                                  float predicted) {
+void ImageProcessor::log_steering(const cluon::data::TimeStamp &timestamp,
+                                  float actual, float predicted) {
+  auto logger = Logger::get_instance().get_logger();
+
   static bool written = false;
 
   static std::string filename = []() {
@@ -146,52 +157,37 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
   }();
   static std::ofstream outputFile(filename, std::ios::out | std::ios::trunc);
   if (!outputFile.is_open()) {
-    std::cerr << "failed to open .csv file at " << filename << std::endl;
+    logger->error("Failed to open .csv file at '{}'", filename);
     return;
   }
   if (!written) {
     outputFile << "Timestamp;PredictedSteeringAngle;ActualSteeringAngle\n";
     written = true;
   }
-  outputFile << timestamp << ";" << predicted << ";" << actual << "\n";
+  outputFile << timestamp.seconds() << timestamp.microseconds() << ";"
+             << predicted << ";" << actual << "\n";
 }
 
-void ImageProcessor::annotate_image(cv::Mat &image, int sample_time_point,
-                                    float actual_steering,
-                                    float steering_angle) const {
-  int font = cv::FONT_HERSHEY_COMPLEX;
-  double font_scale = 0.6;
-  cv::Scalar text_color(255, 255, 255);
-  int text_thickness = 1;
+void ImageProcessor::annotate_image(
+    cv::Mat &image, const cluon::data::TimeStamp &sample_time_point,
+    float actual_steering, float steering_angle) const {
+  const float steering_angle_difference =
+      std::abs(steering_angle - actual_steering);
+  std::array<std::string, 5> words = {
+      "TS: " + std::to_string(sample_time_point.seconds()) +
+          std::to_string(sample_time_point.microseconds()),
+      "Calculated: " + std::to_string(steering_angle),
+      "Actual:  " + std::to_string(actual_steering),
+      "Difference: " + std::to_string(steering_angle_difference),
+      std::string("Is Valid: ") +
+          (steering_angle_difference <= 0.09f ? "Yes" : "No")};
 
-  // display current UTC time
-  auto now = cluon::time::now();
-  std::time_t seconds = now.seconds();
-  std::tm *utc_time = std::gmtime(&seconds);
-  std::ostringstream time_stream;
-  time_stream << "Now: " << std::put_time(utc_time, "%Y-%m-%dT%H:%M:%SZ");
+  cv::rectangle(image, cv::Point(0, 0),
+                cv::Point(175, M_BASE_Y * (words.size() + 1)),
+                cv::Scalar(0, 0, 0), cv::FILLED);
 
-  // display frame time stamp
-  std::ostringstream ts_stream;
-  ts_stream << "TS: " << sample_time_point;
-
-  // display steering
-  std::ostringstream steering_line1;
-  std::ostringstream steering_line2;
-  steering_line1 << "Current steering: " << steering_angle;
-  steering_line2 << "Actual steering: " << actual_steering;
-
-  int line_height = 20;
-  int base_y = 20;
-
-  cv::putText(image, time_stream.str(), cv::Point(10, base_y), font, font_scale,
-              text_color, text_thickness);
-  cv::putText(image, ts_stream.str(), cv::Point(10, base_y + line_height), font,
-              font_scale, text_color, text_thickness);
-  cv::putText(image, steering_line1.str(),
-              cv::Point(10, base_y + 2 * line_height), font, font_scale,
-              text_color, text_thickness);
-  cv::putText(image, steering_line2.str(),
-              cv::Point(10, base_y + 3 * line_height), font, font_scale,
-              text_color, text_thickness);
+  for (std::size_t i = 0; i < words.size(); i += 1) {
+    cv::putText(image, words[i], cv::Point(10, M_BASE_Y + i * M_LINE_HEIGHT),
+                M_FONT, M_FONT_SCALE, M_TEXT_COLOR, M_TEXT_THICKNESS);
+  }
 }
