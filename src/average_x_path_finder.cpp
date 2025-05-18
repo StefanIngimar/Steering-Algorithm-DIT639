@@ -3,7 +3,7 @@
 #include "logger.hpp"
 
 AverageXPathFinder::AverageXPathFinder()
-    : m_road_width_measurements(0), m_average_road_width(0) {};
+    : m_road_widths(), m_average_road_width(0), m_previous_midpoints() {};
 
 cv::Point2f AverageXPathFinder::find_midpoint(
     const ColorClassifiedCones& detection_result, const cv::Mat& frame) {
@@ -17,6 +17,7 @@ cv::Point2f AverageXPathFinder::find_midpoint(
   auto yellow_centers = get_closest_centers(yellow_cones);
 
   cv::Point2f midpoint(0.0f, 0.0f);
+  bool is_valid_midpoint = false;
   if (!blue_centers.empty() && !yellow_centers.empty()) {
     cv::Point2f left_pos_avg(0.0f, 0.0f);
     for (const auto& clc : blue_centers) {
@@ -31,10 +32,12 @@ cv::Point2f AverageXPathFinder::find_midpoint(
     right_pos_avg /= static_cast<float>(yellow_centers.size());
 
     const float road_width = std::abs(left_pos_avg.x - right_pos_avg.x);
-    update_road_width_running_average(road_width);
+    update_road_width_moving_average(road_width);
 
     midpoint.x = (left_pos_avg.x + right_pos_avg.x) / 2;
     midpoint.y = (left_pos_avg.y + right_pos_avg.y) / 2;
+
+    is_valid_midpoint = true;
 
   } else if (!blue_centers.empty() && yellow_centers.empty()) {
     cv::Point2f left_pos_avg(0.0f, 0.0f);
@@ -43,8 +46,12 @@ cv::Point2f AverageXPathFinder::find_midpoint(
     }
     left_pos_avg /= static_cast<float>(blue_centers.size());
 
-    midpoint.x = left_pos_avg.x + (m_average_road_width / 2.0f);
-    midpoint.y = left_pos_avg.y;
+    cv::Point2f current_midpoint;
+    current_midpoint.x = left_pos_avg.x + (m_average_road_width / 2.0f);
+    current_midpoint.y = left_pos_avg.y;
+
+    midpoint = apply_temporal_smoothing(current_midpoint);
+    is_valid_midpoint = true;
 
   } else if (blue_centers.empty() && !yellow_centers.empty()) {
     cv::Point2f right_pos_avg(0.0f, 0.0f);
@@ -53,8 +60,19 @@ cv::Point2f AverageXPathFinder::find_midpoint(
     }
     right_pos_avg /= static_cast<float>(yellow_centers.size());
 
-    midpoint.x = right_pos_avg.x - (m_average_road_width / 2.0f);
-    midpoint.y = right_pos_avg.y;
+    cv::Point2f current_midpoint;
+    current_midpoint.x = right_pos_avg.x - (m_average_road_width / 2.0f);
+    current_midpoint.y = right_pos_avg.y;
+
+    midpoint = apply_temporal_smoothing(current_midpoint);
+    is_valid_midpoint = true;
+  }
+
+  if (is_valid_midpoint) {
+    m_previous_midpoints.push_back(midpoint);
+    if (m_previous_midpoints.size() > 5) {
+      m_previous_midpoints.pop_front();
+    }
   }
 
   return midpoint;
@@ -130,13 +148,35 @@ void AverageXPathFinder::sort_and_filter(std::vector<cv::Rect>& objects,
 }
 
 /*
- * Update road width running average value by adding a newly detected/calculated
+ * Update road width moving average value by adding a newly detected/calculated
  * road width.
  * */
-void AverageXPathFinder::update_road_width_running_average(
-    const float road_width) {
-  m_road_width_measurements += 1;
-  m_average_road_width =
-      (m_average_road_width * (m_road_width_measurements - 1) + road_width) /
-      m_road_width_measurements;
+void AverageXPathFinder::update_road_width_moving_average(
+    const float road_width, uint sliding_window_size) {
+  m_road_widths.push_back(road_width);
+  if (m_road_widths.size() > sliding_window_size) {
+    m_road_widths.pop_front();
+  }
+
+  float sum = 0.0f;
+  for (float width : m_road_widths) {
+    sum += width;
+  }
+
+  m_average_road_width = sum / m_road_widths.size();
+}
+
+/*
+ * Apply temporal smoothing to smooth-out next midpoint calculations based on
+ * past midpoints.
+ * */
+cv::Point2f AverageXPathFinder::apply_temporal_smoothing(
+    const cv::Point2f current_midpoint) {
+  if (!m_previous_midpoints.empty()) {
+    const float alpha = 0.7f;
+    return alpha * current_midpoint +
+           (1.0f - alpha) * m_previous_midpoints.back();
+  }
+
+  return current_midpoint;
 }

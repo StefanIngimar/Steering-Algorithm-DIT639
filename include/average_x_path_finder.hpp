@@ -16,11 +16,15 @@ class AverageXPathFinder : public PathFinder {
   const float m_max_steering_angle = 0.3f;
   const float m_sensitivity = 0.5f;
 
-  uint32_t m_road_width_measurements;
+  std::deque<float> m_road_widths;
   float m_average_road_width;
+
+  std::deque<cv::Point2f> m_previous_midpoints;
 
   std::vector<cv::Point2f> get_closest_centers(
       const std::vector<cv::Rect>& objects, int to_find = 1);
   void sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame);
-  void update_road_width_running_average(const float road_width);
+  void update_road_width_moving_average(const float road_width,
+                                        uint sliding_window_size = 10);
+  cv::Point2f apply_temporal_smoothing(const cv::Point2f current_midpoint);
 };
