@@ -34,11 +34,9 @@ class ImageProcessor {
 
   uint64_t m_processed_frames;
   uint64_t m_correctly_calculated_steering_angle;
-
+  uint64_t m_evaluated_frames = 0;
   void process_frame();
-  void log_steering(const cluon::data::TimeStamp &timestamp, float predicted,
-                    float actual);
-  void annotate_image(cv::Mat &image,
-                      const cluon::data::TimeStamp &sample_time_point,
-                      float actual_steering, float steering_angle) const;
+  void log_steering(int64_t timestamp, float predicted, float actual);
+  void annotate_image(cv::Mat &image, int64_t timestamp, float actual_steering,
+                      float steering_angle) const;
 };
