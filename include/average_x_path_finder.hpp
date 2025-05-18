@@ -4,14 +4,38 @@
 #include "path_finder.hpp"
 
 class AverageXPathFinder : public PathFinder {
-public:
-    cv::Point2f find_midpoint(const ColorClassifiedCones& detection_result, const cv::Mat& frame) override;
-    float calculate_steering_angle(const cv::Point2f& midpoint, const cv::Mat& frame) override;
+ public:
+  AverageXPathFinder();
 
-private:
-    const float m_max_steering_angle = 0.3f;
-    const float m_sensitivity = 0.5f;
+  cv::Point2f find_midpoint(const ColorClassifiedCones& detection_result,
+                            const cv::Mat& frame) override;
+  float calculate_steering_angle(const cv::Point2f& midpoint,
+                                 const cv::Mat& frame) override;
 
-    std::vector<cv::Point2f> get_closest_centers(const std::vector<cv::Rect>& objects, int to_find = 1);
-    void sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame);
+ private:
+  const float m_max_steering_angle = 0.3f;
+  const float m_sensitivity = 0.5f;
+
+  std::deque<float> m_road_widths;
+  float m_average_road_width;
+
+  std::deque<cv::Point2f> m_previous_midpoints;
+
+  bool m_is_blue_left;
+
+  std::vector<cv::Point2f> get_closest_centers(
+      const std::vector<cv::Rect>& objects, int to_find = 1);
+  void sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame);
+
+  cv::Point2f calculate_midpoint_from_both_sides(
+      const std::vector<cv::Point2f>& blue_centers,
+      const std::vector<cv::Point2f>& yellow_centers);
+  cv::Point2f calculate_midpoint_from_blue_side(
+      const std::vector<cv::Point2f>& blue_centers);
+  cv::Point2f calculate_midpoint_from_yellow_side(
+      const std::vector<cv::Point2f>& yellow_centers);
+
+  void update_road_width_moving_average(const float road_width,
+                                        uint sliding_window_size = 10);
+  cv::Point2f apply_temporal_smoothing(const cv::Point2f current_midpoint);
 };
