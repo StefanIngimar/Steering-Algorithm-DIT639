@@ -2,6 +2,9 @@
 
 #include "logger.hpp"
 
+AverageXPathFinder::AverageXPathFinder()
+    : m_road_width_measurements(0), m_average_road_width(0) {};
+
 cv::Point2f AverageXPathFinder::find_midpoint(
     const ColorClassifiedCones& detection_result, const cv::Mat& frame) {
   std::vector<cv::Rect> blue_cones = detection_result.blue_cones;
@@ -27,8 +30,31 @@ cv::Point2f AverageXPathFinder::find_midpoint(
     }
     right_pos_avg /= static_cast<float>(yellow_centers.size());
 
+    const float road_width = std::abs(left_pos_avg.x - right_pos_avg.x);
+    update_road_width_running_average(road_width);
+
     midpoint.x = (left_pos_avg.x + right_pos_avg.x) / 2;
     midpoint.y = (left_pos_avg.y + right_pos_avg.y) / 2;
+
+  } else if (!blue_centers.empty() && yellow_centers.empty()) {
+    cv::Point2f left_pos_avg(0.0f, 0.0f);
+    for (const auto& clc : blue_centers) {
+      left_pos_avg += clc;
+    }
+    left_pos_avg /= static_cast<float>(blue_centers.size());
+
+    midpoint.x = left_pos_avg.x + (m_average_road_width / 2.0f);
+    midpoint.y = left_pos_avg.y;
+
+  } else if (blue_centers.empty() && !yellow_centers.empty()) {
+    cv::Point2f right_pos_avg(0.0f, 0.0f);
+    for (const auto& crc : yellow_centers) {
+      right_pos_avg += crc;
+    }
+    right_pos_avg /= static_cast<float>(yellow_centers.size());
+
+    midpoint.x = right_pos_avg.x - (m_average_road_width / 2.0f);
+    midpoint.y = right_pos_avg.y;
   }
 
   return midpoint;
@@ -101,4 +127,16 @@ void AverageXPathFinder::sort_and_filter(std::vector<cv::Rect>& objects,
 
   std::sort(objects.begin(), objects.end(),
             [](const cv::Rect& a, const cv::Rect& b) { return a.y > b.y; });
+}
+
+/*
+ * Update road width running average value by adding a newly detected/calculated
+ * road width.
+ * */
+void AverageXPathFinder::update_road_width_running_average(
+    const float road_width) {
+  m_road_width_measurements += 1;
+  m_average_road_width =
+      (m_average_road_width * (m_road_width_measurements - 1) + road_width) /
+      m_road_width_measurements;
 }
