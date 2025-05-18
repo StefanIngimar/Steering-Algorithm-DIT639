@@ -18,53 +18,15 @@ cv::Point2f AverageXPathFinder::find_midpoint(
 
   cv::Point2f midpoint(0.0f, 0.0f);
   bool is_valid_midpoint = false;
+
   if (!blue_centers.empty() && !yellow_centers.empty()) {
-    cv::Point2f left_pos_avg(0.0f, 0.0f);
-    for (const auto& clc : blue_centers) {
-      left_pos_avg += clc;
-    }
-    left_pos_avg /= static_cast<float>(blue_centers.size());
-
-    cv::Point2f right_pos_avg(0.0f, 0.0f);
-    for (const auto& crc : yellow_centers) {
-      right_pos_avg += crc;
-    }
-    right_pos_avg /= static_cast<float>(yellow_centers.size());
-
-    const float road_width = std::abs(left_pos_avg.x - right_pos_avg.x);
-    update_road_width_moving_average(road_width);
-
-    midpoint.x = (left_pos_avg.x + right_pos_avg.x) / 2;
-    midpoint.y = (left_pos_avg.y + right_pos_avg.y) / 2;
-
+    midpoint = calculate_midpoint_from_both_sides(blue_centers, yellow_centers);
     is_valid_midpoint = true;
-
   } else if (!blue_centers.empty() && yellow_centers.empty()) {
-    cv::Point2f left_pos_avg(0.0f, 0.0f);
-    for (const auto& clc : blue_centers) {
-      left_pos_avg += clc;
-    }
-    left_pos_avg /= static_cast<float>(blue_centers.size());
-
-    cv::Point2f current_midpoint;
-    current_midpoint.x = left_pos_avg.x + (m_average_road_width / 2.0f);
-    current_midpoint.y = left_pos_avg.y;
-
-    midpoint = apply_temporal_smoothing(current_midpoint);
+    midpoint = calculate_midpoint_from_blue_side(blue_centers);
     is_valid_midpoint = true;
-
   } else if (blue_centers.empty() && !yellow_centers.empty()) {
-    cv::Point2f right_pos_avg(0.0f, 0.0f);
-    for (const auto& crc : yellow_centers) {
-      right_pos_avg += crc;
-    }
-    right_pos_avg /= static_cast<float>(yellow_centers.size());
-
-    cv::Point2f current_midpoint;
-    current_midpoint.x = right_pos_avg.x - (m_average_road_width / 2.0f);
-    current_midpoint.y = right_pos_avg.y;
-
-    midpoint = apply_temporal_smoothing(current_midpoint);
+    midpoint = calculate_midpoint_from_yellow_side(yellow_centers);
     is_valid_midpoint = true;
   }
 
@@ -145,6 +107,61 @@ void AverageXPathFinder::sort_and_filter(std::vector<cv::Rect>& objects,
 
   std::sort(objects.begin(), objects.end(),
             [](const cv::Rect& a, const cv::Rect& b) { return a.y > b.y; });
+}
+
+cv::Point2f AverageXPathFinder::calculate_midpoint_from_both_sides(
+    const std::vector<cv::Point2f>& blue_centers,
+    const std::vector<cv::Point2f>& yellow_centers) {
+  cv::Point2f left_pos_avg(0.0f, 0.0f);
+  for (const auto& clc : blue_centers) {
+    left_pos_avg += clc;
+  }
+  left_pos_avg /= static_cast<float>(blue_centers.size());
+
+  cv::Point2f right_pos_avg(0.0f, 0.0f);
+  for (const auto& crc : yellow_centers) {
+    right_pos_avg += crc;
+  }
+  right_pos_avg /= static_cast<float>(yellow_centers.size());
+
+  const float road_width = std::abs(left_pos_avg.x - right_pos_avg.x);
+  update_road_width_moving_average(road_width);
+
+  cv::Point2f midpoint;
+  midpoint.x = (left_pos_avg.x + right_pos_avg.x) / 2;
+  midpoint.y = (left_pos_avg.y + right_pos_avg.y) / 2;
+
+  return midpoint;
+}
+
+cv::Point2f AverageXPathFinder::calculate_midpoint_from_blue_side(
+    const std::vector<cv::Point2f>& blue_centers) {
+  cv::Point2f left_pos_avg(0.0f, 0.0f);
+  for (const auto& clc : blue_centers) {
+    left_pos_avg += clc;
+  }
+  left_pos_avg /= static_cast<float>(blue_centers.size());
+
+  cv::Point2f current_midpoint;
+  current_midpoint.x = left_pos_avg.x + (m_average_road_width / 2.0f);
+  current_midpoint.y = left_pos_avg.y;
+
+  return apply_temporal_smoothing(current_midpoint);
+}
+
+cv::Point2f AverageXPathFinder::calculate_midpoint_from_yellow_side(
+    const std::vector<cv::Point2f>& yellow_centers) {
+  cv::Point2f right_pos_avg(0.0f, 0.0f);
+  for (const auto& crc : yellow_centers) {
+    right_pos_avg += crc;
+  }
+  right_pos_avg /= static_cast<float>(yellow_centers.size());
+
+  cv::Point2f current_midpoint;
+  current_midpoint.x = right_pos_avg.x - (m_average_road_width / 2.0f);
+  current_midpoint.y = right_pos_avg.y;
+
+  return apply_temporal_smoothing(current_midpoint);
 }
 
 /*

@@ -24,6 +24,15 @@ class AverageXPathFinder : public PathFinder {
   std::vector<cv::Point2f> get_closest_centers(
       const std::vector<cv::Rect>& objects, int to_find = 1);
   void sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame);
+
+  cv::Point2f calculate_midpoint_from_both_sides(
+      const std::vector<cv::Point2f>& blue_centers,
+      const std::vector<cv::Point2f>& yellow_centers);
+  cv::Point2f calculate_midpoint_from_blue_side(
+      const std::vector<cv::Point2f>& blue_centers);
+  cv::Point2f calculate_midpoint_from_yellow_side(
+      const std::vector<cv::Point2f>& yellow_centers);
+
   void update_road_width_moving_average(const float road_width,
                                         uint sliding_window_size = 10);
   cv::Point2f apply_temporal_smoothing(const cv::Point2f current_midpoint);
