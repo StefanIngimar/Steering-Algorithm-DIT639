@@ -2,6 +2,7 @@
 
 #include <cerrno>
 #include <chrono>
+#include <cstdint>
 #include <cstring>
 #include <exception>
 #include <filesystem>
@@ -62,10 +63,16 @@ void ImageProcessor::run() {
                m_correctly_calculated_steering_angle);
   logger->info("Incorrectly calculated steering in: {}",
                m_processed_frames - m_correctly_calculated_steering_angle);
-  logger->info("Correctness score: {}%",
-               (m_correctly_calculated_steering_angle /
-                static_cast<double>(m_processed_frames)) *
-                   100);
+  // check whether we got data we can calculate
+  if (m_evaluated_frames > 0) {
+    double correctness = (m_correctly_calculated_steering_angle /
+                          static_cast<double>(m_evaluated_frames)) *
+                         100;
+    logger->info("Evaluated frames: {}", m_evaluated_frames);
+    logger->info("Correctness score: {:.2f}%", correctness);
+  } else {
+    logger->info("No non-zero steering values to calculate correctness");
+  }
 
   logger->info("ImageProcessor: Closing image processing");
 }
@@ -87,7 +94,9 @@ void ImageProcessor::process_frame() {
     cv::Mat wrapped(m_config.height, m_config.width, CV_8UC4,
                     m_shared_memory->data());
     image = wrapped.clone();
-    auto sample_time_point = m_shared_memory->getTimeStamp().second;
+    // i had to change this back for the timestamps to be correct
+    auto sample_time_point =
+        cluon::time::toMicroseconds(m_shared_memory->getTimeStamp().second);
     m_shared_memory->unlock();
 
     if (image.empty()) {
@@ -119,8 +128,12 @@ void ImageProcessor::process_frame() {
       log_steering(sample_time_point, actual_steering, steering_angle);
     }
 
-    if (std::abs(steering_angle - actual_steering) <= 0.09) {
-      m_correctly_calculated_steering_angle += 1;
+    // filter out actual steering angles where the value is 0
+    if (std::abs(actual_steering) > 1e-4) {
+      m_evaluated_frames += 1;
+      if (std::abs(steering_angle - actual_steering) <= 0.09f) {
+        m_correctly_calculated_steering_angle += 1;
+      }
     }
 
     if (m_config.is_verbose) {
@@ -133,8 +146,8 @@ void ImageProcessor::process_frame() {
 
 // Added logging in the image_processor since all the variables needed were here
 // already
-void ImageProcessor::log_steering(const cluon::data::TimeStamp &timestamp,
-                                  float actual, float predicted) {
+void ImageProcessor::log_steering(int64_t timestamp, float actual,
+                                  float predicted) {
   auto logger = Logger::get_instance().get_logger();
 
   static bool written = false;
@@ -164,18 +177,16 @@ void ImageProcessor::log_steering(const cluon::data::TimeStamp &timestamp,
     outputFile << "Timestamp;PredictedSteeringAngle;ActualSteeringAngle\n";
     written = true;
   }
-  outputFile << timestamp.seconds() << timestamp.microseconds() << ";"
-             << predicted << ";" << actual << "\n";
+  outputFile << timestamp << ";" << predicted << ";" << actual << "\n";
 }
 
-void ImageProcessor::annotate_image(
-    cv::Mat &image, const cluon::data::TimeStamp &sample_time_point,
-    float actual_steering, float steering_angle) const {
+void ImageProcessor::annotate_image(cv::Mat &image, int64_t timestamp,
+                                    float actual_steering,
+                                    float steering_angle) const {
   const float steering_angle_difference =
       std::abs(steering_angle - actual_steering);
   std::array<std::string, 5> words = {
-      "TS: " + std::to_string(sample_time_point.seconds()) +
-          std::to_string(sample_time_point.microseconds()),
+      "TS: " + std::to_string(timestamp),
       "Calculated: " + std::to_string(steering_angle),
       "Actual:  " + std::to_string(actual_steering),
       "Difference: " + std::to_string(steering_angle_difference),
