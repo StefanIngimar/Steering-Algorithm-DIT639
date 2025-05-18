@@ -3,7 +3,10 @@
 #include "logger.hpp"
 
 AverageXPathFinder::AverageXPathFinder()
-    : m_road_widths(), m_average_road_width(0), m_previous_midpoints() {};
+    : m_road_widths(),
+      m_average_road_width(0),
+      m_previous_midpoints(),
+      m_is_blue_left(true) {};
 
 cv::Point2f AverageXPathFinder::find_midpoint(
     const ColorClassifiedCones& detection_result, const cv::Mat& frame) {
@@ -112,54 +115,66 @@ void AverageXPathFinder::sort_and_filter(std::vector<cv::Rect>& objects,
 cv::Point2f AverageXPathFinder::calculate_midpoint_from_both_sides(
     const std::vector<cv::Point2f>& blue_centers,
     const std::vector<cv::Point2f>& yellow_centers) {
-  cv::Point2f left_pos_avg(0.0f, 0.0f);
+  cv::Point2f blue_pos_avg(0.0f, 0.0f);
   for (const auto& clc : blue_centers) {
-    left_pos_avg += clc;
+    blue_pos_avg += clc;
   }
-  left_pos_avg /= static_cast<float>(blue_centers.size());
+  blue_pos_avg /= static_cast<float>(blue_centers.size());
 
-  cv::Point2f right_pos_avg(0.0f, 0.0f);
+  cv::Point2f yellow_pos_avg(0.0f, 0.0f);
   for (const auto& crc : yellow_centers) {
-    right_pos_avg += crc;
+    yellow_pos_avg += crc;
   }
-  right_pos_avg /= static_cast<float>(yellow_centers.size());
+  yellow_pos_avg /= static_cast<float>(yellow_centers.size());
 
-  const float road_width = std::abs(left_pos_avg.x - right_pos_avg.x);
+  const float road_width = std::abs(blue_pos_avg.x - yellow_pos_avg.x);
   update_road_width_moving_average(road_width);
 
+  // For simplicity, validation if blue cones are on the left side will be done
+  // here to avoid having to recalculate averages again somewhere else
+  m_is_blue_left = blue_pos_avg.x < yellow_pos_avg.x;
+
   cv::Point2f midpoint;
-  midpoint.x = (left_pos_avg.x + right_pos_avg.x) / 2;
-  midpoint.y = (left_pos_avg.y + right_pos_avg.y) / 2;
+  midpoint.x = (blue_pos_avg.x + yellow_pos_avg.x) / 2;
+  midpoint.y = (blue_pos_avg.y + yellow_pos_avg.y) / 2;
 
   return midpoint;
 }
 
 cv::Point2f AverageXPathFinder::calculate_midpoint_from_blue_side(
     const std::vector<cv::Point2f>& blue_centers) {
-  cv::Point2f left_pos_avg(0.0f, 0.0f);
+  cv::Point2f blue_pos_avg(0.0f, 0.0f);
   for (const auto& clc : blue_centers) {
-    left_pos_avg += clc;
+    blue_pos_avg += clc;
   }
-  left_pos_avg /= static_cast<float>(blue_centers.size());
+  blue_pos_avg /= static_cast<float>(blue_centers.size());
 
   cv::Point2f current_midpoint;
-  current_midpoint.x = left_pos_avg.x + (m_average_road_width / 2.0f);
-  current_midpoint.y = left_pos_avg.y;
+  if (m_is_blue_left) {
+    current_midpoint.x = blue_pos_avg.x + (m_average_road_width / 2.0f);
+  } else {
+    current_midpoint.x = blue_pos_avg.x - (m_average_road_width / 2.0f);
+  }
+  current_midpoint.y = blue_pos_avg.y;
 
   return apply_temporal_smoothing(current_midpoint);
 }
 
 cv::Point2f AverageXPathFinder::calculate_midpoint_from_yellow_side(
     const std::vector<cv::Point2f>& yellow_centers) {
-  cv::Point2f right_pos_avg(0.0f, 0.0f);
+  cv::Point2f yellow_pos_avg(0.0f, 0.0f);
   for (const auto& crc : yellow_centers) {
-    right_pos_avg += crc;
+    yellow_pos_avg += crc;
   }
-  right_pos_avg /= static_cast<float>(yellow_centers.size());
+  yellow_pos_avg /= static_cast<float>(yellow_centers.size());
 
   cv::Point2f current_midpoint;
-  current_midpoint.x = right_pos_avg.x - (m_average_road_width / 2.0f);
-  current_midpoint.y = right_pos_avg.y;
+  if (m_is_blue_left) {
+    current_midpoint.x = yellow_pos_avg.x - (m_average_road_width / 2.0f);
+  } else {
+    current_midpoint.x = yellow_pos_avg.x + (m_average_road_width / 2.0f);
+  }
+  current_midpoint.y = yellow_pos_avg.y;
 
   return apply_temporal_smoothing(current_midpoint);
 }

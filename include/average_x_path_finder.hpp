@@ -21,6 +21,8 @@ class AverageXPathFinder : public PathFinder {
 
   std::deque<cv::Point2f> m_previous_midpoints;
 
+  bool m_is_blue_left;
+
   std::vector<cv::Point2f> get_closest_centers(
       const std::vector<cv::Rect>& objects, int to_find = 1);
   void sort_and_filter(std::vector<cv::Rect>& objects, const cv::Mat& frame);
