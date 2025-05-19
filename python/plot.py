@@ -27,8 +27,8 @@ for csv_path in csv_files:
 
     plt.figure(figsize=(10, 5))
     plt.text(0.5, 0.5, "Group 4", fontsize=50, ha="center", va="center", transform=plt.gca().transAxes)
-    plt.plot(df["Timestamp"], df["PredictedSteeringAngle"], label="Predicted")
-    plt.plot(df["Timestamp"], df["ActualSteeringAngle"], label="Actual")
+    plt.plot(df["Timestamp"], df["PredictedSteeringAngle"], label="Computed steering values")
+    plt.plot(df["Timestamp"], df["ActualSteeringAngle"], label="groundSteeringRequest")
     plt.xlabel("sampleTime in microseconds")
     plt.ylabel("Steering Angle")
     plt.legend()
