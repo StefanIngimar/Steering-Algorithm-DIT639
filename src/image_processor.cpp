@@ -61,8 +61,11 @@ void ImageProcessor::run() {
   logger->info("Processed frames: {}", m_processed_frames);
   logger->info("Correctly calculated steering in: {}",
                m_correctly_calculated_steering_angle);
-  logger->info("Incorrectly calculated steering in: {}",
-               m_processed_frames - m_correctly_calculated_steering_angle);
+  logger->info(
+      "Incorrectly calculated steering in: {}",
+      m_evaluated_frames -
+          m_correctly_calculated_steering_angle);  // evaluated frames are the
+                                                   // non-zero values
   // check whether we got data we can calculate
   if (m_evaluated_frames > 0) {
     double correctness = (m_correctly_calculated_steering_angle /
