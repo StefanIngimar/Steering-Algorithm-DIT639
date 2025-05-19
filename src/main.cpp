@@ -9,6 +9,7 @@
 // Include the OpenDLV Standard Message Set that contains messages that are
 // usually exchanged for automotive or robotic applications
 #include "average_x_path_finder.hpp"
+#include "focal_x_path_finder.hpp"
 #include "config.hpp"
 #include "cv_dnn_runtime.hpp"
 #include "ground_steering_message_handler.hpp"
@@ -30,6 +31,7 @@ int main(int argc, char **argv) {
     // auto detector = std::make_unique<MlObjectDetector>(model_runtime);
     auto detector = std::make_unique<HsvObjectDetector>();
     auto path_finder = std::make_unique<AverageXPathFinder>();
+    // auto path_finder = std::make_unique<FocalXPathFinder>();
 
     std::unique_ptr<cluon::SharedMemory> shared_memory(
         new cluon::SharedMemory{config.shared_memory_name});
