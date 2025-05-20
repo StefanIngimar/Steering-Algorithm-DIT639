@@ -1,0 +1,17 @@
+# A21 assignment
+# TODO: comment better
+# TODO obviously this isnt a real script, actual implementation will be needed
+
+image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5
+
+performance_analysis:
+  stage: performance-test
+  script:
+    - pip install requirements.py.dev.txt && ./python/requirements.txt
+    - chmod +x run_and_compare.sh
+    - ./run_and_compare.sh
+  artifacts:
+    paths:
+      - res/steering_data/comparison_plots
+  only:
+    - branches

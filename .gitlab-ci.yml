@@ -16,6 +16,9 @@
 # Which Docker image shall be used on the GitLab runner?
 image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5
 
+include:
+  - local: '.gitlab-plots.yml'
+
 # Details about how to connect to the Docker service to run this build.
 variables:
   DOCKER_HOST: tcp://docker:2375
@@ -28,6 +31,7 @@ services:
 
 stages:
   - build
+  - performance-test
   - deploy
 
 # Display information before we start the build.
