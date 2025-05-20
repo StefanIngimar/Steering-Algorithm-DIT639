@@ -4,16 +4,10 @@
 
 image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5
 
-
 # Details about how to connect to the Docker service to run this build.
 variables:
-  DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
   DOCKER_CLI_EXPERIMENTAL: enabled
-
-services:
-  - name: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5-dind
-    alias: docker
 
 performance_analysis:
   stage: performance-test
