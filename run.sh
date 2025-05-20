@@ -12,3 +12,4 @@ docker run --rm --net=host --ipc=host \
   --width=640 --height=480 --verbose
 
 xhost -
+

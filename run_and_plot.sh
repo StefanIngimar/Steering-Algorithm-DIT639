@@ -2,8 +2,8 @@
 
 xhost +local:
 
-mkdir -p res/steering_data/csv
-mkdir -p res/steering_data/plots
+mkdir -p ../res/steering_data/csv
+mkdir -p ../res/steering_data/plots
 
 echo "Starting nutmeg..."
 docker run --rm --net=host --ipc=host \

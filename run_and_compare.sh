@@ -3,10 +3,10 @@
 set -e
 
 COMMIT_SHA=$(git rev-parse --short HEAD)
-REC_DIR="./res/video_feeds"
-OUT_DIR="./res/steering_data/comparison_csv"
-PLOT_DIR="./res/steering_data/comparison_plots"
-PYTHON_DIR="./python"
+REC_DIR="../res/video_feeds"
+OUT_DIR="../res/steering_data/comparison_csv"
+PLOT_DIR="../res/steering_data/comparison_plots"
+PYTHON_DIR="../python"
 
 mkdir -p "$OUT_DIR"
 mkdir -p "$PLOT_DIR"
