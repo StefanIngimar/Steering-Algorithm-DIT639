@@ -2,10 +2,15 @@
 # TODO: comment better
 # TODO obviously this isnt a real script, actual implementation will be needed
 
-image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5
+#image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5
+image: docker:24.0.5
+
+services:
+  - docker:24.0.5-dind
 
 # Details about how to connect to the Docker service to run this build.
 variables:
+  DOCKER_HOST: tcp://docker:2375
   DOCKER_TLS_CERTDIR: ""
   DOCKER_CLI_EXPERIMENTAL: enabled
 
