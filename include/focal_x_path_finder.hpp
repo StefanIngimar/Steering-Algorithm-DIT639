@@ -15,13 +15,13 @@ class FocalXPathFinder : public PathFinder {
 
  private:
   // zero-indexed rows (top-down)
-  float highColIdx{639.0f};
-  float highRowIdx{479.0f}; 
-  float focalX{};
-  bool sideMappingKnown{false};
-  std::string leftColor{};
-  std::string rightColor{};
+  float m_high_col_idx;
+  float m_high_row_idx; 
+  float m_focal_x;
+  bool m_side_mapping_known;
+  std::string m_left_color;
+  std::string m_right_color;
 
-  std::vector<cv::Point2f> getBtmCenters(
+  std::vector<cv::Point2f> get_btm_centers(
       const std::vector<cv::Rect>& objects);
 };
