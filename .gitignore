@@ -64,5 +64,5 @@ dkms.conf
 !.vscode/extensions.json
 
 # Plots and data
-res/steering_data/**/*.csv
-res/steering_data/**/*.png
+res/steering_data/csv/*.csv
+res/steering_data/plots/*.png
