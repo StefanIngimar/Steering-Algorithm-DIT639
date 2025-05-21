@@ -110,7 +110,9 @@ performance-analysis:
   tags: 
     - docker-build
   stage: performance-test
-  #image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/alpine:3.21
+  image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/opencv:4.10
+  before_script:
+    - apt-get update && apt-get install -y python3 python3-pip
   script:
     - pip install -r python/requirements.txt
     - chmod +x run_and_compare.sh
