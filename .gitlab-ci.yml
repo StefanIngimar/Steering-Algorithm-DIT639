@@ -115,6 +115,8 @@ performance-analysis:
     - apk update
     - apk add python3 py3-pip bash
   script:
+    - python3 -m venv venv
+    - . venv/bin/activate
     - pip install -r python/requirements.txt
     - chmod +x run_and_compare.sh
     - sh ./run_and_compare.sh
