@@ -15,6 +15,8 @@ RUN rm -rf build && \
 
 FROM registry.git.chalmers.se/courses/dit638/students/2025-group-04/opencv:4.10
 
+RUN apt-get update && apt-get install -y bash coreutils python3 python3-pip
+
 WORKDIR /usr/bin
 
 COPY --from=builder /tmp/bin/nutmeg .
