@@ -116,7 +116,7 @@ performance-analysis:
   script:
     - pip install -r python/requirements.txt
     - chmod +x run_and_compare.sh
-    - ./run_and_compare.sh
+    - sh ./run_and_compare.sh
   artifacts:
     paths:
       - res/steering_data/comparison_plots
