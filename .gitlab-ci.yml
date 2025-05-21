@@ -107,12 +107,13 @@ code-coverage:
       when: always
 
 performance-analysis:
-  tags: 
-    - docker-build
+  image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/alpine:3.21
   stage: performance-test
-  image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/opencv-dev:4.10
+  tags:
+    - docker-build
   before_script:
-    - apt-get update && apt-get install -y python3 python3-pip
+    - apk update
+    - apk add python3 py3-pip bash
   script:
     - pip install -r python/requirements.txt
     - chmod +x run_and_compare.sh
