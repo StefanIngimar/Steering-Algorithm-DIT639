@@ -113,7 +113,7 @@ performance-analysis:
     - docker-build
   before_script:
     - apk update
-    - apk add python3 py3-pip bash
+    - apk add git python3 py3-pip bash coreutils
   script:
     - python3 -m venv venv
     - . venv/bin/activate
