@@ -1,22 +1,28 @@
   
 #include "focal_x_path_finder.hpp"
-
 #include "logger.hpp"
+#include "config.hpp"
 
-FocalXPathFinder::FocalXPathFinder() {};
+FocalXPathFinder::FocalXPathFinder(Config& config) {
+  m_frameWidth = config.width;
+  m_frameHeight = config.height;
+  m_is_verbose = config.is_verbose;
+  m_focal_x = FOC_LEN / SENSOR_WIDTH * static_cast<float>(m_frameWidth);
+  m_high_row_idx = static_cast<float>(m_frameHeight - 1);
+  m_high_col_idx = static_cast<float>(m_frameWidth - 1);
+  m_y_penalty = m_focal_x / m_high_row_idx;
+  m_side_mapping_known = false;
+};
 
 cv::Point2f FocalXPathFinder::find_midpoint(
     const ColorClassifiedCones& detection_result, const cv::Mat& frame) {
   std::vector<cv::Rect> blue_cones = detection_result.blue_cones;
   std::vector<cv::Rect> yellow_cones = detection_result.yellow_cones;
-  cv::Point2f midpoint{};
+  cv::Point2f midpoint{0};
   bool found_cone{false};
   bool found_pair{false};
-  cv::Point2f left_cone{};
-  cv::Point2f right_cone{};
-
-  m_high_row_idx = static_cast<float>(frame.rows - 1);
-  m_high_col_idx = static_cast<float>(frame.cols - 1);
+  cv::Point2f left_cone{0};
+  cv::Point2f right_cone{0};
 
   if (blue_cones.empty() && yellow_cones.empty())
     found_cone = false;
@@ -26,15 +32,6 @@ cv::Point2f FocalXPathFinder::find_midpoint(
   auto blue_btm_centers{get_btm_centers(blue_cones)};
   auto yellow_btm_centers{get_btm_centers(yellow_cones)};
 
-  const float MAX_Y_DIFF{25.0f};  
-  // known average lane width is 338px 
-  const float MIN_LANE_WIDTH{200.0f};
-  const float MAX_LANE_WIDTH{450.0f}; 
-  // Raspberry Pi Module 2 camera:
-  const float FOC_LEN{3.04f};
-  const float SENSOR_WIDTH{3.68f}; 
-  m_focal_x = FOC_LEN / SENSOR_WIDTH * static_cast<float>(frame.cols);
-  const float Y_PENALTY{m_focal_x/ m_high_row_idx}; 
   float best_score{1e9}; // init. with a large enough value 
   cv::Point2f best_blue, best_yellow;
 
@@ -53,7 +50,7 @@ cv::Point2f FocalXPathFinder::find_midpoint(
       
       // Single weighted score: add a penalty weight to the normal distance based on 
       // how vertically misaligned the cones are (lowest score preferred)
-      float score = (x_diff * x_diff + y_diff * y_diff) + Y_PENALTY * std::abs(y_diff);
+      float score = (x_diff * x_diff + y_diff * y_diff) + m_y_penalty * std::abs(y_diff);
       
       if (score < best_score) {
         best_score = score;
@@ -69,15 +66,15 @@ cv::Point2f FocalXPathFinder::find_midpoint(
     if (best_blue.x < best_yellow.x) {
       left_cone = best_blue;
       right_cone = best_yellow;
-      m_left_color = "blue";
-      m_right_color = "yellow";
+      m_last_known_left_color = "blue";
+      m_last_known_right_color = "yellow";
       m_side_mapping_known = true;
     } 
     else {
       left_cone = best_yellow;
       right_cone = best_blue;
-      m_left_color = "yellow";
-      m_right_color = "blue";
+      m_last_known_left_color = "yellow";
+      m_last_known_right_color = "blue";
       m_side_mapping_known = true;
     }
     
@@ -98,15 +95,17 @@ cv::Point2f FocalXPathFinder::find_midpoint(
     }
 
     // Create virtual cone 
+    // If the setup of the track changes in the same program instance, 
+    // side mapping will auto-fix on the next detected cone pair
     cv::Point2f virtual_cone;
-    if (cone_color == m_left_color) {
+    if (cone_color == m_last_known_left_color) {
       left_cone = actual_cone;
       float tmp_x{actual_cone.x + MAX_LANE_WIDTH};
       float v_x{(tmp_x) > m_high_col_idx ? m_high_col_idx : tmp_x};
       virtual_cone = cv::Point2f(v_x, actual_cone.y); // mirror to right
       right_cone = virtual_cone;
     }
-    else if (cone_color == m_right_color) {
+    else if (cone_color == m_last_known_right_color) {
       right_cone = actual_cone;
       float tmp_x{actual_cone.x - MAX_LANE_WIDTH};
       float v_x{(tmp_x) < 0 ? 0 : tmp_x};
@@ -120,7 +119,7 @@ cv::Point2f FocalXPathFinder::find_midpoint(
     midpoint = cv::Point2f(m_high_col_idx / 2, m_high_row_idx); // fallback straight
   }
 
-  if (found_cone && m_side_mapping_known) {
+  if (m_is_verbose && found_cone && m_side_mapping_known) {
     cv::Point2f frame_bottom_mid{m_high_col_idx / 2.0f, m_high_row_idx};
     cv::circle(frame, midpoint, 5, cv::Scalar(0, 0, 255), cv::FILLED); // red circle
     cv::line(frame, left_cone, right_cone, cv::Scalar(0, 0, 255), 2); // red line 
@@ -169,7 +168,7 @@ std::vector<cv::Point2f> FocalXPathFinder::get_btm_centers(
   for (const auto& rec_box : objects) {
     cv::Point2f cone_btm_center{rec_box.x + rec_box.width / 2.0f, 
                               static_cast<float>(rec_box.y + rec_box.height)};
-    btm_centers.emplace_back(cone_btm_center);
+    btm_centers.push_back(cone_btm_center);
   }
 
   return btm_centers;

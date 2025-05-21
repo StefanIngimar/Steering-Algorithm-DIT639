@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     // auto detector = std::make_unique<MlObjectDetector>(model_runtime);
     auto detector = std::make_unique<HsvObjectDetector>();
     auto path_finder = std::make_unique<AverageXPathFinder>();
-    // auto path_finder = std::make_unique<FocalXPathFinder>();
+    //auto path_finder = std::make_unique<FocalXPathFinder>(config);
 
     std::unique_ptr<cluon::SharedMemory> shared_memory(
         new cluon::SharedMemory{config.shared_memory_name});
