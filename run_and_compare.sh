@@ -14,7 +14,7 @@ mkdir -p "$PLOT_DIR"
 echo "Process recordings for commit: $COMMIT_SHA"
 
 echo "Building nutmeg image..."
-docker build -f Dockerfile -t nutmeg . || {echo "Docker build failed"; exit 1;}
+docker build -f Dockerfile -t nutmeg .
 
 for rec in $REC_DIR/*.rec; do
   base=$(basename "$rec" .rec)
