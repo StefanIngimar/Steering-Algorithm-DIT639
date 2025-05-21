@@ -16,8 +16,6 @@
 # Which Docker image shall be used on the GitLab runner?
 image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/docker:24.0.5
 
-include:
-  - local: '.gitlab-plots.yml'
 
 # Details about how to connect to the Docker service to run this build.
 variables:
@@ -107,6 +105,21 @@ code-coverage:
   rules:
     - if: ($CI_PIPELINE_SOURCE == "merge_request_event")
       when: always
+
+performance-analysis:
+  tags: 
+    - docker-build
+  stage: performance-test
+  image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/alpine:3.21
+  script:
+    - pip install -r python/requirements.txt
+    - chmod +x run_and_compare.sh
+    - ./run_and_compare.sh
+  artifacts:
+    paths:
+      - res/steering_data/comparison_plots
+  rules:
+    - when: always
 
 # This section describes what shall be done to deploy artefacts from the project.
 #test
