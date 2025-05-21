@@ -13,6 +13,9 @@ mkdir -p "$PLOT_DIR"
 
 echo "Process recordings for commit: $COMMIT_SHA"
 
+echo "Building nutmeg image..."
+docker build -f Dockerfile -t nutmeg . || {echo "Docker build failed"; exit 1;}
+
 for rec in $REC_DIR/*.rec; do
   base=$(basename "$rec" .rec)
 
@@ -33,8 +36,8 @@ done
 
 echo "Generating plot for comparison..."
 docker run --rm \
-  -e CI_COMMIT_SHA=$COMMIT_SHA
--v "$(pwd)/res/steering_data/csv:/data/comparison_csv" \
+  -e CI_COMMIT_SHA=$COMMIT_SHA \
+  -v "$(pwd)/res/steering_data/csv:/data/comparison_csv" \
   -v "$(pwd)/res/steering_data/plots:/data/comparison_plots" \
   -v "$(pwd)/python:/app/python" \
   python:3.11-slim \
