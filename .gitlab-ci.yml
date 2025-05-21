@@ -28,7 +28,7 @@ services:
     alias: docker
 
 stages:
- # - build
+  - build
   - performance-test
   - deploy
 
