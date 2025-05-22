@@ -48,7 +48,7 @@ for rec in $REC_DIR/*.rec; do
   base=$(basename "$rec" .rec)
 
   echo "Processing $base..."
-  OUTPUT_SUBDIR="$OUT_DIR/$base/$COMMIT_SHA"
+  OUTPUT_SUBDIR="$(pwd)/$OUT_DIR/$base/$COMMIT_SHA"
 
   mkdir -p "$OUTPUT_SUBDIR"
 
