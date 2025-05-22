@@ -41,6 +41,23 @@ sleep 5
 
 echo "The other two services are running"
 
+echo "Waiting for shared memory '/tmp/img' to be ready..."
+
+for i in {1..10}; do
+  if [ -e /tmp/img ]; then
+    echo "Shared memory ready."
+    break
+  fi
+  sleep 1
+done
+
+if [ ! -e /tmp/img ]; then
+  echo "ERROR: Shared memory '/tmp/img' not found after waiting."
+  docker ps -a
+  docker logs $(docker ps -q --filter name=h264-decoder) || true
+  exit 1
+fi
+
 echo "Building nutmeg..."
 docker build -f Dockerfile -t nutmeg .
 
