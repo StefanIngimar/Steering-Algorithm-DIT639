@@ -8,20 +8,13 @@ OUT_DIR="res/steering_data/comparison_csv"
 PLOT_DIR="res/steering_data/comparison_plots"
 PYTHON_DIR="python"
 
-mkdir -p "$OUT_DIR"
-mkdir -p "$PLOT_DIR"
+mkdir -p "$OUT_DIR" "$PLOT_DIR"
 
 echo "Process recordings for commit: $COMMIT_SHA"
 
 docker_image_exists() {
   docker image inspect "$1" >/dev/null 2>&1
 }
-
-echo "Starting Opendlv Vehicle View"
-docker run --rm -d --init --net=host --name=opendlv-vehicle-view \
-  -v "$PWD/res/video_feeds:/opt/vehicle-view/recordings" \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -p 8081:8081 chrberger/opendlv-vehicle-view:v0.0.64
 
 echo "Checking h264-decoder image"
 if ! docker_image_exists "h264decoder:v0.0.5"; then
@@ -32,43 +25,30 @@ else
   echo "h264-decoder image already exists"
 fi
 
-echo "Starting h264-decoder..."
-docker run --rm -d --net=host --ipc=host \
-  -e DISPLAY="$DISPLAY" -v /tmp:/tmp \
-  h264decoder:v0.0.5 --cid=253 --name=img
-
-sleep 5
-
-echo "The other two services are running"
-
-echo "Waiting for shared memory '/tmp/img' to be ready..."
-
-for i in {1..10}; do
-  if [ -e /tmp/img ]; then
-    echo "Shared memory ready."
-    break
-  fi
-  sleep 1
-done
-
-if [ ! -e /tmp/img ]; then
-  echo "ERROR: Shared memory '/tmp/img' not found after waiting."
-  docker ps -a
-  docker logs $(docker ps -q --filter name=h264-decoder) || true
-  exit 1
-fi
-
 echo "Building nutmeg..."
 docker build -f Dockerfile -t nutmeg .
 
 for rec in $REC_DIR/*.rec; do
   base=$(basename "$rec" .rec)
-
   echo "Processing $base..."
   OUTPUT_SUBDIR="$(pwd)/$OUT_DIR/$base/$COMMIT_SHA"
-
   mkdir -p "$OUTPUT_SUBDIR"
 
+  echo "Starting h264-decoder..."
+  docker run --rm -d --net=host --ipc=host \
+    -v /tmp:/tmp \
+    h264decoder:v0.0.5 --cid=253 --name=img
+
+  echo "Trying to stream .rec with cluon-livefeed from Docker..."
+  docker run --rm --init --net=host \
+    -v "$(pwd)/$REC_DIR:/data" \
+    ghcr.io/chrberger/cluon-livefeed:latest \
+    --cid=253 \
+    --file="/data/$base.rec" \
+    --speed=1.0 \
+    --delay=5
+
+  echo "Running nutmeg on $base..."
   docker run --rm \
     -v "$(pwd)/$rec:/data/input.rec" \
     -v "$OUTPUT_SUBDIR:/data/output" \
