@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
         std::make_shared<CvDnnRuntime>("res/ml_models/colored_cones_nano.onnx",
                                        320, 320);
     // auto detector = std::make_unique<MlObjectDetector>(model_runtime);
-    auto detector = std::make_unique<HsvObjectDetector>();
-    auto path_finder = std::make_unique<AverageXPathFinder>();
-    //auto path_finder = std::make_unique<FocalXPathFinder>(config);
+    auto detector = std::make_unique<HsvObjectDetector>(config);
+    auto path_finder = std::make_unique<FocalXPathFinder>(config);
+    // auto path_finder = std::make_unique<AverageXPathFinder>();
 
     std::unique_ptr<cluon::SharedMemory> shared_memory(
         new cluon::SharedMemory{config.shared_memory_name});
