@@ -3,17 +3,45 @@
 set -e
 
 COMMIT_SHA=$(git rev-parse --short HEAD)
-REC_DIR="/res/video_feeds"
-OUT_DIR="/res/steering_data/comparison_csv"
-PLOT_DIR="/res/steering_data/comparison_plots"
-PYTHON_DIR="/python"
+REC_DIR="res/video_feeds"
+OUT_DIR="res/steering_data/comparison_csv"
+PLOT_DIR="res/steering_data/comparison_plots"
+PYTHON_DIR="python"
 
 mkdir -p "$OUT_DIR"
 mkdir -p "$PLOT_DIR"
 
 echo "Process recordings for commit: $COMMIT_SHA"
 
-echo "Building nutmeg image..."
+docker_image_exists() {
+  docker image inspect "$1" >/dev/null 2>&1
+}
+
+echo "Starting Opendlv Vehicle View"
+docker run --rm -d --init --net=host --name=opendlv-vehicle-view \
+  -v "$PWD/res/video_feeds:/opt/vehicle-view/recordings" \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -p 8081:8081 chrberger/opendlv-vehicle-view:v0.0.64
+
+echo "Checking h264-decoder image"
+if ! docker_image_exists "h264decoder:v0.0.5"; then
+  echo "Building h264-decoder image..."
+  docker build https://github.com/chalmers-revere/opendlv-video-h264-decoder.git#v0.0.5 \
+    -f Dockerfile -t h264decoder:v0.0.5
+else
+  echo "h264-decoder image already exists"
+fi
+
+echo "Starting h264-decoder..."
+docker run --rm -d --net=host --ipc=host \
+  -e DISPLAY="$DISPLAY" -v /tmp:/tmp \
+  h264decoder:v0.0.5 --cid=253 --name=img
+
+sleep 5
+
+echo "The other two services are running"
+
+echo "Building nutmeg..."
 docker build -f Dockerfile -t nutmeg .
 
 for rec in $REC_DIR/*.rec; do
