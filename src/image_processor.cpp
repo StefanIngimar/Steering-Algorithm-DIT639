@@ -132,7 +132,7 @@ void ImageProcessor::process_frame() {
     }
 
     // filter out actual steering angles where the value is 0
-    if (std::abs(actual_steering) > 1e-4) {
+    if (std::abs(actual_steering) >= 1e-6) {
       m_evaluated_frames += 1;
       if (std::abs(steering_angle - actual_steering) <= 0.09f) {
         m_correctly_calculated_steering_angle += 1;
