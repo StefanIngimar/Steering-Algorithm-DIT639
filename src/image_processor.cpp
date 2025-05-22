@@ -127,6 +127,8 @@ void ImageProcessor::process_frame() {
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
     }
 
+    std::cout << "group_04;" << sample_time_point << ";" << steering_angle << std::endl;
+
     if (m_config.should_generate_plot) {
       log_steering(sample_time_point, actual_steering, steering_angle);
     }
