@@ -113,7 +113,7 @@ performance-analysis:
     - docker-build
   before_script:
     - apk update
-    - apk add --no-cache build-base cmake linux-headers python3-dev py3-pip py3-numpy py3-setuptools ffmpeg-dev
+    - apk add --no-cache build-base cmake linux-headers python3-dev py3-pip py3-numpy py3-setuptools ffmpeg-dev docker-cli
 
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
