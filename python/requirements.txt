@@ -1,7 +1,6 @@
 matplotlib==3.8
 pandas==2.2.3
 pre-commit==4.2.0
-numpy
-opencv-python-headless
-sysv_ipc
-posix_ipc
+numpy==1.26.4
+opencv-python-headless==4.9.0.80
+sysv_ipc==1.1.0
