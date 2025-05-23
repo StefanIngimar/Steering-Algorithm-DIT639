@@ -61,6 +61,15 @@ find_package(OpenCV REQUIRED core highgui imgproc dnn)
 include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 set(LIBRARIES ${LIBRARIES} ${OpenCV_LIBS})
 
+add_executable(rec_to_csv scripts/minimal_rec_parser.cpp)
+add_dependencies(rec_to_csv generate_opendlv_standard_message_set_hpp)
+target_link_libraries(rec_to_csv ${LIBRARIES})
+
+add_executable(rec2txt scripts/rec2txt.cpp)
+add_dependencies(rec2txt generate_opendlv_standard_message_set_hpp)
+target_link_libraries(rec2txt ${LIBRARIES})
+
+
 file(GLOB_RECURSE SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 

@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 COMMIT_SHA=$(git rev-parse --short HEAD)
@@ -7,23 +6,18 @@ REC_DIR="res/video_feeds"
 OUT_DIR="res/steering_data/comparison_csv"
 PLOT_DIR="res/steering_data/comparison_plots"
 PYTHON_DIR="python"
+VIDEO_WIDTH=640
+VIDEO_HEIGHT=480
+SHM_HEX_KEY="0x696d67"
+
+echo "Building rec2txt"
+mkdir -p build && cd build
+cmake .. -D CMAKE_BUILD_TYPE=Release
+make rec2txt -j$(nproc)
+cd ..
 
 mkdir -p "$OUT_DIR" "$PLOT_DIR"
-
 echo "Process recordings for commit: $COMMIT_SHA"
-
-docker_image_exists() {
-  docker image inspect "$1" >/dev/null 2>&1
-}
-
-echo "Checking h264-decoder image"
-if ! docker_image_exists "h264decoder:v0.0.5"; then
-  echo "Building h264-decoder image..."
-  docker build https://github.com/chalmers-revere/opendlv-video-h264-decoder.git#v0.0.5 \
-    -f Dockerfile -t h264decoder:v0.0.5
-else
-  echo "h264-decoder image already exists"
-fi
 
 echo "Building nutmeg..."
 docker build -f Dockerfile -t nutmeg .
@@ -34,29 +28,47 @@ for rec in $REC_DIR/*.rec; do
   OUTPUT_SUBDIR="$(pwd)/$OUT_DIR/$base/$COMMIT_SHA"
   mkdir -p "$OUTPUT_SUBDIR"
 
-  echo "Starting h264-decoder..."
-  docker run --rm -d --net=host --ipc=host \
-    -v /tmp:/tmp \
-    h264decoder:v0.0.5 --cid=253 --name=img
+  echo "Extracting ground steering data..."
+  REC2TXT="./build/rec2txt"
+  if [ ! -x "$REC2TXT" ]; then
+    echo "Error: rec2txt not built. Run cmake and make first."
+    exit 1
+  fi
 
-  echo "Trying to stream .rec with cluon-livefeed from Docker..."
-  docker run --rm --init --net=host \
-    -v "$(pwd)/$REC_DIR:/data" \
-    ghcr.io/chrberger/cluon-livefeed:latest \
-    --cid=253 \
-    --file="/data/$base.rec" \
-    --speed=1.0 \
-    --delay=5
+  "$REC2TXT" --rec="$rec" --output="$OUTPUT_SUBDIR/raw.txt"
+
+  echo "Streaming frames from raw.txt to shared memory..."
+  python3 scripts/stream_h264_frames_to_shm.py \
+    --input="$OUTPUT_SUBDIR/raw.txt" \
+    --width=$VIDEO_WIDTH \
+    --height=$VIDEO_HEIGHT &
+  PRODUCER_PID=$!
+
+  echo "Waiting for shared memory token..."
+  for i in {1..10}; do
+    if ipcs -m | grep -q "$(printf '%d' $SHM_HEX_KEY)"; then
+      echo "Shared memory token detected."
+      break
+    fi
+    sleep 2
+  done
 
   echo "Running nutmeg on $base..."
   docker run --rm \
-    -v "$(pwd)/$rec:/data/input.rec" \
+    --ipc=host \
     -v "$OUTPUT_SUBDIR:/data/output" \
+    -v /tmp:/tmp \
     nutmeg:latest \
     --cid=253 --name=img \
-    --input=/data/input.rec \
     --output-dir=/data/output \
-    --width=640 --height=480 --verbose --generate_plot
+    --width=$VIDEO_WIDTH --height=$VIDEO_HEIGHT --generate_plot
+
+  echo "Killing frame producer..."
+  kill $PRODUCER_PID || true
+  wait $PRODUCER_PID || true
+
+  echo "Cleaning up token file..."
+  rm -f /tmp/img
 done
 
 echo "Generating plot for comparison..."
