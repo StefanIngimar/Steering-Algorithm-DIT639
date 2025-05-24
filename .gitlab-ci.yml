@@ -121,7 +121,7 @@ performance-analysis:
     - . venv/bin/activate
     - pip install --upgrade pip
     - pip install setuptools wheel
-    - pip install -r python/requirements.txt
+    - pip install -r python/requirements.txt --only-binary=:all:
     - chmod +x run_and_compare.sh
     - sh ./run_and_compare.sh
   artifacts:
