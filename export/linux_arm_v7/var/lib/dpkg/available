@@ -1,0 +1,1990 @@
+Package: libacl1
+Source: acl
+Version: 2.2.53-10
+Installed-Size: 54
+Maintainer: Guillem Jover <guillem@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: access control list - shared library
+Multi-Arch: same
+Homepage: https://savannah.nongnu.org/projects/acl/
+Description-md5: 819a4a0833dcbd5db23e4a5fd341c3aa
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/a/acl/libacl1_2.2.53-10_armhf.deb
+Size: 28548
+MD5sum: 2d342043b539dffbe5ec26bd98bbe18d
+SHA256: 75aab8956706caeaacd12eb88158de215f3034d455441bced837a2fd3be2128f
+
+Package: adduser
+Version: 3.118+deb11u1
+Installed-Size: 849
+Maintainer: Debian Adduser Developers <adduser@packages.debian.org>
+Architecture: all
+Depends: passwd, debconf (>= 0.5) | debconf-2.0
+Suggests: liblocale-gettext-perl, perl
+Description: add and remove users and groups
+Multi-Arch: foreign
+Description-md5: 0e61515c925d932d3824e3dc6af2842b
+Tag: admin::user-management, implemented-in::perl, interface::commandline,
+ role::program, scope::utility, suite::debian
+Section: admin
+Priority: important
+Filename: pool/main/a/adduser/adduser_3.118+deb11u1_all.deb
+Size: 240736
+MD5sum: 3f4a7deb357d8b65a6b0a65bfdb0af4b
+SHA256: 1478a610fd50e190882ff41e16c57b628a508bcf5b5ac5313affb49d20818e0a
+
+Package: apt
+Version: 2.2.4
+Installed-Size: 3674
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: armhf
+Replaces: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~)
+Provides: apt-transport-https (= 2.2.4)
+Depends: adduser, gpgv | gpgv2 | gpgv1, libapt-pkg6.0 (>= 2.2.4), debian-archive-keyring, libc6 (>= 2.15), libgcc-s1 (>= 3.5), libgnutls30 (>= 3.7.0), libseccomp2 (>= 2.4.2), libstdc++6 (>= 9), libsystemd0
+Recommends: ca-certificates
+Suggests: apt-doc, aptitude | synaptic | wajig, dpkg-dev (>= 1.17.2), gnupg | gnupg2 | gnupg1, powermgmt-base
+Breaks: apt-transport-https (<< 1.5~alpha4~), apt-utils (<< 1.3~exp2~), aptitude (<< 0.8.10)
+Description: commandline package manager
+Description-md5: 9fb97a88cb7383934ef963352b53b4a7
+Tag: admin::package-management, devel::lang:ruby, hardware::storage,
+ hardware::storage:cd, implemented-in::c++, implemented-in::perl,
+ implemented-in::ruby, interface::commandline, network::client,
+ protocol::ftp, protocol::http, protocol::ipv6, role::program,
+ scope::application, scope::utility, suite::debian, use::downloading,
+ use::organizing, use::playing, use::searching, works-with-format::html,
+ works-with::audio, works-with::software:package, works-with::text
+Section: admin
+Priority: required
+Filename: pool/main/a/apt/apt_2.2.4_armhf.deb
+Size: 1440672
+MD5sum: d763dded959163952c4a5976833b89b7
+SHA256: b0cda76002f166757bf3eeddc208198c5f801c115246b95a25a7f85c7d16b380
+
+Package: libapt-pkg6.0
+Source: apt
+Version: 2.2.4
+Installed-Size: 2636
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: armhf
+Provides: libapt-pkg (= 2.2.4)
+Depends: libbz2-1.0, libc6 (>= 2.28), libgcc-s1 (>= 3.5), libgcrypt20 (>= 1.8.0), liblz4-1 (>= 0.0~r127), liblzma5 (>= 5.1.1alpha+20120614), libstdc++6 (>= 9), libsystemd0 (>= 221), libudev1 (>= 183), libxxhash0 (>= 0.7.1), libzstd1 (>= 1.4.0), zlib1g (>= 1:1.2.3.4)
+Recommends: apt (>= 2.2.4)
+Breaks: appstream (<< 0.9.0-3~), apt (<< 1.6~), aptitude (<< 0.8.9), libapt-inst1.5 (<< 0.9.9~)
+Description: package management runtime library
+Multi-Arch: same
+Description-md5: eaacd63db236f47bdcc19e3bea7026a7
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/a/apt/libapt-pkg6.0_2.2.4_armhf.deb
+Size: 938140
+MD5sum: 52ab89e5b42d3e760e1a1d1b4693f222
+SHA256: 8934e4814eccbd6088b01c6fabcc08d88c3770edde3412d6926c0deda4183d3b
+
+Package: libattr1
+Source: attr
+Version: 1:2.4.48-6
+Installed-Size: 44
+Maintainer: Guillem Jover <guillem@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: extended attribute handling - shared library
+Multi-Arch: same
+Homepage: https://savannah.nongnu.org/projects/attr/
+Description-md5: d4aef101ff5430158eae72e808000f6c
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/a/attr/libattr1_2.4.48-6_armhf.deb
+Size: 20624
+MD5sum: 45c826a52e90977ae6eb2094a1b046f8
+SHA256: 75ab01c197e6710673c2b058009c960b83a507ed4c186540075be6bbca72d942
+
+Package: libaudit-common
+Source: audit
+Version: 1:3.0-2
+Installed-Size: 26
+Maintainer: Laurent Bigonville <bigon@debian.org>
+Architecture: all
+Description: Dynamic library for security auditing - common files
+Multi-Arch: foreign
+Homepage: https://people.redhat.com/sgrubb/audit/
+Description-md5: f1e698fe58902299a06c8f79f079ac9a
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/a/audit/libaudit-common_3.0-2_all.deb
+Size: 14832
+MD5sum: 8eff8cbc99166c1f6ce3b0764807f07d
+SHA256: 0d52f4826a57aea13cea1a85bfae354024c7b2f7b95e39cd1ce225e4db27d0f6
+
+Package: libaudit1
+Source: audit
+Version: 1:3.0-2
+Installed-Size: 134
+Maintainer: Laurent Bigonville <bigon@debian.org>
+Architecture: armhf
+Depends: libaudit-common (>= 1:3.0-2), libc6 (>= 2.28), libcap-ng0 (>= 0.7.9)
+Description: Dynamic library for security auditing
+Multi-Arch: same
+Homepage: https://people.redhat.com/sgrubb/audit/
+Description-md5: ec521af3cbcca51c5a26a117f114a9b5
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/a/audit/libaudit1_3.0-2_armhf.deb
+Size: 47320
+MD5sum: 4082884cd44cafff1f7159a02ea7ed0a
+SHA256: 33bddcaadde62f68c89740fde522c8a8ade0a010614f3f3b937f529cc11c9bae
+
+Package: base-files
+Version: 11.1+deb11u11
+Essential: yes
+Installed-Size: 341
+Maintainer: Santiago Vila <sanvila@debian.org>
+Architecture: armhf
+Replaces: base, dpkg (<= 1.15.0), miscutils
+Provides: base
+Pre-Depends: awk
+Breaks: debian-security-support (<< 2019.04.25), initscripts (<< 2.88dsf-13.3), sendfile (<< 2.1b.20080616-5.2~)
+Description: Debian base system miscellaneous files
+Multi-Arch: foreign
+Description-md5: 6d16337f57b84c4747f56438355b2395
+Tag: admin::configuring, admin::install, admin::login, role::app-data,
+ suite::debian
+Section: admin
+Priority: required
+Filename: pool/main/b/base-files/base-files_11.1+deb11u11_armhf.deb
+Size: 70240
+MD5sum: f0fae48e667033f54977a5218f51499e
+SHA256: e875ad6cef5fb271f0d8f72fa169bf817c3762ee34a8f515e5fba68f8d030f83
+
+Package: base-passwd
+Version: 3.5.51
+Essential: yes
+Installed-Size: 230
+Maintainer: Colin Watson <cjwatson@debian.org>
+Architecture: armhf
+Replaces: base
+Depends: libc6 (>= 2.8), libdebconfclient0 (>= 0.145)
+Recommends: debconf (>= 0.5) | debconf-2.0
+Description: Debian base system master password and group files
+Multi-Arch: foreign
+Description-md5: aad0cc52ee72b2469af5552851e49f03
+Tag: admin::configuring, admin::user-management, implemented-in::c,
+ interface::commandline, role::app-data, role::program, scope::utility,
+ security::authentication, suite::debian, use::login
+Section: admin
+Priority: required
+Filename: pool/main/b/base-passwd/base-passwd_3.5.51_armhf.deb
+Size: 56860
+MD5sum: 1cf407074c68c9381fde18cddb8c9d71
+SHA256: 4ceeeefcedadde56af6be6692800ce4eeef725cdfdde9d51ec82cf9854bd43d1
+
+Package: bash
+Version: 5.1-2+deb11u1
+Essential: yes
+Installed-Size: 6051
+Maintainer: Matthias Klose <doko@debian.org>
+Architecture: armhf
+Replaces: bash-completion (<< 20060301-0), bash-doc (<= 2.05-1)
+Depends: base-files (>= 2.1.12), debianutils (>= 2.15)
+Pre-Depends: libc6 (>= 2.28), libtinfo6 (>= 6)
+Recommends: bash-completion (>= 20060301-0)
+Suggests: bash-doc
+Conflicts: bash-completion (<< 20060301-0)
+Description: GNU Bourne Again SHell
+Multi-Arch: foreign
+Homepage: http://tiswww.case.edu/php/chet/bash/bashtop.html
+Description-md5: 3522aa7b4374048d6450e348a5bb45d9
+Tag: admin::TODO, devel::TODO, devel::interpreter, implemented-in::c,
+ interface::shell, interface::text-mode, role::program,
+ scope::application, suite::gnu, uitoolkit::ncurses
+Section: shells
+Priority: required
+Filename: pool/main/b/bash/bash_5.1-2+deb11u1_armhf.deb
+Size: 1350684
+MD5sum: 781f4f89e28759278e3f49eaa057ac6a
+SHA256: 9f7bb25c8108af61b00d626ee3fa3a8086d7aa1a93f8cabb049090fb477305b7
+
+Package: libbz2-1.0
+Source: bzip2
+Version: 1.0.8-4
+Installed-Size: 80
+Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: high-quality block-sorting file compressor library - runtime
+Multi-Arch: same
+Homepage: https://sourceware.org/bzip2/
+Description-md5: 88cb63f2e4d8cedcf07307314fc3c3d3
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/b/bzip2/libbz2-1.0_1.0.8-4_armhf.deb
+Size: 44568
+MD5sum: d564ca85259747119ad26ac838bfd19d
+SHA256: e897f1205f7b08edff033ae5403a5498f914e68efd14d288c27a3e1136fed58f
+
+Package: libdebconfclient0
+Source: cdebconf
+Version: 0.260
+Installed-Size: 65
+Maintainer: Debian Install System Team <debian-boot@lists.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: Debian Configuration Management System (C-implementation library)
+Multi-Arch: same
+Description-md5: b6846d950dc3d5d61a275932cc66b18d
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/c/cdebconf/libdebconfclient0_0.260_armhf.deb
+Size: 50176
+MD5sum: 04e0376613b9ab47528e076441d98ecd
+SHA256: 6e62aa8ca3aefd3677b0668b593d85e82597daf9d9099bb997e39b436ec4cff0
+
+Package: coreutils
+Version: 8.32-4
+Essential: yes
+Installed-Size: 15022
+Maintainer: Michael Stone <mstone@debian.org>
+Architecture: armhf
+Pre-Depends: libacl1 (>= 2.2.23), libattr1 (>= 1:2.4.44), libc6 (>= 2.28), libgmp10, libselinux1 (>= 3.1~)
+Description: GNU core utilities
+Multi-Arch: foreign
+Homepage: http://gnu.org/software/coreutils
+Description-md5: d0d975dec3625409d24be1238cede238
+Tag: admin::configuring, implemented-in::c, interface::commandline,
+ role::program, scope::utility, suite::gnu, works-with::file
+Section: utils
+Priority: required
+Filename: pool/main/c/coreutils/coreutils_8.32-4_armhf.deb
+Size: 2722820
+MD5sum: ccbf3770d18c9c4a3f20068ea5ed1be9
+SHA256: 50c89f39249f2895d67c97987435409c29eb57ad27b3327fd5aebcf6d9a14b92
+
+Package: dash
+Version: 0.5.11+git20200708+dd9ef66-5
+Essential: yes
+Installed-Size: 172
+Maintainer: Andrej Shadura <andrewsh@debian.org>
+Architecture: armhf
+Depends: debianutils (>= 2.15), dpkg (>= 1.19.1), debconf (>= 0.5) | debconf-2.0
+Pre-Depends: libc6 (>= 2.28)
+Description: POSIX-compliant shell
+Multi-Arch: foreign
+Homepage: http://gondor.apana.org.au/~herbert/dash/
+Description-md5: 8d4d9c32c6b2b70328f7f774a0cc1248
+Tag: implemented-in::c, interface::shell, role::program, scope::utility
+Section: shells
+Priority: required
+Filename: pool/main/d/dash/dash_0.5.11+git20200708+dd9ef66-5_armhf.deb
+Size: 107832
+MD5sum: 7964699030a85ad9947ef4a77c528b5a
+SHA256: 8254b4a5607a8ebc23cd8d1b744cf7779a6b5e1c0d6246b0d9b410304fcfda85
+
+Package: libdb5.3
+Source: db5.3
+Version: 5.3.28+dfsg1-0.8
+Installed-Size: 1139
+Maintainer: Debian Berkeley DB Team <team+bdb@tracker.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28)
+Description: Berkeley v5.3 Database Libraries [runtime]
+Multi-Arch: same
+Homepage: http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html
+Description-md5: 6cef0d1fc062f09a5c2c1209dc807be1
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/d/db5.3/libdb5.3_5.3.28+dfsg1-0.8_armhf.deb
+Size: 595660
+MD5sum: c2c8e893d345ae94a403fb324a8e13da
+SHA256: 78a1c2f82be0a7e3dda4855706da20d365192056904cc1fdef7caee1e2d1efaa
+
+Package: debconf
+Version: 1.5.77
+Installed-Size: 517
+Maintainer: Debconf Developers <debconf-devel@lists.alioth.debian.org>
+Architecture: all
+Replaces: debconf-tiny
+Provides: debconf-2.0
+Pre-Depends: perl-base (>= 5.20.1-3~)
+Recommends: apt-utils (>= 0.5.1), debconf-i18n
+Suggests: debconf-doc, debconf-utils, whiptail | dialog, libterm-readline-gnu-perl, libgtk3-perl, libnet-ldap-perl, perl, debconf-kde-helper (>= 0.1+git20110702)
+Conflicts: apt (<< 0.3.12.1), cdebconf (<< 0.96), debconf-tiny, debconf-utils (<< 1.3.22), dialog (<< 0.9b-20020814-1), menu (<= 2.1.3-1), whiptail (<< 0.51.4-11), whiptail-utf8 (<= 0.50.17-13)
+Breaks: apt-listchanges (<< 3.14), ubiquity (<< 17.10.2), update-notifier-common (<< 3.187~)
+Description: Debian configuration management system
+Multi-Arch: foreign
+Description-md5: 85b82bf406dfc9a635114f44ab7fb66d
+Tag: admin::configuring, implemented-in::perl, interface::commandline,
+ interface::graphical, interface::text-mode, interface::x11,
+ role::program, scope::utility, suite::debian, uitoolkit::TODO,
+ uitoolkit::gtk, uitoolkit::ncurses, uitoolkit::qt, use::configuring,
+ x11::application
+Section: admin
+Priority: required
+Filename: pool/main/d/debconf/debconf_1.5.77_all.deb
+Size: 144080
+MD5sum: ba9e11acb3a7bcd4fa7b2e094a156060
+SHA256: d9ee4dff77aaad12674eed3ccefdcccd332424c9e2ac2ac00a37a1e06c84ab70
+
+Package: debian-archive-keyring
+Version: 2021.1.1+deb11u1
+Installed-Size: 253
+Maintainer: Debian Release Team <packages@release.debian.org>
+Architecture: all
+Description: GnuPG archive keys of the Debian archive
+Multi-Arch: foreign
+Description-md5: 4ee78d6fd2292b9893b8eb4f5d5dd91d
+Tag: role::data, security::authentication, suite::debian
+Section: misc
+Priority: important
+Filename: pool/main/d/debian-archive-keyring/debian-archive-keyring_2021.1.1+deb11u1_all.deb
+Size: 109864
+MD5sum: 7c6608cf530b8e40e70aa197074c3fd7
+SHA256: 28ca7749ab7978f3c571732c3aa1c56e3ad1d5db3c915293763d4f6cb8fcce89
+
+Package: debianutils
+Version: 4.11.2
+Essential: yes
+Installed-Size: 203
+Maintainer: Clint Adams <clint@debian.org>
+Architecture: armhf
+Pre-Depends: libc6 (>= 2.15)
+Description: Miscellaneous utilities specific to Debian
+Multi-Arch: foreign
+Description-md5: ccafef5bb90a2453aecca96cbb772d23
+Tag: admin::configuring, devel::lang:perl, devel::library, implemented-in::c,
+ implemented-in::perl, interface::commandline, role::devel-lib,
+ role::program, scope::utility, suite::debian
+Section: utils
+Priority: required
+Filename: pool/main/d/debianutils/debianutils_4.11.2_armhf.deb
+Size: 100104
+MD5sum: 2466b3e3831348176f8be02c63239a5c
+SHA256: 9420ee60c61db0503de9c4d22de96e04bf3ffe44c1aece4b751b185d1ffb80bf
+
+Package: diffutils
+Version: 1:3.7-5
+Essential: yes
+Installed-Size: 1455
+Maintainer: Santiago Vila <sanvila@debian.org>
+Architecture: armhf
+Replaces: diff
+Pre-Depends: libc6 (>= 2.17)
+Suggests: diffutils-doc, wdiff
+Description: File comparison utilities
+Homepage: https://www.gnu.org/software/diffutils/
+Description-md5: 5cf0bc18e36aa2957e62b309d6aa34f9
+Tag: devel::rcs, implemented-in::c, interface::commandline, role::program,
+ scope::utility, suite::gnu, use::comparing, use::editing,
+ use::synchronizing, works-with-format::diff,
+ works-with-format::plaintext, works-with::file,
+ works-with::software:source, works-with::text
+Section: utils
+Priority: required
+Filename: pool/main/d/diffutils/diffutils_3.7-5_armhf.deb
+Size: 355000
+MD5sum: 6db69ce0be99567957310494088736a2
+SHA256: cd938ac0dfdd67a35d63d1bad197a33c60fbec02daa53a38228d213ed2cf0ca9
+
+Package: dpkg
+Version: 1.20.13
+Essential: yes
+Installed-Size: 6557
+Maintainer: Dpkg Developers <debian-dpkg@lists.debian.org>
+Architecture: armhf
+Depends: tar (>= 1.28-1)
+Pre-Depends: libbz2-1.0, libc6 (>= 2.28), liblzma5 (>= 5.2.2), libselinux1 (>= 3.1~), zlib1g (>= 1:1.1.4)
+Suggests: apt, debsig-verify
+Breaks: libapt-pkg5.0 (<< 1.7~b), lsb-base (<< 10.2019031300)
+Description: Debian package management system
+Multi-Arch: foreign
+Homepage: https://wiki.debian.org/Teams/Dpkg
+Description-md5: 2f156c6a30cc39895ad3487111e8c190
+Tag: admin::package-management, devel::lang:perl, devel::library,
+ implemented-in::c, implemented-in::perl, interface::commandline,
+ role::devel-lib, role::program, scope::utility, suite::debian,
+ use::configuring, works-with::software:package
+Section: admin
+Priority: required
+Filename: pool/main/d/dpkg/dpkg_1.20.13_armhf.deb
+Size: 2493296
+MD5sum: 193b408f7135abd04b12c3bc108a1a4c
+SHA256: 5ac670560527d1c51d20826f28783e62f7cf3743664d37d62b4d54be39a4a225
+
+Package: e2fsprogs
+Version: 1.46.2-2
+Installed-Size: 1155
+Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Architecture: armhf
+Depends: logsave
+Pre-Depends: libblkid1 (>= 2.36), libc6 (>= 2.28), libcom-err2 (>= 1.43.9), libext2fs2 (= 1.46.2-2), libss2 (>= 1.38), libuuid1 (>= 2.16)
+Recommends: e2fsprogs-l10n
+Suggests: gpart, parted, fuse2fs, e2fsck-static
+Description: ext2/ext3/ext4 file system utilities
+Multi-Arch: foreign
+Homepage: http://e2fsprogs.sourceforge.net
+Description-md5: 92d0fdf684262bbfa702eaea3f50b97e
+Important: yes
+Tag: admin::configuring, admin::filesystem, hardware::storage,
+ implemented-in::c, interface::commandline, role::program,
+ scope::utility, security::integrity, use::checking, use::configuring
+Section: admin
+Priority: required
+Filename: pool/main/e/e2fsprogs/e2fsprogs_1.46.2-2_armhf.deb
+Size: 591416
+MD5sum: 231f73643f0d7f158faefc09d56692c9
+SHA256: 023587de662b875a01ed63ddf5d1ba8480fc146e1f765b11029de590f761b36b
+
+Package: libcom-err2
+Source: e2fsprogs
+Version: 1.46.2-2
+Installed-Size: 89
+Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Architecture: armhf
+Replaces: libcomerr2 (<< 1.43.9-1~)
+Provides: libcomerr2 (= 1.46.2-2)
+Depends: libc6 (>= 2.28)
+Breaks: libcomerr2 (<< 1.43.9-1~)
+Description: common error description library
+Multi-Arch: same
+Homepage: http://e2fsprogs.sourceforge.net
+Description-md5: 5611f795c9947cfb9a2980a01506a1b9
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/e/e2fsprogs/libcom-err2_1.46.2-2_armhf.deb
+Size: 73408
+MD5sum: 5ad9bbaf13e735b80fa9b0db222eb3f0
+SHA256: bfc3279b5cebd5d9fb9b61374825120b4fa697b55071436c2473881e827797ec
+
+Package: libext2fs2
+Source: e2fsprogs
+Version: 1.46.2-2
+Installed-Size: 431
+Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Architecture: armhf
+Replaces: e2fslibs (<< 1.43.9-1~)
+Provides: e2fslibs (= 1.46.2-2)
+Depends: libc6 (>= 2.28)
+Breaks: e2fslibs (<< 1.43.9-1~)
+Description: ext2/ext3/ext4 file system libraries
+Multi-Arch: same
+Homepage: http://e2fsprogs.sourceforge.net
+Description-md5: ba4f61a3e0b238831f03143cbdce696e
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/e/e2fsprogs/libext2fs2_1.46.2-2_armhf.deb
+Size: 241096
+MD5sum: 16d450cebb7ef8cc2e4fbc070f425f29
+SHA256: 8635e6fd26ca29f02a2eaf4853c2fe14cc3f70000cba2e4a58b5f8758d9d9cc3
+
+Package: libss2
+Source: e2fsprogs
+Version: 1.46.2-2
+Installed-Size: 97
+Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Architecture: armhf
+Replaces: e2fsprogs (<< 1.34-1)
+Depends: libcom-err2, libc6 (>= 2.17)
+Description: command-line interface parsing library
+Multi-Arch: same
+Homepage: http://e2fsprogs.sourceforge.net
+Description-md5: d3d9f89af5755a413e24d2dc0cb7df81
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/e/e2fsprogs/libss2_1.46.2-2_armhf.deb
+Size: 76936
+MD5sum: 48c927af65b64ce25d6b6d558b5453ff
+SHA256: bf72284cf55be2848b8e7f11dacaef90a5028afe54f4483a1b31d5a7dc2f2466
+
+Package: logsave
+Source: e2fsprogs
+Version: 1.46.2-2
+Installed-Size: 89
+Maintainer: Theodore Y. Ts'o <tytso@mit.edu>
+Architecture: armhf
+Replaces: e2fsprogs (<< 1.45.3-1)
+Depends: libc6 (>= 2.4)
+Breaks: e2fsprogs (<< 1.45.3-1)
+Description: save the output of a command in a log file
+Multi-Arch: foreign
+Homepage: http://e2fsprogs.sourceforge.net
+Description-md5: 423ff285c4e5f41ac959b0fda6f812fe
+Section: admin
+Priority: optional
+Filename: pool/main/e/e2fsprogs/logsave_1.46.2-2_armhf.deb
+Size: 74392
+MD5sum: b2755443145cd754e5de444971da9b7d
+SHA256: 4a92be9f8636f5b0c5134de6bdfead05078d53edd4934504edb02bb9d9abe1b8
+
+Package: findutils
+Version: 4.8.0-1
+Essential: yes
+Installed-Size: 1817
+Maintainer: Andreas Metzler <ametzler@debian.org>
+Architecture: armhf
+Pre-Depends: libc6 (>= 2.28), libselinux1 (>= 3.1~)
+Suggests: mlocate | locate
+Breaks: binstats (<< 1.08-8.1), guilt (<< 0.36-0.2), libpython3.4-minimal (<< 3.4.4-2), libpython3.5-minimal (<< 3.5.1-3), lsat (<< 0.9.7.1-2.1), mc (<< 3:4.8.11-1), switchconf (<< 0.0.9-2.1)
+Description: utilities for finding files--find, xargs
+Multi-Arch: foreign
+Homepage: https://savannah.gnu.org/projects/findutils/
+Description-md5: ad1a783819241ffdf3ff5f37a676af59
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, suite::gnu, use::searching, works-with::file
+Section: utils
+Priority: required
+Filename: pool/main/f/findutils/findutils_4.8.0-1_armhf.deb
+Size: 677376
+MD5sum: 84c4111266ea707e1fd1b3692e5ef08f
+SHA256: b7d1144dd38d5d0afdcf6a412e2c08a42e214d08e0ed79ba217df2f96ed49022
+
+Package: gcc-10-base
+Source: gcc-10
+Version: 10.2.1-6
+Installed-Size: 261
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: armhf
+Breaks: gnat (<< 7)
+Description: GCC, the GNU Compiler Collection (base package)
+Multi-Arch: same
+Homepage: http://gcc.gnu.org/
+Description-md5: b6e93638a6d08ea7a18929d7cf078e5d
+Tag: role::shared-lib
+Section: libs
+Priority: required
+Filename: pool/main/g/gcc-10/gcc-10-base_10.2.1-6_armhf.deb
+Size: 201312
+MD5sum: 1db2618886d4865c9d2a6a0279111bdb
+SHA256: 324a17d32434045ea97c1a1bc976cec7b2c6276287b3eca6216dcc0f4cbd6d2d
+
+Package: libgcc-s1
+Source: gcc-10
+Version: 10.2.1-6
+Installed-Size: 147
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: armhf
+Replaces: libgcc1 (<< 1:10)
+Provides: libgcc-s1-armhf, libgcc1 (= 1:10.2.1-6)
+Depends: gcc-10-base (= 10.2.1-6), libc6 (>= 2.4)
+Breaks: cryptsetup-initramfs (<< 2:2.2.2-3~)
+Description: GCC support library
+Multi-Arch: same
+Homepage: http://gcc.gnu.org/
+Description-md5: bbd60d723e97d8e06c04228ee4c76f10
+Important: yes
+Protected: yes
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/g/gcc-10/libgcc-s1_10.2.1-6_armhf.deb
+Size: 36200
+MD5sum: c40c1da2fcd91bae82e0a345636b1fff
+SHA256: 4cfff89c7f492090c5988298f9f9419d3464d294c43883800a2ed55676581d26
+
+Package: libstdc++6
+Source: gcc-10
+Version: 10.2.1-6
+Installed-Size: 1711
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: armhf
+Replaces: libstdc++6-10-dbg (<< 4.9.0-3)
+Provides: libstdc++6-armhf
+Depends: gcc-10-base (= 10.2.1-6), libc6 (>= 2.29), libgcc-s1 (>= 3.5)
+Conflicts: scim (<< 1.4.2-1)
+Breaks: gcc-4.3 (<< 4.3.6-1), gcc-4.4 (<< 4.4.6-4), gcc-4.5 (<< 4.5.3-2)
+Description: GNU Standard C++ Library v3
+Multi-Arch: same
+Homepage: http://gcc.gnu.org/
+Description-md5: 724ab84919e0e220afb960e36463914d
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/g/gcc-10/libstdc++6_10.2.1-6_armhf.deb
+Size: 420924
+MD5sum: 2d100bbebc3469dd183ee5f209e85077
+SHA256: 879258df2ac36d9733df014c5a5443944e1a5c4ba9a7eebe5dd28547b4ebb541
+
+Package: gcc-9-base
+Source: gcc-9
+Version: 9.3.0-22
+Installed-Size: 262
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: armhf
+Breaks: gnat (<< 7)
+Description: GCC, the GNU Compiler Collection (base package)
+Multi-Arch: same
+Homepage: http://gcc.gnu.org/
+Description-md5: b6e93638a6d08ea7a18929d7cf078e5d
+Tag: role::shared-lib
+Section: libs
+Priority: required
+Filename: pool/main/g/gcc-9/gcc-9-base_9.3.0-22_armhf.deb
+Size: 198292
+MD5sum: f5007293526cbcca276b90dc60bfc2ac
+SHA256: 27deefd4083e7677a26362d71ad099c7b294b48392e637d9379e287765678ff1
+
+Package: libc-bin
+Source: glibc
+Version: 2.31-13+deb11u11
+Essential: yes
+Installed-Size: 2968
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: armhf
+Depends: libc6 (>> 2.31), libc6 (<< 2.32)
+Recommends: manpages
+Description: GNU C Library: Binaries
+Multi-Arch: foreign
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description-md5: 7625903821514b57277d1bae69ec3c1a
+Tag: role::shared-lib
+Section: libs
+Priority: required
+Filename: pool/main/g/glibc/libc-bin_2.31-13+deb11u11_armhf.deb
+Size: 718180
+MD5sum: bac24f8562cfcd68c61e473cc5e952d4
+SHA256: fe591fe8c42bd5b04f2c60113a9fc2ebb1055632818f320ed92f84a673a1ed2c
+
+Package: libc6
+Source: glibc
+Version: 2.31-13+deb11u11
+Installed-Size: 8231
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: armhf
+Depends: libgcc-s1, libcrypt1
+Recommends: libidn2-0 (>= 2.0.5~), libnss-nis, libnss-nisplus
+Suggests: glibc-doc, debconf | debconf-2.0, libc-l10n, locales
+Breaks: busybox (<< 1.30.1-6), hurd (<< 1:0.9.git20170910-1), ioquake3 (<< 1.36+u20200211.f2c61c1~dfsg-2~), iraf-fitsutil (<< 2018.07.06-4), libgegl-0.4-0 (<< 0.4.18), libtirpc1 (<< 0.2.3), locales (<< 2.31), locales-all (<< 2.31), macs (<< 2.2.7.1-3~), nocache (<< 1.1-1~), nscd (<< 2.31), openarena (<< 0.8.8+dfsg-4~), openssh-server (<< 1:8.1p1-5), r-cran-later (<< 0.7.5+dfsg-2), wcc (<< 0.0.2+dfsg-3)
+Description: GNU C Library: Shared libraries
+Multi-Arch: same
+Homepage: https://www.gnu.org/software/libc/libc.html
+Description-md5: fc3001b0b90a1c8e6690b283a619d57f
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/g/glibc/libc6_2.31-13+deb11u11_armhf.deb
+Size: 2331296
+MD5sum: cf30bbfc02dc46903ac306193ee3fabf
+SHA256: 2b8a57429fd1999ae15c144a09a37a2c37a02ec1c5a5e07eded65455934e3b08
+
+Package: libgmp10
+Source: gmp
+Version: 2:6.2.1+dfsg-1+deb11u1
+Installed-Size: 661
+Maintainer: Debian Science Team <debian-science-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.7)
+Breaks: libmath-gmp-perl (<< 2.20-1), libmath-prime-util-gmp-perl (<< 0.51-2), postgresql-pgmp (<< 1.0.3-1)
+Description: Multiprecision arithmetic library
+Multi-Arch: same
+Homepage: http://gmplib.org/
+Description-md5: cf6b3a218331a8f680398794acac47a0
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/g/gmp/libgmp10_6.2.1+dfsg-1+deb11u1_armhf.deb
+Size: 515860
+MD5sum: 540fd41293f7643239ff881d9027c9f1
+SHA256: 50be3d3da713747543d71986c80e8e1fde6db521e6390bb87f64a45a0bf2b057
+
+Package: gpgv
+Source: gnupg2
+Version: 2.2.27-2+deb11u2
+Installed-Size: 725
+Maintainer: Debian GnuPG Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
+Architecture: armhf
+Replaces: gnupg2 (<< 2.0.21-2), gpgv2 (<< 2.1.11-7+exp1)
+Depends: libbz2-1.0, libc6 (>= 2.28), libgcrypt20 (>= 1.8.0), libgpg-error0 (>= 1.38), zlib1g (>= 1:1.1.4)
+Suggests: gnupg
+Breaks: gnupg2 (<< 2.0.21-2), gpgv2 (<< 2.1.11-7+exp1), python-debian (<< 0.1.29)
+Description: GNU privacy guard - signature verification tool
+Multi-Arch: foreign
+Homepage: https://www.gnupg.org/
+Description-md5: 4ea8f4f4d6a0a387a4a3aeba3e6cc888
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, security::cryptography, suite::gnu, use::checking
+Section: utils
+Priority: important
+Filename: pool/main/g/gnupg2/gpgv_2.2.27-2+deb11u2_armhf.deb
+Size: 597324
+MD5sum: 71628047461f4e01afdef92f4b8dcf89
+SHA256: bb7779be3536142d314c289a85d2aa7d52f733ee266f6e28ce2333cf4a26cc0c
+
+Package: libgnutls30
+Source: gnutls28
+Version: 3.7.1-5+deb11u5
+Installed-Size: 2568
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libgmp10 (>= 2:6.0.0), libc6 (>= 2.28), libhogweed6 (>= 3.6), libidn2-0 (>= 2.0.0), libnettle8 (>= 3.7~), libp11-kit0 (>= 0.23.18.1), libtasn1-6 (>= 4.14), libunistring2 (>= 0.9.7)
+Suggests: gnutls-bin
+Description: GNU TLS library - main runtime library
+Multi-Arch: same
+Homepage: https://www.gnutls.org/
+Description-md5: 62280ac2a597a21eda709c611a5c0008
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/g/gnutls28/libgnutls30_3.7.1-5+deb11u5_armhf.deb
+Size: 1280196
+MD5sum: 3fea3809be5745a70ac1f325dd63e9d2
+SHA256: bda8ac912431af9a59d5218279bb13bbc0dbcef2baa001de539cb7fd79df8d9b
+
+Package: grep
+Version: 3.6-1+deb11u1
+Essential: yes
+Installed-Size: 1014
+Maintainer: Anibal Monsalve Salazar <anibal@debian.org>
+Architecture: armhf
+Provides: rgrep
+Depends: dpkg (>= 1.15.4) | install-info
+Pre-Depends: libc6 (>= 2.28), libpcre3
+Suggests: libpcre3 (>= 7.7)
+Conflicts: rgrep
+Description: GNU grep, egrep and fgrep
+Multi-Arch: foreign
+Homepage: https://www.gnu.org/software/grep/
+Description-md5: f9188c5583d41955f3b3fe60b9d445f1
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, suite::gnu, use::filtering, use::searching,
+ works-with::file, works-with::text
+Section: utils
+Priority: required
+Filename: pool/main/g/grep/grep_3.6-1+deb11u1_armhf.deb
+Size: 386908
+MD5sum: 4e079be444dcd20abbeadb0c4ff595ff
+SHA256: 1b2c7c35d5ebbe081bd1063a3839740108137e830c616ed10c0363308f81b21f
+
+Package: gzip
+Version: 1.10-4+deb11u1
+Essential: yes
+Installed-Size: 209
+Maintainer: Milan Kupcevic <milan@debian.org>
+Architecture: armhf
+Depends: dpkg (>= 1.15.4) | install-info
+Pre-Depends: libc6 (>= 2.28)
+Suggests: less
+Description: GNU compression utilities
+Homepage: https://www.gnu.org/software/gzip/
+Description-md5: 100720c9e2c6508f1a1f3731537b38e5
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, suite::gnu, use::compressing, works-with::archive,
+ works-with::file
+Section: utils
+Priority: required
+Filename: pool/main/g/gzip/gzip_1.10-4+deb11u1_armhf.deb
+Size: 128224
+MD5sum: ca0fc09dfd9d35bf41cdbb9e5cfdef54
+SHA256: 8c2ddd607f8ec618b4061d6828dc3ac619bcef0296a6b330c8ba7e815be1b209
+
+Package: hostname
+Version: 3.23
+Essential: yes
+Installed-Size: 41
+Maintainer: Michael Meskes <meskes@debian.org>
+Architecture: armhf
+Replaces: nis (<< 3.17-30)
+Pre-Depends: libc6 (>= 2.4)
+Breaks: nis (<< 3.17-30)
+Description: utility to set/show the host name or domain name
+Description-md5: a5a22acc3c69a7f40f07f1a8dfc93af1
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, use::configuring
+Section: admin
+Priority: required
+Filename: pool/main/h/hostname/hostname_3.23_armhf.deb
+Size: 14068
+MD5sum: 7fa4cb4b216059664d4673f58442bebb
+SHA256: 596bbc505ae763d56c79552919dc3608891e4ac7987e43f7258f137784d2124b
+
+Package: init-system-helpers
+Version: 1.60
+Essential: yes
+Installed-Size: 131
+Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: all
+Depends: perl-base (>= 5.20.1-3)
+Conflicts: file-rc (<< 0.8.17~)
+Description: helper tools for all init systems
+Multi-Arch: foreign
+Description-md5: facafbf6c4b9fd95c34e95938629ecef
+Tag: admin::boot, implemented-in::perl, role::program
+Section: admin
+Priority: required
+Filename: pool/main/i/init-system-helpers/init-system-helpers_1.60_all.deb
+Size: 47076
+MD5sum: 783c018e8e00a85f0e4f9c33cf50fe58
+SHA256: 43420922c5e3aa747f8854236bf381a35179bba3885b242edb104751dad20644
+
+Package: libkeyutils1
+Source: keyutils
+Version: 1.6.1-2
+Installed-Size: 38
+Maintainer: Christian Kastner <ckk@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.7)
+Description: Linux Key Management Utilities (library)
+Multi-Arch: same
+Homepage: https://people.redhat.com/~dhowells/keyutils/
+Description-md5: 5c4d88a0a818e5ef897f2a9fa5c3ac2d
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/k/keyutils/libkeyutils1_1.6.1-2_armhf.deb
+Size: 14392
+MD5sum: b920b4d7f84b080ad4d81836320ce2b9
+SHA256: 484b06d6110dbd3244022ded8ffba072d7babd4bac8f8f67ee1a67ab26cb8d8c
+
+Package: libgssapi-krb5-2
+Source: krb5
+Version: 1.18.3-6+deb11u5
+Installed-Size: 313
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.27), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.16), libkrb5-3 (= 1.18.3-6+deb11u5), libkrb5support0 (>= 1.15~beta1)
+Suggests: krb5-doc, krb5-user
+Breaks: moonshot-gss-eap (<= 1.0)
+Description: MIT Kerberos runtime libraries - krb5 GSS-API Mechanism
+Multi-Arch: same
+Homepage: http://web.mit.edu/kerberos/
+Description-md5: 2dd7fe357b29d0ba6727171c01f0301c
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/k/krb5/libgssapi-krb5-2_1.18.3-6+deb11u5_armhf.deb
+Size: 144044
+MD5sum: 343272d4a608facddb882a9174cf44f7
+SHA256: c77650ba2b0672d9161cac24b2c6c2e4d312bcc1b808098d9bb991d60b039dd1
+
+Package: libk5crypto3
+Source: krb5
+Version: 1.18.3-6+deb11u5
+Installed-Size: 251
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), libkrb5support0 (>= 1.16)
+Suggests: krb5-doc, krb5-user
+Breaks: libgssapi-krb5-2 (<= 1.18~), libkrb5-3 (<= 1.18~)
+Description: MIT Kerberos runtime libraries - Crypto Library
+Multi-Arch: same
+Homepage: http://web.mit.edu/kerberos/
+Description-md5: 4b107bcb8481fee0b8b11744a386a6b0
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/k/krb5/libk5crypto3_1.18.3-6+deb11u5_armhf.deb
+Size: 110800
+MD5sum: 6ee87e1d5ff742b71f8324b9f44bc7f7
+SHA256: 3da64564370d8a38f0f6d61f932855f332d9b125bf64598b9c771223f98413af
+
+Package: libkrb5-3
+Source: krb5
+Version: 1.18.3-6+deb11u5
+Installed-Size: 778
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.15~beta1), libkeyutils1 (>= 1.5.9), libkrb5support0 (= 1.18.3-6+deb11u5), libssl1.1 (>= 1.1.0)
+Recommends: krb5-locales
+Suggests: krb5-doc, krb5-user
+Breaks: libapache2-mod-auth-kerb (<= 5.4-2.4), libsmbclient (<= 2:3.6.1-2), sssd (<= 1.2.1-4.3)
+Description: MIT Kerberos runtime libraries
+Multi-Arch: same
+Homepage: http://web.mit.edu/kerberos/
+Description-md5: 07bb931a85fb24c6a0ef0f62a94bb26c
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/k/krb5/libkrb5-3_1.18.3-6+deb11u5_armhf.deb
+Size: 319488
+MD5sum: c265737bad84a0a4d4c0d9567bdeb9b9
+SHA256: fd412529978ab7c9b669002185a729f52362c6f679f0ccd033264e3b97ddbae1
+
+Package: libkrb5support0
+Source: krb5
+Version: 1.18.3-6+deb11u5
+Installed-Size: 144
+Maintainer: Sam Hartman <hartmans@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.25)
+Breaks: libgssapi-krb5-2 (<< 1.13~alpha1-1), libk5crypto3 (<< 1.16), libkadm5clnt-mit9 (<< 1.13~alpha1-1), libkadm5srv-mit9 (<< 1.13~alpha1-1), libkdb5-8 (<< 1.16)
+Description: MIT Kerberos runtime libraries - Support library
+Multi-Arch: same
+Homepage: http://web.mit.edu/kerberos/
+Description-md5: 4f3abf66dd7bfd20406fc400a05b0693
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/k/krb5/libkrb5support0_1.18.3-6+deb11u5_armhf.deb
+Size: 62812
+MD5sum: c030e24c9a917d31c917a38ed1abfc66
+SHA256: 0f6316394d4d049a6b5282841891fc4ac91aafb40ef406fe60f7efb9afd02818
+
+Package: libcap-ng0
+Source: libcap-ng (0.7.9-2.2)
+Version: 0.7.9-2.2+b1
+Installed-Size: 35
+Maintainer: Pierre Chifflier <pollux@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.8)
+Description: An alternate POSIX capabilities library
+Multi-Arch: same
+Homepage: http://people.redhat.com/sgrubb/libcap-ng
+Description-md5: a9611912ade327f38052faa7edd07603
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libc/libcap-ng/libcap-ng0_0.7.9-2.2+b1_armhf.deb
+Size: 13468
+MD5sum: 1a35b085e4b92054391dfa713a9d5111
+SHA256: 7c69d07de9daf5d2884e7b5b8c8027ab4254c84a4108102515c947af773b6497
+
+Package: libffi7
+Source: libffi
+Version: 3.3-6
+Installed-Size: 45
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.7), libgcc-s1 (>= 3.5)
+Description: Foreign Function Interface library runtime
+Multi-Arch: same
+Homepage: https://sourceware.org/libffi/
+Description-md5: aa11fa9e12227fc9a1de7b2cb193c270
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libf/libffi/libffi7_3.3-6_armhf.deb
+Size: 19932
+MD5sum: 6b04a8851c4c5c3836304cdbb668d2fc
+SHA256: c18d4ad579a4e88f3da20eb523ecc5a850a61bf37091b316c9d3f668cf9838fa
+
+Package: libgcrypt20
+Version: 1.8.7-6
+Installed-Size: 863
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), libgpg-error0 (>= 1.25)
+Suggests: rng-tools
+Description: LGPL Crypto library - runtime library
+Multi-Arch: same
+Homepage: https://directory.fsf.org/project/libgcrypt/
+Description-md5: e8ab63c6be1944ea9efde5248663f053
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libg/libgcrypt20/libgcrypt20_1.8.7-6_armhf.deb
+Size: 503520
+MD5sum: 50181e56d091372837d947235cd73385
+SHA256: cbef54fe75a2c489f0181f6b30c56c1a4f479bebcf2d665881cc944177213cb7
+
+Package: libgpg-error0
+Source: libgpg-error
+Version: 1.38-2
+Installed-Size: 131
+Maintainer: Debian GnuPG Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28)
+Recommends: libgpg-error-l10n
+Description: GnuPG development runtime library
+Multi-Arch: same
+Homepage: https://www.gnupg.org/related_software/libgpg-error/
+Description-md5: 25a68a249e16424360132bea187a6d2b
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libg/libgpg-error/libgpg-error0_1.38-2_armhf.deb
+Size: 69024
+MD5sum: ec208b3e653c144a528df12b75368a17
+SHA256: 4955c944425b64688cb09b6fc3df351be4fa7111bc09b36f6c931032a1593a6c
+
+Package: libidn2-0
+Source: libidn2
+Version: 2.3.0-5
+Installed-Size: 288
+Maintainer: Debian Libidn team <help-libidn@gnu.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4), libunistring2 (>= 0.9.7)
+Description: Internationalized domain names (IDNA2008/TR46) library
+Multi-Arch: same
+Homepage: https://www.gnu.org/software/libidn/#libidn2
+Description-md5: 6db3016f9ad1788327b1e04cd1c8616e
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libi/libidn2/libidn2-0_2.3.0-5_armhf.deb
+Size: 83392
+MD5sum: 783ff109d2e197ea3351c1fd13a59152
+SHA256: e20f1e06123f749fe2ac46ffe32e16c0acd5c1d0667e1b2a9df38c756571347d
+
+Package: libnsl2
+Source: libnsl
+Version: 1.3.0-2
+Installed-Size: 86
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), libtirpc3 (>= 1.0.2)
+Description: Public client interface for NIS(YP) and NIS+
+Multi-Arch: same
+Homepage: https://github.com/thkukuk/libnsl
+Description-md5: 4c1cacf3967f03c84acb322d7186e004
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libn/libnsl/libnsl2_1.3.0-2_armhf.deb
+Size: 33868
+MD5sum: 4718ec288ca06983cdb02eefa1ae9a82
+SHA256: a38fb6899749f74ebef429d7b20f1d0f962e2187653c82d66b8bc83ef694efb2
+
+Package: libseccomp2
+Source: libseccomp
+Version: 2.5.1-1+deb11u1
+Installed-Size: 129
+Maintainer: Kees Cook <kees@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: high level interface to Linux seccomp filter
+Multi-Arch: same
+Homepage: https://github.com/seccomp/libseccomp
+Description-md5: 7ee97a8161e83bfebc75870eb92bde51
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libs/libseccomp/libseccomp2_2.5.1-1+deb11u1_armhf.deb
+Size: 46748
+MD5sum: 0bfa2385f8da2758d245d2aa1839fd80
+SHA256: 79696c3325c4899c8eb2ce751f34336c9d25d72306e92756e859cb8854ed1737
+
+Package: libselinux1
+Source: libselinux
+Version: 3.1-3
+Installed-Size: 150
+Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), libpcre2-8-0 (>= 10.22)
+Description: SELinux runtime shared libraries
+Multi-Arch: same
+Homepage: https://selinuxproject.org
+Description-md5: 90f6e1cb06c527bc3fc11ec6f969c59c
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libs/libselinux/libselinux1_3.1-3_armhf.deb
+Size: 79940
+MD5sum: 3fd2614de3ebbc7af6e844ecae445cad
+SHA256: 09ea6434e96e35932bb5a1177a757cf8404c02be1bd69b8d87104a5fcf5f296b
+
+Package: libsemanage-common
+Source: libsemanage
+Version: 3.1-1
+Installed-Size: 36
+Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Architecture: all
+Replaces: libsemanage1 (<= 2.0.41-1), libsemanage1-dev (<< 2.1.6-3~)
+Breaks: libsemanage1 (<= 2.0.41-1), libsemanage1-dev (<< 2.1.6-3~)
+Description: Common files for SELinux policy management libraries
+Multi-Arch: foreign
+Homepage: http://userspace.selinuxproject.org/
+Description-md5: c7a0a093650c85e838f42492add9b46b
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libs/libsemanage/libsemanage-common_3.1-1_all.deb
+Size: 21308
+MD5sum: b6006d54ced57e66e612f6329bc87942
+SHA256: d319a026ecd02e2f605c52350949279f3c331a19380f8b6888ce5b9ef0d31349
+
+Package: libsemanage1
+Source: libsemanage (3.1-1)
+Version: 3.1-1+b2
+Installed-Size: 208
+Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libsemanage-common (= 3.1-1), libaudit1 (>= 1:2.2.1), libbz2-1.0, libc6 (>= 2.28), libselinux1 (>= 3.1), libsepol1 (>= 3.1)
+Breaks: policycoreutils (<< 3.0), selinux-policy-default (<< 2:2.20140421-10~), selinux-policy-mls (<< 2:2.20140421-10~)
+Description: SELinux policy management library
+Multi-Arch: same
+Homepage: http://userspace.selinuxproject.org/
+Description-md5: 8998b538051f37f69c5f1bf9a005fa56
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libs/libsemanage/libsemanage1_3.1-1+b2_armhf.deb
+Size: 88036
+MD5sum: 64e5bae0d5b2aba66a7bf07a35ec06b5
+SHA256: f1519d7e0ccf3b7b3a70ebb0ef0f7ee1009d091b06141fb06ffb2fc56fbd10bb
+
+Package: libsepol1
+Source: libsepol
+Version: 3.1-1
+Installed-Size: 482
+Maintainer: Debian SELinux maintainers <selinux-devel@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.8)
+Description: SELinux library for manipulating binary security policies
+Multi-Arch: same
+Homepage: http://userspace.selinuxproject.org/
+Description-md5: d569fae7efa3328b3d40879b104d9a63
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libs/libsepol/libsepol1_3.1-1_armhf.deb
+Size: 233964
+MD5sum: f273b74967f8cf178022d8801d6eea48
+SHA256: 3e0086c20925e11b816d46d34e3639f2cff3622f06ddf2b6342169b3f7596361
+
+Package: libtasn1-6
+Version: 4.16.0-2+deb11u1
+Installed-Size: 92
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: Manage ASN.1 structures (runtime)
+Multi-Arch: same
+Homepage: https://www.gnu.org/software/libtasn1/
+Description-md5: 535058cbce5722d1c5d399c0854dd71f
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libt/libtasn1-6/libtasn1-6_4.16.0-2+deb11u1_armhf.deb
+Size: 50368
+MD5sum: bdd9789a4fc2090a6bb810f0162de3fe
+SHA256: 1ddf8f110cc489f93f928236feb39ea7957ac6bc5570a138e9bf2e521d6be3c7
+
+Package: libtirpc-common
+Source: libtirpc
+Version: 1.3.1-1+deb11u1
+Installed-Size: 34
+Maintainer: Josue Ortega <josue@debian.org>
+Architecture: all
+Replaces: libtirpc1, libtirpc3 (<< 1.1.4-0.1~)
+Breaks: libtirpc1, libtirpc3 (<< 1.1.4-0.1~)
+Description: transport-independent RPC library - common files
+Multi-Arch: foreign
+Homepage: http://sourceforge.net/projects/libtirpc
+Description-md5: f186b4d689860df1502b7e1917b6dad9
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libt/libtirpc/libtirpc-common_1.3.1-1+deb11u1_all.deb
+Size: 13464
+MD5sum: a19334e37b6384b89f552065d0942c1a
+SHA256: b2f10cb79e7d7a2f9b30bcdf036127df55cd4a34688547bc2886fa38f4969f77
+
+Package: libtirpc3
+Source: libtirpc
+Version: 1.3.1-1+deb11u1
+Installed-Size: 156
+Maintainer: Josue Ortega <josue@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), libgssapi-krb5-2 (>= 1.17), libtirpc-common (>= 1.3.1-1+deb11u1)
+Breaks: nfs-common (<< 1:1.2.8-7), nfs-kernel-server (<< 1:1.2.8-7)
+Description: transport-independent RPC library
+Multi-Arch: same
+Homepage: http://sourceforge.net/projects/libtirpc
+Description-md5: 604bfb6c9b5f2aed27c76dfa111bffcf
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libt/libtirpc/libtirpc3_1.3.1-1+deb11u1_armhf.deb
+Size: 72504
+MD5sum: 1e2ae420c4d3b430029b31267c362d4d
+SHA256: 2c74a236a4d0c1004627c3321490190714e1dbaa06c1d09e0f2d7f6bae98b660
+
+Package: libunistring2
+Source: libunistring
+Version: 0.9.10-4
+Installed-Size: 1447
+Maintainer: Jörg Frings-Fürst <debian@jff.email>
+Architecture: armhf
+Depends: libc6 (>= 2.7)
+Description: Unicode string library for C
+Multi-Arch: same
+Homepage: https://www.gnu.org/software/libunistring/
+Description-md5: b202dbec3da512fe5ff554ac46cd2451
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libu/libunistring/libunistring2_0.9.10-4_armhf.deb
+Size: 373556
+MD5sum: ecaa34425b1490945441f5e632aec4f0
+SHA256: dad576f7d8bfbc39623828b3f9d2957dcc88f6e735e9bda3a9ced688636f4e46
+
+Package: libcrypt1
+Source: libxcrypt
+Version: 1:4.4.18-4
+Installed-Size: 206
+Maintainer: Marco d'Itri <md@linux.it>
+Architecture: armhf
+Replaces: libc6 (<< 2.29-4)
+Depends: libc6 (>= 2.25)
+Description: libcrypt shared library
+Multi-Arch: same
+Description-md5: deac8c9adc422e925bdaf6bffdd3e875
+Important: yes
+Protected: yes
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libx/libxcrypt/libcrypt1_4.4.18-4_armhf.deb
+Size: 95604
+MD5sum: 80912dd3a105ae49a09664876263e4fd
+SHA256: 317b174a75e2c2dd4f46eb9bd9c781e7dd70c4b0c6697032cd4832de8a069955
+
+Package: libzstd1
+Source: libzstd
+Version: 1.4.8+dfsg-2.1
+Installed-Size: 576
+Maintainer: Debian Med Packaging Team <debian-med-packaging@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: fast lossless compression algorithm
+Multi-Arch: same
+Homepage: https://github.com/facebook/zstd
+Description-md5: 5529781042229a3d4fc1e69daa94d736
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/libz/libzstd/libzstd1_1.4.8+dfsg-2.1_armhf.deb
+Size: 272252
+MD5sum: 8ef10dfbf5a460a43f3d4edf342c2db3
+SHA256: bf9b391dd40d21a237ddcf2720a1f33c2c5eff4bec820a2001aea73e9c7df650
+
+Package: lsb-base
+Source: lsb
+Version: 11.1.0
+Installed-Size: 49
+Maintainer: Debian sysvinit maintainers <debian-init-diversity@chiark.greenend.org.uk>
+Architecture: all
+Description: Linux Standard Base init script functionality
+Multi-Arch: foreign
+Homepage: https://wiki.linuxfoundation.org/lsb/start
+Description-md5: 097c50ae4dc8b22ec551f0128089a56c
+Tag: admin::boot, implemented-in::shell, role::plugin
+Section: misc
+Priority: optional
+Filename: pool/main/l/lsb/lsb-base_11.1.0_all.deb
+Size: 28700
+MD5sum: 34446c7a4ce621d325c45df40a19d72b
+SHA256: 89ed6332074d827a65305f9a51e591dff20641d61ff5e11f4e1822a9987e96fe
+
+Package: liblz4-1
+Source: lz4
+Version: 1.9.3-2
+Installed-Size: 108
+Maintainer: Nobuhiro Iwamatsu <iwamatsu@debian.org>
+Architecture: armhf
+Replaces: liblz4-1a
+Depends: libc6 (>= 2.4)
+Breaks: liblz4-1a
+Description: Fast LZ compression algorithm library - runtime
+Multi-Arch: same
+Homepage: https://github.com/Cyan4973/lz4
+Description-md5: c21cacb9494ced3b87993140a583422c
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/l/lz4/liblz4-1_1.9.3-2_armhf.deb
+Size: 50636
+MD5sum: 8ae812548b3e2ea0276fd2075f59163b
+SHA256: 041c0151ffb737503557e3e2cf346ec4cef21b0b2651d47b2d7d3ed91fc1d8d9
+
+Package: mawk
+Version: 1.3.4.20200120-2
+Installed-Size: 185
+Maintainer: Boyuan Yang <byang@debian.org>
+Architecture: armhf
+Provides: awk
+Depends: libc6 (>= 2.29)
+Description: Pattern scanning and text processing language
+Multi-Arch: foreign
+Homepage: https://invisible-island.net/mawk/
+Description-md5: 05965bfcd1a2333e963d9f1945d161fc
+Tag: devel::interpreter, implemented-in::c, interface::commandline,
+ role::program, scope::utility, use::filtering, use::scanning,
+ works-with::text
+Section: interpreters
+Priority: required
+Filename: pool/main/m/mawk/mawk_1.3.4.20200120-2_armhf.deb
+Size: 101684
+MD5sum: c596be538e6c430bb9317868dc77a43b
+SHA256: 5a34fbd84a9e1bf4951031a107797656bfdc7dd938aedc7f2d06b2b4be419da0
+
+Package: libtinfo6
+Source: ncurses
+Version: 6.2+20201114-2+deb11u2
+Installed-Size: 451
+Maintainer: Craig Small <csmall@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.16)
+Description: shared low-level terminfo library for terminal handling
+Multi-Arch: same
+Homepage: https://invisible-island.net/ncurses/
+Description-md5: f681846d99e5156a0882bb53c35d3244
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/n/ncurses/libtinfo6_6.2+20201114-2+deb11u2_armhf.deb
+Size: 328424
+MD5sum: ac00bc0041a2b51d5c41e4dde17a8996
+SHA256: 6973dca97fae75e87a6c5898c8aad1cad37e888ef995d89a31c302dbe12dcb57
+
+Package: ncurses-base
+Source: ncurses
+Version: 6.2+20201114-2+deb11u2
+Essential: yes
+Installed-Size: 386
+Maintainer: Craig Small <csmall@debian.org>
+Architecture: all
+Provides: ncurses-runtime
+Breaks: bash-static (<< 4.4.18-1.1), libmono-corlib4.5-cil (<< 4.6.2.7+dfsg-2), libslang2 (<< 2.3.1a-3), libtinfo5 (<< 6.1), libunibilium0 (<< 2), libunibilium4 (<< 2.0.0-3), zsh-static (<< 5.4.2-4)
+Description: basic terminal type definitions
+Multi-Arch: foreign
+Homepage: https://invisible-island.net/ncurses/
+Description-md5: 2cbef17322c0de7f007682de54ca0d4a
+Tag: implemented-in::TODO, role::app-data, uitoolkit::ncurses
+Section: misc
+Priority: required
+Filename: pool/main/n/ncurses/ncurses-base_6.2+20201114-2+deb11u2_all.deb
+Size: 271888
+MD5sum: 5b75a1fc7c1cb484c178fed6a56f6a34
+SHA256: a55a5f94299448279da6a6c2031a9816dc768cd300668ff82ecfc6480bbfc83d
+
+Package: ncurses-bin
+Source: ncurses
+Version: 6.2+20201114-2+deb11u2
+Essential: yes
+Installed-Size: 551
+Maintainer: Craig Small <csmall@debian.org>
+Architecture: armhf
+Pre-Depends: libc6 (>= 2.7), libtinfo6 (>= 6.2+20200912), libtinfo6 (<< 6.3~)
+Description: terminal-related programs and man pages
+Multi-Arch: foreign
+Homepage: https://invisible-island.net/ncurses/
+Description-md5: 682ee2624c08c54a53ecaefd778a4d86
+Tag: admin::configuring, implemented-in::c, interface::commandline,
+ interface::text-mode, role::program, scope::utility, uitoolkit::ncurses
+Section: utils
+Priority: required
+Filename: pool/main/n/ncurses/ncurses-bin_6.2+20201114-2+deb11u2_armhf.deb
+Size: 420656
+MD5sum: 40b351bfef231b46a3f6c4eb5d77f479
+SHA256: 0e5b21e32a484845129088607b66148f634aa508960562337a8d6209317a8166
+
+Package: libhogweed6
+Source: nettle
+Version: 3.7.3-1
+Installed-Size: 390
+Maintainer: Magnus Holmgren <holmgren@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4), libgmp10 (>= 2:6.1.0), libnettle8
+Description: low level cryptographic library (public-key cryptos)
+Multi-Arch: same
+Homepage: http://www.lysator.liu.se/~nisse/nettle/
+Description-md5: 2a20554eaadbd355079396956d5d3edb
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/n/nettle/libhogweed6_3.7.3-1_armhf.deb
+Size: 308444
+MD5sum: a829def4bea73b7cc3355191392ff2e0
+SHA256: 712b290612c826b7d0f943fbe7eb762cbb422386526396b3c4586c056b7ca1c6
+
+Package: libnettle8
+Source: nettle
+Version: 3.7.3-1
+Installed-Size: 436
+Maintainer: Magnus Holmgren <holmgren@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.17)
+Description: low level cryptographic library (symmetric and one-way cryptos)
+Multi-Arch: same
+Homepage: http://www.lysator.liu.se/~nisse/nettle/
+Description-md5: 9dcb77a61a93b06eb5b005f9c8c509a4
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/n/nettle/libnettle8_3.7.3-1_armhf.deb
+Size: 284000
+MD5sum: 6e183b5f84d2be89e838d09e538d861c
+SHA256: 233dce7ed44907c63850706108bda212adf4da7822c72af2e3f08d176c7beb46
+
+Package: libssl1.1
+Source: openssl
+Version: 1.1.1w-0+deb11u1
+Installed-Size: 2547
+Maintainer: Debian OpenSSL Team <pkg-openssl-devel@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), debconf (>= 0.5) | debconf-2.0
+Breaks: isync (<< 1.3.0-2), lighttpd (<< 1.4.49-2), python-boto (<< 2.44.0-1.1), python-httplib2 (<< 0.11.3-1), python-imaplib2 (<< 2.57-5), python3-boto (<< 2.44.0-1.1), python3-imaplib2 (<< 2.57-5)
+Description: Secure Sockets Layer toolkit - shared libraries
+Multi-Arch: same
+Homepage: https://www.openssl.org/
+Description-md5: 88547c6206c7fbc4fcc7d09ce100d210
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_armhf.deb
+Size: 1319012
+MD5sum: a9b70b2b83d7b799661ce335edc8fa56
+SHA256: 42130c140f972d938d4b4a5ab9638675e6d1223fcff3042bbcc1829e3646eb00
+
+Package: libp11-kit0
+Source: p11-kit
+Version: 0.23.22-1
+Installed-Size: 914
+Maintainer: Debian GnuTLS Maintainers <pkg-gnutls-maint@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28), libffi7 (>= 3.3~20180313)
+Breaks: opencryptoki (<= 3.6.1+dfsg-1)
+Description: library for loading and coordinating access to PKCS#11 modules - runtime
+Multi-Arch: same
+Homepage: https://p11-glue.github.io/p11-glue/p11-kit.html
+Description-md5: 35d0359f0f7422b8380df1a478394459
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/p/p11-kit/libp11-kit0_0.23.22-1_armhf.deb
+Size: 316680
+MD5sum: 505d249e013b5406472bc0b0164be0f4
+SHA256: b881f48cf4454aa7ae7179a4ec55ec99407e52e3d68952d1d99bd8411b828266
+
+Package: libpam-modules
+Source: pam
+Version: 1.4.0-9+deb11u1
+Installed-Size: 728
+Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: armhf
+Replaces: libpam-umask, libpam0g-util
+Provides: libpam-mkhomedir, libpam-motd, libpam-umask
+Pre-Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.28), libcrypt1 (>= 1:4.3.0), libdb5.3, libnsl2 (>= 1.0), libpam0g (>= 1.3.2), libselinux1 (>= 3.1~), libtirpc3 (>= 1.0.2), debconf (>= 0.5) | debconf-2.0, libpam-modules-bin (= 1.4.0-9+deb11u1)
+Conflicts: libpam-mkhomedir, libpam-motd, libpam-umask
+Description: Pluggable Authentication Modules for PAM
+Multi-Arch: same
+Homepage: http://www.linux-pam.org/
+Description-md5: 234b9429528430ead853cc8bbe97ffb4
+Tag: implemented-in::c, role::plugin, security::authentication
+Section: admin
+Priority: required
+Filename: pool/main/p/pam/libpam-modules_1.4.0-9+deb11u1_armhf.deb
+Size: 310828
+MD5sum: aee105db316bd2de4f5ff680ffacbd79
+SHA256: 1a5f8ec58cc4a32b843eed63815b86cd1dde062c208d72ca8bf83f3736fde347
+
+Package: libpam-modules-bin
+Source: pam
+Version: 1.4.0-9+deb11u1
+Installed-Size: 186
+Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: armhf
+Replaces: libpam-modules (<< 1.1.3-8)
+Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.4), libcrypt1 (>= 1:4.3.0), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~)
+Description: Pluggable Authentication Modules for PAM - helper binaries
+Multi-Arch: foreign
+Homepage: http://www.linux-pam.org/
+Description-md5: 25d278fc7450d5202a9a137f71302e58
+Tag: admin::login, admin::user-management, implemented-in::c, protocol::ldap,
+ role::plugin, role::program, role::shared-lib,
+ security::authentication, use::login
+Section: admin
+Priority: required
+Filename: pool/main/p/pam/libpam-modules-bin_1.4.0-9+deb11u1_armhf.deb
+Size: 104752
+MD5sum: 0c354897fd5c001ed82f7448d0a65399
+SHA256: 38320ba12c62b20647e2d9d67b01ea1a1a7f79446c2cb49d74f1ee05a873165f
+
+Package: libpam-runtime
+Source: pam
+Version: 1.4.0-9+deb11u1
+Installed-Size: 965
+Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: all
+Replaces: libpam0g-dev, libpam0g-util
+Depends: debconf (>= 0.5) | debconf-2.0, debconf (>= 1.5.19) | cdebconf, libpam-modules (>= 1.0.1-6)
+Conflicts: libpam0g-util
+Description: Runtime support for the PAM library
+Multi-Arch: foreign
+Homepage: http://www.linux-pam.org/
+Description-md5: bc15ddbf92ee7965a8588141c54bb5a1
+Tag: implemented-in::c, role::app-data, role::program,
+ security::authentication, use::configuring
+Section: admin
+Priority: required
+Filename: pool/main/p/pam/libpam-runtime_1.4.0-9+deb11u1_all.deb
+Size: 207376
+MD5sum: ced2fd5d4de87f22327d7583b1291a62
+SHA256: d98a68a56386d0992446417a4ee9fa685ebe841e81303a7d4f45cdd4c133c3f6
+
+Package: libpam0g
+Source: pam
+Version: 1.4.0-9+deb11u1
+Installed-Size: 212
+Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: armhf
+Replaces: libpam0g-util
+Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.8), debconf (>= 0.5) | debconf-2.0
+Suggests: libpam-doc
+Description: Pluggable Authentication Modules library
+Multi-Arch: same
+Homepage: http://www.linux-pam.org/
+Description-md5: af00a40029e1e1d2ad04c042c3b18095
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/p/pam/libpam0g_1.4.0-9+deb11u1_armhf.deb
+Size: 123872
+MD5sum: a097e0c22710fd822d12d7d713c05246
+SHA256: c8593ef34af2a34c56b049a91c2595f232970c23f06c6b9da3b221a9ed2ae62b
+
+Package: libpcre2-8-0
+Source: pcre2
+Version: 10.36-2+deb11u1
+Installed-Size: 467
+Maintainer: Matthew Vernon <matthew@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: New Perl Compatible Regular Expression Library- 8 bit runtime files
+Multi-Arch: same
+Homepage: https://pcre.org/
+Description-md5: 734c95b9f25246dab73666cd44bfe6a7
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/p/pcre2/libpcre2-8-0_10.36-2+deb11u1_armhf.deb
+Size: 212924
+MD5sum: fc3d9255a57f5ede56af76f62d39b5ab
+SHA256: 9960e2e6b493a2dca84d4ad288072201f4b2eaa9ba6b242b921dad411ee13ce0
+
+Package: libpcre3
+Source: pcre3
+Version: 2:8.39-13
+Installed-Size: 517
+Maintainer: Matthew Vernon <matthew@debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Conflicts: libpcre3-dev (<= 4.3-3)
+Breaks: approx (<< 4.4-1~), cduce (<< 0.5.3-2~), cmigrep (<< 1.5-7~), galax (<< 1.1-7~), libpcre-ocaml (<< 6.0.1~), liquidsoap (<< 0.9.2-3~), ocsigen (<< 1.3.3-1~)
+Description: Old Perl 5 Compatible Regular Expression Library - runtime files
+Multi-Arch: same
+Description-md5: 554ac784f7314cb2c59649814e330d34
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/p/pcre3/libpcre3_8.39-13_armhf.deb
+Size: 321692
+MD5sum: 898ad68be6a04efb21ccd04caa533d40
+SHA256: 8eb7af918cd369c190d1e118f2c2de78182c2560e9a64ced2c5fe8f5ea2c9f40
+
+Package: perl-base
+Source: perl
+Version: 5.32.1-4+deb11u3
+Essential: yes
+Installed-Size: 6518
+Maintainer: Niko Tyni <ntyni@debian.org>
+Architecture: armhf
+Replaces: libfile-path-perl (<< 2.16), libfile-temp-perl (<< 0.2309), libio-socket-ip-perl (<< 0.39), libscalar-list-utils-perl (<< 1:1.55), libsocket-perl (<< 2.029), libxsloader-perl (<< 0.30), perl (<< 5.10.1-12), perl-modules (<< 5.20.1-3)
+Provides: libfile-path-perl (= 2.16), libfile-temp-perl (= 0.2309), libio-socket-ip-perl (= 0.39), libscalar-list-utils-perl (= 1:1.55), libsocket-perl (= 2.029), libxsloader-perl (= 0.30), perlapi-5.32.0, perlapi-5.32.1
+Pre-Depends: libc6 (>= 2.29), libcrypt1 (>= 1:4.1.0), dpkg (>= 1.17.17)
+Suggests: perl, sensible-utils
+Conflicts: defoma (<< 0.11.12), doc-base (<< 0.10.3), mono-gac (<< 2.10.8.1-3), safe-rm (<< 0.8), update-inetd (<< 4.41)
+Breaks: amanda-common (<< 1:3.3.9-2), backuppc (<< 3.3.1-2), bucardo (<< 5.5.0-1.1), debconf (<< 1.5.61), dh-haskell (<< 0.3), intltool (<< 0.51.0-4), kio-perldoc (<< 20.04.1-1), latexml (<< 0.8.4-2), libdevel-mat-dumper-perl (<< 0.42-3), libencode-arabic-perl (<< 14.2-2), libexception-class-perl (<< 1.42), libfile-path-perl (<< 2.16), libfile-spec-perl (<< 3.7800), libfile-temp-perl (<< 0.2309), libio-socket-ip-perl (<< 0.39), libmp3-tag-perl (<< 1.13-1.2), libsbuild-perl (<< 0.67.0-1), libscalar-list-utils-perl (<< 1:1.55), libsocket-perl (<< 2.029), libxsloader-perl (<< 0.30), mailagent (<< 1:3.1-81-2), perl (<< 5.32.1~), perl-modules (<< 5.32.1~), pod2pdf (<< 0.42-5.1), slic3r (<< 1.2.9+dfsg-6.1), slic3r-prusa (<< 1.37.0+dfsg-1.1), texinfo (<< 6.1.0.dfsg.1-8)
+Description: minimal Perl system
+Homepage: http://dev.perl.org/perl5/
+Description-md5: 232ab9bd6b6b338a3658c92e4b2ffcee
+Tag: devel::interpreter, devel::lang:perl, devel::library, implemented-in::c,
+ implemented-in::perl, interface::commandline, role::devel-lib,
+ role::program, role::shared-lib
+Section: perl
+Priority: required
+Filename: pool/main/p/perl/perl-base_5.32.1-4+deb11u3_armhf.deb
+Size: 1491960
+MD5sum: 42c211a9ec7bbd83a98fc98294080d53
+SHA256: 1c5c959c68e9e22e503738c1102094b892b55c7d6f9dc25cae0f7fe305b97d2f
+
+Package: sed
+Version: 4.7-1
+Essential: yes
+Installed-Size: 838
+Maintainer: Clint Adams <clint@debian.org>
+Architecture: armhf
+Pre-Depends: libacl1 (>= 2.2.51-8), libc6 (>= 2.7), libselinux1 (>= 1.32)
+Description: GNU stream editor for filtering/transforming text
+Multi-Arch: foreign
+Homepage: https://www.gnu.org/software/sed/
+Description-md5: 2ed71305ee7a49ce4438c58140980d2f
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, suite::gnu, use::editing, works-with::file,
+ works-with::text
+Section: utils
+Priority: required
+Filename: pool/main/s/sed/sed_4.7-1_armhf.deb
+Size: 301276
+MD5sum: 428557ede0494c1b7bb14f837d1b6afb
+SHA256: 434aabe139a2a91c66ba824f320ccf689ca897c77d0a463c4a57f7708ab806c5
+
+Package: login
+Source: shadow
+Version: 1:4.8.1-1
+Essential: yes
+Installed-Size: 2266
+Maintainer: Shadow package maintainers <pkg-shadow-devel@lists.alioth.debian.org>
+Architecture: armhf
+Replaces: manpages-de (<< 0.5-3), manpages-tr (<< 1.0.5), manpages-zh (<< 1.5.1-1)
+Pre-Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.7), libcrypt1 (>= 1:4.1.0), libpam0g (>= 0.99.7.1), libpam-runtime, libpam-modules (>= 1.1.8-1)
+Conflicts: amavisd-new (<< 2.3.3-8), backupninja (<< 0.9.3-5), echolot (<< 2.1.8-4), gnunet (<< 0.7.0c-2), python-4suite (<< 0.99cvs20060405-1)
+Breaks: util-linux (<< 2.32-0.2~)
+Description: system login tools
+Multi-Arch: foreign
+Homepage: https://github.com/shadow-maint/shadow
+Description-md5: 78ac96cb774b9146397717a29f70b14b
+Tag: admin::login, implemented-in::c, interface::commandline,
+ interface::text-mode, role::program, security::authentication,
+ use::login
+Section: admin
+Priority: required
+Filename: pool/main/s/shadow/login_4.8.1-1_armhf.deb
+Size: 651468
+MD5sum: 7ef46b6ec6af6cacf7947eddd9498356
+SHA256: 438e338eb8d47dd87982a4d65527615f582c8747ca21f4d3a66592ce0a3a0a57
+
+Package: passwd
+Source: shadow
+Version: 1:4.8.1-1
+Installed-Size: 2042
+Maintainer: Shadow package maintainers <pkg-shadow-devel@lists.alioth.debian.org>
+Architecture: armhf
+Replaces: manpages-tr (<< 1.0.5), manpages-zh (<< 1.5.1-1)
+Depends: libaudit1 (>= 1:2.2.1), libc6 (>= 2.28), libcrypt1 (>= 1:4.1.0), libpam0g (>= 0.99.7.1), libselinux1 (>= 2.1.9), libsemanage1 (>= 2.0.3), libpam-modules
+Description: change and administer password and group data
+Multi-Arch: foreign
+Homepage: https://github.com/shadow-maint/shadow
+Description-md5: 5bbd70e421ed3367a8299e53bd7afed4
+Tag: admin::user-management, implemented-in::c, interface::commandline,
+ role::program, security::authentication
+Section: admin
+Priority: required
+Filename: pool/main/s/shadow/passwd_4.8.1-1_armhf.deb
+Size: 942772
+MD5sum: b9136d5b5328f2d595bc54a2ab6d1896
+SHA256: 8c8b7d86c668909ae31f95ff608c88786fc998f168dae0fa9c59e6cd3b3788a9
+
+Package: libsystemd0
+Source: systemd
+Version: 247.3-7+deb11u5
+Installed-Size: 636
+Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Pre-Depends: libc6 (>= 2.30), libgcrypt20 (>= 1.8.0), liblz4-1 (>= 0.0~r122), liblzma5 (>= 5.1.1alpha+20120614), libzstd1 (>= 1.4.0)
+Description: systemd utility library
+Multi-Arch: same
+Homepage: https://www.freedesktop.org/wiki/Software/systemd
+Description-md5: 92180a6b506aa0eff52136aeb8212dc6
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/s/systemd/libsystemd0_247.3-7+deb11u5_armhf.deb
+Size: 351440
+MD5sum: ab8781ad4a774b84fc9cde31451e8aed
+SHA256: 894c380fbc1d2e96d78b6a6c154a224d72b78671db9b376b3fc2ae620ae713ad
+
+Package: libudev1
+Source: systemd
+Version: 247.3-7+deb11u5
+Installed-Size: 229
+Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.30)
+Description: libudev shared library
+Multi-Arch: same
+Homepage: https://www.freedesktop.org/wiki/Software/systemd
+Description-md5: ace5b83d7b48187416c90173a93255b6
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/s/systemd/libudev1_247.3-7+deb11u5_armhf.deb
+Size: 161908
+MD5sum: 688f64692c8054046d80950a1bb9e4c4
+SHA256: f96851738462d2a1fcde7758e1281f45d1b872ff001529545f2e5c40d68e54fc
+
+Package: sysvinit-utils
+Source: sysvinit
+Version: 2.96-7+deb11u1
+Essential: yes
+Installed-Size: 61
+Maintainer: Debian sysvinit maintainers <debian-init-diversity@chiark.greenend.org.uk>
+Architecture: armhf
+Depends: lsb-base (>= 11.0.0~), libc6 (>= 2.4)
+Description: System-V-like utilities
+Multi-Arch: foreign
+Homepage: https://savannah.nongnu.org/projects/sysvinit
+Description-md5: 79410281ead72a8950c945cfffb13d5f
+Tag: implemented-in::c, interface::commandline, role::program,
+ scope::utility, use::analysing, use::checking, use::monitor,
+ works-with::software:running
+Section: admin
+Priority: required
+Filename: pool/main/s/sysvinit/sysvinit-utils_2.96-7+deb11u1_armhf.deb
+Size: 24204
+MD5sum: 5e9af690581868fccc96ff888e003aae
+SHA256: e9bedd2961ca5903366a7ae241f3fd8de52fe0d6b967b17ec402406955593ecb
+
+Package: tar
+Version: 1.34+dfsg-1+deb11u1
+Essential: yes
+Installed-Size: 2940
+Maintainer: Janos Lenart <ocsi@debian.org>
+Architecture: armhf
+Replaces: cpio (<< 2.4.2-39)
+Pre-Depends: libacl1 (>= 2.2.23), libc6 (>= 2.28), libselinux1 (>= 3.1~)
+Suggests: bzip2, ncompress, xz-utils, tar-scripts, tar-doc
+Conflicts: cpio (<= 2.4.2-38)
+Breaks: dpkg-dev (<< 1.14.26)
+Description: GNU version of the tar archiving utility
+Multi-Arch: foreign
+Homepage: https://www.gnu.org/software/tar/
+Description-md5: 48033bf96442788d1f697785773ad9bb
+Tag: admin::backup, admin::file-distribution, devel::packaging,
+ implemented-in::c, interface::commandline, role::program,
+ scope::utility, suite::gnu, use::storing, works-with-format::tar,
+ works-with::archive, works-with::file
+Section: utils
+Priority: required
+Filename: pool/main/t/tar/tar_1.34+dfsg-1+deb11u1_armhf.deb
+Size: 818628
+MD5sum: 0f168ceca9d05f79a11d2442b180291d
+SHA256: 5aeb2235564fa4a83add59b0381f334c7b395046be9b40846b1d013075f84bcd
+
+Package: tzdata
+Version: 2024a-0+deb11u1
+Installed-Size: 3454
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: all
+Provides: tzdata-bullseye
+Depends: debconf (>= 0.5) | debconf-2.0
+Description: time zone and daylight-saving time data
+Multi-Arch: foreign
+Homepage: https://www.iana.org/time-zones
+Description-md5: a77a3cc9a67658dd7cfdc6547391b8f8
+Tag: role::app-data, use::timekeeping
+Section: localization
+Priority: required
+Filename: pool/main/t/tzdata/tzdata_2024a-0+deb11u1_all.deb
+Size: 303824
+MD5sum: eb1a16b327c2e8e769d7066b057fa5e0
+SHA256: 13befffb7ee127f569af92d736e30c86c199bbd58f9c3cca0d071ed63e04d003
+
+Package: bsdutils
+Source: util-linux (2.36.1-8+deb11u2)
+Version: 1:2.36.1-8+deb11u2
+Essential: yes
+Installed-Size: 300
+Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Architecture: armhf
+Pre-Depends: libc6 (>= 2.28), libsystemd0
+Recommends: bsdextrautils
+Description: basic utilities from 4.4BSD-Lite
+Multi-Arch: foreign
+Homepage: http://www.kernel.org/pub/linux/utils/util-linux/
+Description-md5: 07a52b485dd8e72c97ccec74c54564a0
+Tag: admin::logging, implemented-in::c, interface::commandline,
+ role::program, scope::utility, suite::bsd,
+ works-with::software:running, works-with::text
+Section: utils
+Priority: required
+Filename: pool/main/u/util-linux/bsdutils_2.36.1-8+deb11u2_armhf.deb
+Size: 141084
+MD5sum: 495c2ceb9c1d02b98aa7ad4c2c4c8e7d
+SHA256: 2f26be819625de7fbfb3a6ae09cb03b2a5d6625bd59d1912eb13bfbd9fc16f9a
+
+Package: libblkid1
+Source: util-linux
+Version: 2.36.1-8+deb11u2
+Installed-Size: 304
+Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28)
+Description: block device ID library
+Multi-Arch: same
+Homepage: http://www.kernel.org/pub/linux/utils/util-linux/
+Description-md5: a511054d3223ae05280eebc8f3e2c80e
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/u/util-linux/libblkid1_2.36.1-8+deb11u2_armhf.deb
+Size: 180660
+MD5sum: fd9452999d71e04e780220b02508ec79
+SHA256: 27684b00ba88230ee63a2ed2a04692c1556c387e2a087f43f0b927462f99ba34
+
+Package: libmount1
+Source: util-linux
+Version: 2.36.1-8+deb11u2
+Installed-Size: 352
+Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Architecture: armhf
+Depends: libblkid1 (>= 2.17.2), libc6 (>= 2.28), libselinux1 (>= 3.1~)
+Description: device mounting library
+Multi-Arch: same
+Homepage: http://www.kernel.org/pub/linux/utils/util-linux/
+Description-md5: 7e446c44302ff94779f1434f2e05d553
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/u/util-linux/libmount1_2.36.1-8+deb11u2_armhf.deb
+Size: 195980
+MD5sum: 7fb2064d90bec1eae7cdd3d6c67bbbd3
+SHA256: 24b12732e5efef368050793044480a36ab536f8c002606f94c3ec88bd7d75213
+
+Package: libsmartcols1
+Source: util-linux
+Version: 2.36.1-8+deb11u2
+Installed-Size: 247
+Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28)
+Description: smart column output alignment library
+Multi-Arch: same
+Homepage: http://www.kernel.org/pub/linux/utils/util-linux/
+Description-md5: d5382f0223188fc45ed69f879488c198
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/u/util-linux/libsmartcols1_2.36.1-8+deb11u2_armhf.deb
+Size: 145456
+MD5sum: 3ed7f9a0802ab7a51074da318cdb53a8
+SHA256: 5428d314a64055142842addd7c1f8c4e74563833df4acb043b5b8471f07f11eb
+
+Package: libuuid1
+Source: util-linux
+Version: 2.36.1-8+deb11u2
+Installed-Size: 120
+Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Architecture: armhf
+Depends: libc6 (>= 2.28)
+Recommends: uuid-runtime
+Description: Universally Unique ID library
+Multi-Arch: same
+Homepage: http://www.kernel.org/pub/linux/utils/util-linux/
+Description-md5: f31dd3d34d42a99fedd60c9fb7d79469
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/u/util-linux/libuuid1_2.36.1-8+deb11u2_armhf.deb
+Size: 82884
+MD5sum: 41cd0b73fee6919f3947c4433e3c90d8
+SHA256: 92ce55adfdd8f5d7d3272d7ab6841b57e77bedc8c797f71c3696a4b6a8678da5
+
+Package: mount
+Source: util-linux
+Version: 2.36.1-8+deb11u2
+Installed-Size: 337
+Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Architecture: armhf
+Depends: util-linux (>= 2.29.2-3~)
+Pre-Depends: libblkid1 (>= 2.17.2), libc6 (>= 2.28), libmount1 (>= 2.35.1), libsmartcols1 (>= 2.33)
+Suggests: nfs-common
+Description: tools for mounting and manipulating filesystems
+Multi-Arch: foreign
+Homepage: http://www.kernel.org/pub/linux/utils/util-linux/
+Description-md5: 90e187380786a435bb9c85b37afa2c5f
+Tag: admin::filesystem, hardware::storage, implemented-in::c,
+ interface::commandline, role::program, scope::utility
+Section: admin
+Priority: required
+Filename: pool/main/u/util-linux/mount_2.36.1-8+deb11u2_armhf.deb
+Size: 177960
+MD5sum: 8cf5569794b0570e2e33cdda790c1389
+SHA256: 46052dcaf2bec46f88aed26f33c9868d653eb4e393d75be9ed874e4187c70154
+
+Package: util-linux
+Version: 2.36.1-8+deb11u2
+Essential: yes
+Installed-Size: 3152
+Maintainer: util-linux packagers <util-linux@packages.debian.org>
+Architecture: armhf
+Replaces: bash-completion (<< 1:2.8), initscripts (<< 2.88dsf-59.2~), login (<< 1:4.5-1.1~), mount (<< 2.29.2-3~), s390-tools (<< 2.2.0-1~), setpriv (<< 2.32.1-0.2~), sysvinit-utils (<< 2.88dsf-59.1~)
+Depends: login (>= 1:4.5-1.1~)
+Pre-Depends: libaudit1 (>= 1:2.2.1), libblkid1 (>= 2.31.1), libc6 (>= 2.28), libcap-ng0 (>= 0.7.9), libcrypt1 (>= 1:4.1.0), libmount1 (>= 2.34), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libsmartcols1 (>= 2.34), libsystemd0, libtinfo6 (>= 6), libudev1 (>= 183), libuuid1 (>= 2.16), zlib1g (>= 1:1.1.4)
+Suggests: dosfstools, kbd, util-linux-locales
+Breaks: bash-completion (<< 1:2.8), grml-debootstrap (<< 0.68), mount (<< 2.29.2-3~), s390-tools (<< 2.2.0-1~), setpriv (<< 2.32.1-0.2~), sysvinit-utils (<< 2.88dsf-59.4~)
+Description: miscellaneous system utilities
+Multi-Arch: foreign
+Homepage: http://www.kernel.org/pub/linux/utils/util-linux/
+Description-md5: 33d0291a69ffd307cfba295915df602a
+Tag: admin::configuring, admin::filesystem, admin::hardware,
+ implemented-in::c, interface::commandline, interface::text-mode,
+ role::program, scope::utility, uitoolkit::ncurses
+Section: utils
+Priority: required
+Filename: pool/main/u/util-linux/util-linux_2.36.1-8+deb11u2_armhf.deb
+Size: 1068364
+MD5sum: 73622e3a622c47498f55dff6099199b6
+SHA256: 660dcbf071c57077e2c1afdf491379ec40c4215f135c9109d0591bd3a0139521
+
+Package: libxxhash0
+Source: xxhash
+Version: 0.8.0-2
+Installed-Size: 57
+Maintainer: Norbert Preining <norbert@preining.info>
+Architecture: armhf
+Depends: libc6 (>= 2.4)
+Description: shared library for xxhash
+Multi-Arch: same
+Homepage: https://cyan4973.github.io/xxHash
+Description-md5: 6bd5146e7d8c018b3155cacf897b1233
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/x/xxhash/libxxhash0_0.8.0-2_armhf.deb
+Size: 23452
+MD5sum: 3a8a800be90ceda4503d55cbb4938933
+SHA256: 0961a41c3cf3d94180d8c2a7831395073e0922916df39b532f19043af39a2818
+
+Package: liblzma5
+Source: xz-utils
+Version: 5.2.5-2.1~deb11u1
+Installed-Size: 224
+Maintainer: Jonathan Nieder <jrnieder@gmail.com>
+Architecture: armhf
+Depends: libc6 (>= 2.17)
+Breaks: liblzma2 (<< 5.1.1alpha+20110809-3~)
+Description: XZ-format compression library
+Multi-Arch: same
+Homepage: https://tukaani.org/xz/
+Description-md5: 0ceca09eb4ab99863be3578fa55e7d2b
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/x/xz-utils/liblzma5_5.2.5-2.1~deb11u1_armhf.deb
+Size: 159084
+MD5sum: 9c2030cef5eb45d948c43bcd4904a9d8
+SHA256: 7cf7e55371340095497e13f5ead469caf63ea9ec73dc76c9603f063a78297ef5
+
+Package: zlib1g
+Source: zlib
+Version: 1:1.2.11.dfsg-2+deb11u2
+Installed-Size: 130
+Maintainer: Mark Brown <broonie@debian.org>
+Architecture: armhf
+Provides: libz1
+Depends: libc6 (>= 2.4)
+Conflicts: zlib1 (<= 1:1.0.4-7)
+Breaks: libxml2 (<< 2.7.6.dfsg-2), texlive-binaries (<< 2009-12)
+Description: compression library - runtime
+Multi-Arch: same
+Homepage: http://zlib.net/
+Description-md5: 567f396aeeb2b2b63295099aed237057
+Tag: role::shared-lib
+Section: libs
+Priority: optional
+Filename: pool/main/z/zlib/zlib1g_1.2.11.dfsg-2+deb11u2_armhf.deb
+Size: 84980
+MD5sum: 3637bd37ccf4dc42e0502170eafa9554
+SHA256: 6c30a8d2525b301765c320c2d49dc6c361e1d3cd2ca9225492c2a083e0b74ce4
+

@@ -10,12 +10,6 @@ VIDEO_WIDTH=640
 VIDEO_HEIGHT=480
 SHM_HEX_KEY="0x696d67"
 
-echo "Building rec2txt"
-mkdir -p build && cd build
-cmake .. -D CMAKE_BUILD_TYPE=Release
-make rec2txt -j$(nproc)
-cd ..
-
 mkdir -p "$OUT_DIR" "$PLOT_DIR"
 echo "Process recordings for commit: $COMMIT_SHA"
 
