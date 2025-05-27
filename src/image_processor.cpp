@@ -1,5 +1,9 @@
 #include "image_processor.hpp"
 
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+
 #include <cerrno>
 #include <chrono>
 #include <cstdint>
@@ -18,6 +22,9 @@
 #include "ground_steering_message_handler.hpp"
 #include "logger.hpp"
 #include "object_detector.hpp"
+
+#define STEERING_SHM_KEY 0x123456
+#define STEERING_SHM_SIZE sizeof(SteeringData)
 
 ImageProcessor::ImageProcessor(
     const Config &config, std::shared_ptr<cluon::OD4Session> od4,
@@ -129,6 +136,7 @@ void ImageProcessor::process_frame() {
 
     if (m_config.should_generate_plot) {
       log_steering(sample_time_point, actual_steering, steering_angle);
+      steering_analyze(sample_time_point, actual_steering, steering_angle);
     }
 
     // filter out actual steering angles where the value is 0
@@ -181,6 +189,37 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
     written = true;
   }
   outputFile << timestamp << ";" << predicted << ";" << actual << "\n";
+}
+
+struct SteeringData {
+  int64_t timestamp;
+  float predicted;
+  float actual;
+};
+
+void ImageProcessor::steering_analyze(int64_t timestamp, float actual,
+                                      float predicted) {
+  auto logger = Logger::get_instance().get_logger();
+
+  int shmid = shmget(STEERING_SHM_KEY, STEERING_SHM_SIZE, IPC_CREAT | 0666);
+  if (shmid < 0) {
+    logger->error(
+        "Failed to get steering shared memory segment for analyze: {}",
+        strerror(errno));
+    return;
+  }
+
+  void *shmaddr = shmat(shmid, nullptr, 0);
+  if (shmaddr == (void *)-1) {
+    logger->error("Failed to attach steering shared memory for analyze: {}",
+                  strerror(errno));
+    return;
+  }
+
+  SteeringData data = {timestamp, predicted, actual};
+  std::memcpy(shmaddr, &data, sizeof(SteeringData));
+
+  shmdt(shmaddr);
 }
 
 void ImageProcessor::annotate_image(cv::Mat &image, int64_t timestamp,

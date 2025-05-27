@@ -37,6 +37,7 @@ class ImageProcessor {
   uint64_t m_evaluated_frames = 0;
   void process_frame();
   void log_steering(int64_t timestamp, float predicted, float actual);
+  void steering_analyze(int64_t, float actual, float predicted);
   void annotate_image(cv::Mat &image, int64_t timestamp, float actual_steering,
                       float steering_angle) const;
 };

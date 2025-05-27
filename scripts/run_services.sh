@@ -6,7 +6,7 @@ docker_image_exists() {
 
 echo "Starting Opendlv Vehicle View"
 docker run --rm -d --init --net=host --name=opendlv-vehicle-view \
-  -v "$PWD/res/video_feeds:/opt/vehicle-view/recordings" \
+  -v "$PWD/../res/video_feeds:/opt/vehicle-view/recordings" \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -p 8081:8081 chrberger/opendlv-vehicle-view:v0.0.64
 
