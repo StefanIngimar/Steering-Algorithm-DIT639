@@ -23,7 +23,7 @@
 #include "logger.hpp"
 #include "object_detector.hpp"
 
-#define STEERING_SHM_KEY 0x123456
+#define STEERING_SHM_KEY 0x696d67
 #define STEERING_SHM_SIZE sizeof(SteeringData)
 
 ImageProcessor::ImageProcessor(
