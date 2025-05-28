@@ -17,13 +17,14 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <sstream>
-
+#include <sys/sem.h>
 #include "config.hpp"
 #include "ground_steering_message_handler.hpp"
 #include "logger.hpp"
 #include "object_detector.hpp"
 
-#define STEERING_SHM_KEY 0x696d67
+#define STEERING_SHM_KEY 0x123e89
+#define STEERING_SEM_KEY 0x654321
 #define STEERING_SHM_SIZE sizeof(SteeringData)
 
 ImageProcessor::ImageProcessor(
@@ -136,7 +137,7 @@ void ImageProcessor::process_frame() {
 
     if (m_config.should_generate_plot) {
       log_steering(sample_time_point, actual_steering, steering_angle);
-      steering_analyze(sample_time_point, actual_steering, steering_angle);
+      steering_analyze(sample_time_point, actual_steering, steering_angle, true);
     }
 
     // filter out actual steering angles where the value is 0
@@ -195,11 +196,27 @@ struct SteeringData {
   int64_t timestamp;
   float predicted;
   float actual;
+  int32_t has_more_data;
 };
 
+// included has_more field. to send the end of data message, pass false
 void ImageProcessor::steering_analyze(int64_t timestamp, float actual,
-                                      float predicted) {
+                                      float predicted, bool has_more) {
   auto logger = Logger::get_instance().get_logger();
+
+  int semid = semget(STEERING_SEM_KEY, 1, IPC_CREAT | 0666);
+  if(semid == -1){
+    logger->error("Failed to create semaphore: {}", strerror(errno));
+    return;
+  }
+
+  static bool sem_initialized = false;
+  if(!sem_initialized){
+    semun arg;
+    arg.val = 1;
+    semctl(semid, 0, SETVAL, arg);
+    sem_initialized = true;
+  }
 
   int shmid = shmget(STEERING_SHM_KEY, STEERING_SHM_SIZE, IPC_CREAT | 0666);
   if (shmid < 0) {
@@ -216,8 +233,13 @@ void ImageProcessor::steering_analyze(int64_t timestamp, float actual,
     return;
   }
 
-  SteeringData data = {timestamp, predicted, actual};
+  struct sembuf lock_op = {0, -1, 0};
+  semop(semid, &lock_op, 1);
+
+  SteeringData data = {timestamp, predicted, actual, has_more ? 1 : 0};
   std::memcpy(shmaddr, &data, sizeof(SteeringData));
+  struct sembuf unlock_op = {0, 1, 0};
+  semop(semid, &unlock_op, 1);
 
   shmdt(shmaddr);
 }
