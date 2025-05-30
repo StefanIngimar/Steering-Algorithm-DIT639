@@ -1,0 +1,12 @@
+# plots/graphs
+matplotlib==3.10.3
+
+# database
+SQLAlchemy==2.0.41
+alembic==1.16.1
+
+# data validation
+pydantic==2.11.5
+
+# shared memory
+sysv-ipc==1.1.0
