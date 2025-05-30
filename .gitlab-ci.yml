@@ -107,13 +107,13 @@ code-coverage:
       when: always
 
 performance-analysis:
-  image: registry.git.chalmers.se/courses/dit638/students/2025-group-04/alpine:3.21
+  image: python:3.12-bullseye 
   stage: performance-test
   tags:
     - docker-build
   before_script:
-    - apk update
-    - apk add --no-cache bash build-base cmake linux-headers python3-dev py3-pip py3-numpy py3-setuptools ffmpeg-dev docker-cli py3-wheel py3-packaging py3-build git
+    - apt-get update
+    - apt-get install -y bash build-essential cmake linux-headers-amd64 python3-dev python3-pip python3-numpy python3-setuptools ffmpeg docker.io python3-wheel python3-packaging python3-venv git
 
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
