@@ -14,7 +14,7 @@ echo "[*] Installing Python dependencies..."
 pip install -r microservices/perfy_producer/requirements.txt
 pip install -r microservices/karen/requirements.txt
 
-xhost +local:
+xhost +local: || true
 
 for rec_file in "${REC_FILES[@]}"; do
   echo "===== Processing: $rec_file ====="
@@ -60,4 +60,4 @@ for rec_file in "${REC_FILES[@]}"; do
   echo "===== Done with: $rec_file ====="
 done
 
-xhost -
+xhost - || true
