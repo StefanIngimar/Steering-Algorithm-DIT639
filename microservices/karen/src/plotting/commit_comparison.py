@@ -1,6 +1,6 @@
 import logging
 import os
-
+from pathlib import Path
 from typing import Sequence, List, Optional
 
 from sqlalchemy.orm import Session
@@ -100,8 +100,8 @@ def plot_commit_comparison(
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
-
-        safe_file_name = file_name.replace(".", "_")
+        #path was throwing for me
+        safe_file_name = Path(file_name).name.replace(".", "_")
         output_path = os.path.join(output_dir, f"commit_comparison_{safe_file_name}_{video_commits[0].commit_id[:8]}.png")
         plt.savefig(output_path, dpi=300, bbox_inches="tight")
         plt.close()

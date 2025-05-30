@@ -9,6 +9,7 @@ struct Config {
   std::string shared_memory_name;
   bool is_verbose;
   bool should_generate_plot;
+  bool should_analyze;
 
   static bool are_arguments_valid(
       const std::map<std::string, std::string>& args) {
@@ -65,6 +66,7 @@ struct Config {
     config.height = static_cast<uint32_t>(std::stoi(args["height"]));
     config.is_verbose = args.count("verbose") != 0;
     config.should_generate_plot = args.count("generate_plot") != 0;
+    config.should_analyze = args.count("analyze") != 0;
 
     return config;
   };

@@ -57,16 +57,29 @@ class VideoProcessor:
         _logger.info("Starting reading steering data")
 
         is_data_coming = True
+        missing_data_count = 0
+        max_missing_retries = 10
+        # it would get stuck at times for some reason, so i added this checker to see if it was done
         while is_data_coming:
-            frame_data = self._data_controller.collect(
-                video_feed_id=video_feed_id,
-            )
-            is_data_coming = frame_data.has_more_data if frame_data else True
+            frame_data = self._data_controller.collect(video_feed_id=video_feed_id)
+    
+            if frame_data is None:
+                missing_data_count += 1
+                if missing_data_count > max_missing_retries:
+                    _logger.warning("No frame data after multiple attempts. Stopping.")
+                    break
+                time.sleep(0.1)
+                continue
+            else:
+                missing_data_count = 0
+
+            is_data_coming = frame_data.has_more_data
 
             if self._data_controller.should_flush():
                 self._data_controller.flush_batch(session=session)
 
-            time.sleep(1/10)
+            time.sleep(0.1)
+        
 
         _logger.info("Finished reading steering data")
 

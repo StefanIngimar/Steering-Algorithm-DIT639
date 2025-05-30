@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <sys/sem.h>
 #include <unistd.h>
 
 #include <cerrno>
@@ -17,7 +18,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <sstream>
-#include <sys/sem.h>
+
 #include "config.hpp"
 #include "ground_steering_message_handler.hpp"
 #include "logger.hpp"
@@ -87,9 +88,9 @@ void ImageProcessor::run() {
 
   // NOTE(sw): notice that we need to send an info to karen when we are done
   // processing frames, without the line below, karen does not know when to stop
-  // if (m_config.should_analyze) {
-  //   steering_analyze(0, 0.0, 0.0, false);
-  // }
+  if (m_config.should_analyze) {
+    steering_analyze(0, 0.0, 0.0, false);
+  }
 
   logger->info("ImageProcessor: Closing image processing");
 }
@@ -141,16 +142,18 @@ void ImageProcessor::process_frame() {
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
     }
 
-    // NOTE(sw): we are running log_steering and steering_analyze only when the flag is set
-    // it might be a better idea to separate those two functions into two separate flags
-    // for more flexilibty, so:
-    // if (m_config.should_analyze) {
-    //   steering_analyze(sample_time_point, actual_steering, steering_angle, true);
-    // }
+    // NOTE(sw): we are running log_steering and steering_analyze only when the
+    // flag is set it might be a better idea to separate those two functions
+    // into two separate flags for more flexilibty, so:
+    if (m_config.should_analyze) {
+      steering_analyze(sample_time_point, actual_steering, steering_angle,
+                       true);
+    }
 
     if (m_config.should_generate_plot) {
       log_steering(sample_time_point, actual_steering, steering_angle);
-      steering_analyze(sample_time_point, actual_steering, steering_angle, true);
+      // steering_analyze(sample_time_point, actual_steering, steering_angle,
+      // true);
     }
 
     // filter out actual steering angles where the value is 0
@@ -218,13 +221,13 @@ void ImageProcessor::steering_analyze(int64_t timestamp, float actual,
   auto logger = Logger::get_instance().get_logger();
 
   int semid = semget(STEERING_SEM_KEY, 1, IPC_CREAT | 0666);
-  if(semid == -1){
+  if (semid == -1) {
     logger->error("Failed to create semaphore: {}", strerror(errno));
     return;
   }
 
   static bool sem_initialized = false;
-  if(!sem_initialized){
+  if (!sem_initialized) {
     semun arg;
     arg.val = 1;
     semctl(semid, 0, SETVAL, arg);
