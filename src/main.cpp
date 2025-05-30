@@ -8,10 +8,13 @@
 #include "cluon-complete.hpp"
 // Include the OpenDLV Standard Message Set that contains messages that are
 // usually exchanged for automotive or robotic applications
+#include <chrono>
+#include <thread>
+
 #include "average_x_path_finder.hpp"
-#include "focal_x_path_finder.hpp"
 #include "config.hpp"
 #include "cv_dnn_runtime.hpp"
+#include "focal_x_path_finder.hpp"
 #include "ground_steering_message_handler.hpp"
 #include "hsv_object_detector.hpp"
 #include "image_processor.hpp"
@@ -33,11 +36,23 @@ int main(int argc, char **argv) {
     auto path_finder = std::make_unique<AverageXPathFinder>();
     // auto path_finder = std::make_unique<FocalXPathFinder>();
 
-    std::unique_ptr<cluon::SharedMemory> shared_memory(
-        new cluon::SharedMemory{config.shared_memory_name});
+    std::unique_ptr<cluon::SharedMemory> shared_memory;
+    const int max_attempts = 300;
+    const int sleep_ms = 300;
+
+    for (int attempt = 0; attempt < max_attempts; ++attempt) {
+      shared_memory =
+          std::make_unique<cluon::SharedMemory>(config.shared_memory_name);
+      if (shared_memory && shared_memory->valid()) {
+        break;
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
+    }
+
     if (!shared_memory || !shared_memory->valid()) {
-      throw std::runtime_error("Failed to attach to shared memory: " +
-                               config.shared_memory_name);
+      throw std::runtime_error(
+          "Failed to attach to shared memory after waiting: " +
+          config.shared_memory_name);
     }
 
     logger->info("{}: Attached to shared memory '{}' ({} bytes).", argv[0],

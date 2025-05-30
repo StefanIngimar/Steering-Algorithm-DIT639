@@ -2,7 +2,7 @@ import time
 import struct
 
 import sysv_ipc
-
+import argparse
 from enum import Enum
 
 import cluonDataStructures_pb2
@@ -24,10 +24,12 @@ class EnvelopeDataType(Enum):
     GROUND_STEERING_ID = 1090
     IMAGE_READING_ID = 1055
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--file", required=True, help="Path to .rec file")
+args = parser.parse_args()
+file_name = args.file
 
 def main() -> None:
-    file_name = "./res/CID-140-recording-2020-03-18_144821-selection.rec"
-
     buffer = b""
     envelope_header_length = 5
     was_envelope_header_consumed = False
