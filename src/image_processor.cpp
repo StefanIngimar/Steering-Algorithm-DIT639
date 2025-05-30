@@ -85,6 +85,12 @@ void ImageProcessor::run() {
     logger->info("No non-zero steering values to calculate correctness");
   }
 
+  // NOTE(sw): notice that we need to send an info to karen when we are done
+  // processing frames, without the line below, karen does not know when to stop
+  // if (m_config.should_analyze) {
+  //   steering_analyze(0, 0.0, 0.0, false);
+  // }
+
   logger->info("ImageProcessor: Closing image processing");
 }
 
@@ -134,6 +140,13 @@ void ImageProcessor::process_frame() {
 
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
     }
+
+    // NOTE(sw): we are running log_steering and steering_analyze only when the flag is set
+    // it might be a better idea to separate those two functions into two separate flags
+    // for more flexilibty, so:
+    // if (m_config.should_analyze) {
+    //   steering_analyze(sample_time_point, actual_steering, steering_angle, true);
+    // }
 
     if (m_config.should_generate_plot) {
       log_steering(sample_time_point, actual_steering, steering_angle);
