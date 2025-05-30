@@ -121,6 +121,8 @@ performance-analysis:
     - . venv/bin/activate
     - pip install --upgrade pip
     - pip install setuptools wheel
+    - pwd
+    - ls -la
     - chmod +x run_and_compare.sh
     - ./run_and_compare.sh
   rules:
