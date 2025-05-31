@@ -44,7 +44,7 @@ for rec_file in "${REC_FILES[@]}"; do
 
   echo "[*] Launching Nutmeg container..."
   docker run --rm --name nutmeg_container --net=host --ipc=host \
-    -e DISPLAY="$DISPLAY" -v /tmp:/tmp \
+    -e DISPLAY="${DISPLAY:-:0}" -v /tmp:/tmp \
     nutmeg:latest --cid=253 --name=img \
     --width=640 --height=480 --analyze &
   NUTMEG_PID=$!
@@ -59,7 +59,10 @@ for rec_file in "${REC_FILES[@]}"; do
   BRIDGE_PID=$!
 
   echo "[*] Waiting briefly for shared memory setup..."
-  sleep 3
+  timeout 10 bash -c 'until ipcs -m | grep 696d67; do sleep 1; done' || {
+    echo "Shared memory not available for Karen"
+    exit 1
+  }
 
   echo "[*] Starting Karen with $rec_file and commit ID: $COMMIT_ID"
   PYTHONPATH=microservices/karen/src \
