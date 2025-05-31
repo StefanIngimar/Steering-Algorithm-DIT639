@@ -24,10 +24,6 @@
 #include "logger.hpp"
 #include "object_detector.hpp"
 
-#define STEERING_SHM_KEY 0x123e89
-#define STEERING_SEM_KEY 0x654321
-#define STEERING_SHM_SIZE sizeof(SteeringData)
-
 ImageProcessor::ImageProcessor(
     const Config &config, std::shared_ptr<cluon::OD4Session> od4,
     std::unique_ptr<ObjectDetector> detector,
@@ -40,6 +36,7 @@ ImageProcessor::ImageProcessor(
           std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
       m_path_finder(std::move(path_finder)),
       m_gs_handler(gs_handler),
+      m_steering_shared_memory(SteeringSharedMemory(0x123e89, sizeof(SteeringData), 0x654321)),
       m_processed_frames(0),
       m_correctly_calculated_steering_angle(0) {
   auto logger = Logger::get_instance().get_logger();
@@ -208,56 +205,15 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
   outputFile << timestamp << ";" << predicted << ";" << actual << "\n";
 }
 
-struct SteeringData {
-  int64_t timestamp;
-  float predicted;
-  float actual;
-  int32_t has_more_data;
-};
-
 // included has_more field. to send the end of data message, pass false
 void ImageProcessor::steering_analyze(int64_t timestamp, float actual,
                                       float predicted, bool has_more) {
   auto logger = Logger::get_instance().get_logger();
 
-  int semid = semget(STEERING_SEM_KEY, 1, IPC_CREAT | 0666);
-  if (semid == -1) {
-    logger->error("Failed to create semaphore: {}", strerror(errno));
-    return;
-  }
-
-  static bool sem_initialized = false;
-  if (!sem_initialized) {
-    semun arg;
-    arg.val = 1;
-    semctl(semid, 0, SETVAL, arg);
-    sem_initialized = true;
-  }
-
-  int shmid = shmget(STEERING_SHM_KEY, STEERING_SHM_SIZE, IPC_CREAT | 0666);
-  if (shmid < 0) {
-    logger->error(
-        "Failed to get steering shared memory segment for analyze: {}",
-        strerror(errno));
-    return;
-  }
-
-  void *shmaddr = shmat(shmid, nullptr, 0);
-  if (shmaddr == (void *)-1) {
-    logger->error("Failed to attach steering shared memory for analyze: {}",
-                  strerror(errno));
-    return;
-  }
-
-  struct sembuf lock_op = {0, -1, 0};
-  semop(semid, &lock_op, 1);
-
   SteeringData data = {timestamp, predicted, actual, has_more ? 1 : 0};
-  std::memcpy(shmaddr, &data, sizeof(SteeringData));
-  struct sembuf unlock_op = {0, 1, 0};
-  semop(semid, &unlock_op, 1);
-
-  shmdt(shmaddr);
+  if (!m_steering_shared_memory.write(data)) {
+    logger->error("Failed to write steering data to shared memory");
+  }
 }
 
 void ImageProcessor::annotate_image(cv::Mat &image, int64_t timestamp,
