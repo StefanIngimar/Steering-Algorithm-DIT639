@@ -6,6 +6,9 @@ COMMIT_ID=$(git rev-parse --short HEAD)
 REC_DIR="microservices/perfy_producer/res"
 REC_FILES=("$REC_DIR"/*.rec)
 
+STEERING_SHM_DECIMAL=1193737
+STEERING_SEM_DECIMAL=6636321  # 0x654321
+
 # Build Nutmeg once outside the loop
 echo "[*] Building Nutmeg image once..."
 docker build -f Dockerfile -t nutmeg .
@@ -60,9 +63,23 @@ for rec_file in "${REC_FILES[@]}"; do
   ./microservices/perfy_bridge/build/perfy &
   BRIDGE_PID=$!
 
-  echo "[*] Waiting briefly for shared memory setup..."
-  timeout 10 bash -c 'until ipcs -m | awk "{print \$2}" | grep -q 1193737; do sleep 1; done' || {
-    echo "Shared memory not available for Karen"
+  echo "[*] Waiting for shared memory (key: 0x123e89 / $STEERING_SHM_DECIMAL)..."
+  timeout 10 bash -c "
+    while ! ipcs -m | awk '{print \$2}' | grep -q '^$STEERING_SHM_DECIMAL\$'; do
+      sleep 0.5
+    done
+  " || {
+    echo "[ERROR] Shared memory with key 0x123e89 not available within timeout"
+    exit 1
+  }
+
+  echo "[*] Waiting for semaphore (key: 0x654321 / $STEERING_SEM_DECIMAL)..."
+  timeout 10 bash -c "
+    while ! ipcs -s | awk '{print \$2}' | grep -q '^$STEERING_SEM_DECIMAL\$'; do
+      sleep 0.5
+    done
+  " || {
+    echo "[ERROR] Semaphore with key 0x654321 not available within timeout"
     exit 1
   }
 
