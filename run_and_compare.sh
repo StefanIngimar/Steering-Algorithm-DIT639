@@ -11,7 +11,7 @@ echo "[*] Building Nutmeg image once..."
 docker build -f Dockerfile -t nutmeg .
 
 echo "[*] Building services..."
-git clone git@github.com:chalmers-revere/opendlv-video-h264-decoder.git
+git clone https://github.com/chalmers-revere/opendlv-video-h264-decoder.git
 docker build -f opendlv-video-h264-decoder/Dockerfile -t h264decoder:v0.0.5 opendlv-video-h264-decoder
 
 echo "[*] Installing Python dependencies..."
