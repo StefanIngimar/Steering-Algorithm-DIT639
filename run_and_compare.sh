@@ -53,6 +53,8 @@ for rec_file in "${REC_FILES[@]}"; do
   python3 microservices/perfy_producer/main.py --file "$rec_file" &
   PRODUCER_PID=$!
 
+  sleep 5
+
   echo "[*] Launching Cyber-Perfy Bridge..."
   #chmod +x microservices/perfy_bridge/run.sh
   ./microservices/perfy_bridge/build/perfy &
