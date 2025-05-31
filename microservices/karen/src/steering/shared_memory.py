@@ -31,8 +31,7 @@ def read_steering_data(timeout: float = 30.0) -> Optional[SteeringData]:
             try:
                 raw_data = shared_memory.read(STEERING_DATA_SIZE_BYTES)
                 timestamp, predicted, actual, has_more_data = struct.unpack(
-                    "<qffb",
-                    raw_data
+                    "<qffb", raw_data
                 )
 
                 return SteeringData(
@@ -46,10 +45,12 @@ def read_steering_data(timeout: float = 30.0) -> Optional[SteeringData]:
         except sysv_ipc.ExistentialError:
             current_time = time.time()
             elapsed = current_time - start_time
-            if (elapsed >= timeout):
-                _logger.error(f"Shared memory of semaphore with key 0x{STEERING_SHM_KEY}/0x{STEERING_SEM_KEY} does not exist")
+            if elapsed >= timeout:
+                _logger.error(
+                    f"Shared memory of semaphore with key {hex(STEERING_SHM_KEY)}/{hex(STEERING_SEM_KEY)} does not exist"
+                )
                 return None
-            
+
             if current_time - last_log_time >= 3:
                 _logger.debug("Shared memory/semaphore is not accessible, retrying...")
                 last_log_time = current_time
@@ -64,4 +65,3 @@ def read_steering_data(timeout: float = 30.0) -> Optional[SteeringData]:
         except Exception as e:
             _logger.error(f"Unexpected error while reading steering data: {e}")
             return None
-
