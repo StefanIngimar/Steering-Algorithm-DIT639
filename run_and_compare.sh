@@ -61,7 +61,7 @@ for rec_file in "${REC_FILES[@]}"; do
   BRIDGE_PID=$!
 
   echo "[*] Waiting briefly for shared memory setup..."
-  timeout 10 bash -c 'until ipcs -m | grep 696d67; do sleep 1; done' || {
+  timeout 10 bash -c 'until ipcs -m | awk "{print \$2}" | grep -q 1193737; do sleep 1; done' || {
     echo "Shared memory not available for Karen"
     exit 1
   }
