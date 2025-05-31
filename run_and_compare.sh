@@ -11,7 +11,7 @@ echo "[*] Building Nutmeg image once..."
 docker build -f Dockerfile -t nutmeg .
 
 echo "[*] Building services..."
-docker build https://github.com/chalmers-revere/opendlv-video-h264-decoder.git#v0.0.5 -f Dockerfile -t h264decoder:v0.0.5
+docker build https://github.com/chalmers-revere/opendlv-video-h264-decoder.git -f Dockerfile -t h264decoder:v0.0.5
 
 echo "[*] Installing Python dependencies..."
 pip install -r microservices/perfy_producer/requirements.txt
