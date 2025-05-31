@@ -18,6 +18,21 @@ echo "[*] Installing Python dependencies..."
 pip install -r microservices/perfy_producer/requirements.txt
 pip install -r microservices/karen/requirements.txt
 
+echo "[*] Installing perfy_bridge..."
+mkdir -p microservices/perfy_bridge/build
+cd microservices/perfy_bridge/build
+cmake .. || {
+  echo "Error: CMake configuration failed"
+  exit 1
+}
+
+make || {
+  echo "Error: Make failed"
+  exit 1
+}
+
+cd - >/dev/null
+
 xhost +local: || true
 
 for rec_file in "${REC_FILES[@]}"; do
@@ -39,8 +54,8 @@ for rec_file in "${REC_FILES[@]}"; do
   PRODUCER_PID=$!
 
   echo "[*] Launching Cyber-Perfy Bridge..."
-  chmod +x microservices/perfy_bridge/run.sh
-  ./microservices/perfy_bridge/run.sh &
+  #chmod +x microservices/perfy_bridge/run.sh
+  ./microservices/perfy_bridge/perfy &
   BRIDGE_PID=$!
 
   echo "[*] Waiting briefly for shared memory setup..."
