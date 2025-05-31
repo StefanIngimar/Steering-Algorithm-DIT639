@@ -55,7 +55,7 @@ for rec_file in "${REC_FILES[@]}"; do
 
   echo "[*] Launching Cyber-Perfy Bridge..."
   #chmod +x microservices/perfy_bridge/run.sh
-  ./microservices/perfy_bridge/perfy &
+  ./microservices/perfy_bridge/build/perfy &
   BRIDGE_PID=$!
 
   echo "[*] Waiting briefly for shared memory setup..."
