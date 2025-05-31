@@ -64,7 +64,7 @@ for rec_file in "${REC_FILES[@]}"; do
   BRIDGE_PID=$!
 
   echo "[*] Waiting for shared memory (key: 0x123e89 / $STEERING_SHM_DECIMAL)..."
-  timeout 10 bash -c "
+  timeout 60 bash -c "
     while ! ipcs -m | awk '{print \$2}' | grep -q '^$STEERING_SHM_DECIMAL\$'; do
       sleep 0.5
     done
@@ -74,7 +74,7 @@ for rec_file in "${REC_FILES[@]}"; do
   }
 
   echo "[*] Waiting for semaphore (key: 0x654321 / $STEERING_SEM_DECIMAL)..."
-  timeout 10 bash -c "
+  timeout 60 bash -c "
     while ! ipcs -s | awk '{print \$2}' | grep -q '^$STEERING_SEM_DECIMAL\$'; do
       sleep 0.5
     done
