@@ -9,20 +9,15 @@ REC_FILES=("$REC_DIR"/*.rec)
 STEERING_SHM_DECIMAL=1193737
 STEERING_SEM_DECIMAL=6636321 # 0x654321
 
-echo "[*] Building Nutmeg locally..."
-mkdir -p build && cd build
-cmake .. || {
-  echo "Error: CMake configuration failed"
-  exit 1
-}
-make -j$(nproc) || {
-  echo "Error: Make failed"
-  exit 1
-}
-cd - >/dev/null
+echo "[*] Test creating shared memory token file"
+touch /tmp/img
+
+# Build Nutmeg once outside the loop
+echo "[*] Building Nutmeg image once..."
+docker build -f Dockerfile -t nutmeg .
 
 echo "[*] Building services..."
-git clone https://github.com/chalmers-revere/opendlv-video-h264-decoder.git || true
+git clone https://github.com/chalmers-revere/opendlv-video-h264-decoder.git
 docker build -f opendlv-video-h264-decoder/Dockerfile -t h264decoder:v0.0.5 opendlv-video-h264-decoder
 
 echo "[*] Installing Python dependencies..."
@@ -36,10 +31,12 @@ cmake .. || {
   echo "Error: CMake configuration failed"
   exit 1
 }
+
 make || {
   echo "Error: Make failed"
   exit 1
 }
+
 cd - >/dev/null
 
 xhost +local: || true
@@ -55,22 +52,17 @@ for rec_file in "${REC_FILES[@]}"; do
   python3 microservices/perfy_producer/main.py --file "$rec_file" &
   PRODUCER_PID=$!
 
-  echo "[*] Creating token file for shared memory..."
-  TOKEN_FILE="/tmp/img"
-  if [ ! -f "$TOKEN_FILE" ]; then
-    touch "$TOKEN_FILE"
-    echo "[*] Token file created at $TOKEN_FILE"
-  else
-    echo "[*] Token file already exists at $TOKEN_FILE"
-  fi
-
-  echo "[*] Launching Nutmeg on host..."
-  ./build/nutmeg --cid=253 --name=img --width=640 --height=480 --analyze &
+  echo "[*] Launching Nutmeg container..."
+  docker run --rm --name nutmeg_container --net=host --ipc=host \
+    -e DISPLAY="${DISPLAY:-:0}" -v /tmp:/tmp \
+    nutmeg:latest --cid=253 --name=img \
+    --width=640 --height=480 --analyze &
   NUTMEG_PID=$!
 
   sleep 5
 
   echo "[*] Launching Cyber-Perfy Bridge..."
+  #chmod +x microservices/perfy_bridge/run.sh
   ./microservices/perfy_bridge/build/perfy &
   BRIDGE_PID=$!
 
@@ -85,13 +77,12 @@ for rec_file in "${REC_FILES[@]}"; do
 
   kill $PRODUCER_PID 2>/dev/null || true
   kill $BRIDGE_PID 2>/dev/null || true
-  kill $NUTMEG_PID 2>/dev/null || true
+  docker stop nutmeg_container >/dev/null 2>&1 || true
 
   echo "[*] Stopping shared memory services..."
   chmod +x scripts/stop_services.sh
   ./scripts/stop_services.sh
 
-  rm -f /tmp/img
   echo "===== Done with: $rec_file ====="
 done
 
