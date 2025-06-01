@@ -23,6 +23,36 @@
 #include "ml_object_detector.hpp"
 #include "opendlv-standard-message-set.hpp"
 
+void attach_to_shared_memory(const Config& config) {
+    auto logger = Logger::get_instance().get_logger();
+    std::unique_ptr<cluon::SharedMemory> shared_memory;
+
+    const int max_attempts = 300;
+    const float backoff_factor = 1.5f;
+    const int max_sleep_ms = 5000;
+
+    int sleep_ms = 500;
+    
+    logger->info("Attempting to attach to shared memory: '{}'", config.shared_memory_name);
+    for (int attempt = 0; attempt < max_attempts; ++attempt) {
+        shared_memory = std::make_unique<cluon::SharedMemory>(config.shared_memory_name);
+        if (shared_memory && shared_memory->valid()) {
+            logger->info("Successfully attached to shared memory after {} attempts", attempt);
+            break;
+        }
+
+        logger->info("Could not attach to shared memory, retrying after {} ms", sleep_ms);
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
+        sleep_ms = std::min(static_cast<int>(sleep_ms * backoff_factor), max_sleep_ms);
+    }
+
+    if (!shared_memory || !shared_memory->valid()) {
+      throw std::runtime_error("Failed to attach to shared memory after waiting: " + config.shared_memory_name);
+    }
+
+    logger->info("Attached to shared memory '{}' ({} bytes).", shared_memory->name(), shared_memory->size());
+}
+
 int main(int argc, char **argv) {
   auto logger = Logger::get_instance().get_logger();
   auto config = Config::parse_config(argc, argv);
@@ -35,37 +65,14 @@ int main(int argc, char **argv) {
     auto detector = std::make_unique<HsvObjectDetector>();
     auto path_finder = std::make_unique<AverageXPathFinder>();
     // auto path_finder = std::make_unique<FocalXPathFinder>();
-
-    std::unique_ptr<cluon::SharedMemory> shared_memory;
-    const int max_attempts = 300;
-    const int sleep_ms = 300;
-
-    for (int attempt = 0; attempt < max_attempts; ++attempt) {
-      shared_memory =
-          std::make_unique<cluon::SharedMemory>(config.shared_memory_name);
-      if (shared_memory && shared_memory->valid()) {
-        break;
-      }
-      std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
-    }
-
-    if (!shared_memory || !shared_memory->valid()) {
-      throw std::runtime_error(
-          "Failed to attach to shared memory after waiting: " +
-          config.shared_memory_name);
-    }
-
-    logger->info("{}: Attached to shared memory '{}' ({} bytes).", argv[0],
-                 shared_memory->name(), shared_memory->size());
+    
+    attach_to_shared_memory(config);
 
     auto gs_msg_handler = std::make_shared<GroundSteeringMessageHandler>();
-
-    std::shared_ptr<cluon::OD4Session> od4 =
-        std::make_shared<cluon::OD4Session>(config.cid);
+    std::shared_ptr<cluon::OD4Session> od4 = std::make_shared<cluon::OD4Session>(config.cid);
     gs_msg_handler->setup(*od4);
-    ImageProcessor processor(config, od4, std::move(detector),
-                             std::move(path_finder), gs_msg_handler);
 
+    ImageProcessor processor(config, od4, std::move(detector), std::move(path_finder), gs_msg_handler);
     processor.run();
   } catch (const std::exception &e) {
     logger->error("Main: Raised exception: {}", e.what());

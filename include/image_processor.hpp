@@ -35,7 +35,7 @@ class ImageProcessor {
   std::unique_ptr<PathFinder> m_path_finder;
   std::shared_ptr<GroundSteeringMessageHandler> m_gs_handler;
 
-  SteeringSharedMemory m_steering_shared_memory;
+  std::unique_ptr<SteeringSharedMemory> m_steering_shared_memory;
 
   uint64_t m_processed_frames;
   uint64_t m_correctly_calculated_steering_angle;

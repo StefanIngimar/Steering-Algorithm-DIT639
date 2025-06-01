@@ -37,9 +37,40 @@ SteeringSharedMemory::SteeringSharedMemory(key_t shm_key, size_t shm_size, key_t
 }
 
 SteeringSharedMemory::~SteeringSharedMemory() {
-    // Detach shared memory (if initialized) when object is destroyed 
-    if (m_shmaddr && m_shmaddr != (void *)-1) {
-        shmdt(m_shmaddr);
+    auto logger = Logger::get_instance().get_logger();
+
+    // detach from shared memory
+    if (m_shmaddr != nullptr && m_shmaddr != (void *)-1) {
+        if (shmdt(m_shmaddr) == -1) {
+            logger->error("Failed to detach shared memory: {}", std::string(strerror(errno)));
+        } else {
+            logger->info("Detached from shared memory");
+        }
+        m_shmaddr = nullptr;
+    }
+
+    // remove shared memory
+    if (m_shmid != -1) {
+        if (shmctl(m_shmid, IPC_RMID, nullptr) == -1) {
+            if (errno != EINVAL) {
+                logger->error("Failed to remove shared memory: {}", std::string(strerror(errno)));
+            }
+        } else {
+            logger->info("Removed shared memory segment with key '{}'", std::to_string(m_shm_key));
+        }
+        m_shmid = -1;
+    }
+
+    // remove semaphore
+    if (m_semid != -1) {
+        if (semctl(m_semid, 0, IPC_RMID) == -1) {
+            if (errno != EINVAL) {
+                logger->error("Failed to remove semaphore: {}", std::string(strerror(errno)));
+            }
+        } else {
+            logger->info("Removed semaphore with key '{}'", std::to_string(m_sem_key));
+        }
+        m_semid = -1;
     }
 }
 
@@ -64,3 +95,4 @@ bool SteeringSharedMemory::write(const SteeringData &data) {
 
     return true;
 }
+

@@ -32,11 +32,10 @@ ImageProcessor::ImageProcessor(
     : m_config(config),
       m_od4(od4),
       m_detector(std::move(detector)),
-      m_shared_memory(
-          std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
+      m_shared_memory(std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
       m_path_finder(std::move(path_finder)),
       m_gs_handler(gs_handler),
-      m_steering_shared_memory(SteeringSharedMemory(0x123e89, sizeof(SteeringData), 0x654321)),
+      m_steering_shared_memory(nullptr),
       m_processed_frames(0),
       m_correctly_calculated_steering_angle(0) {
   auto logger = Logger::get_instance().get_logger();
@@ -44,6 +43,11 @@ ImageProcessor::ImageProcessor(
     logger->warn(
         "[ImageProcessor] No object detector was provided - object "
         "detection will be omitted");
+  }
+
+  if (m_config.should_analyze) {
+    logger->info("[ImageProcessor] Creating an instance of steering shared memory for data comparison");
+    m_steering_shared_memory = std::make_unique<SteeringSharedMemory>(0x123e89, sizeof(SteeringData), 0x654321);
   }
 };
 
@@ -85,7 +89,7 @@ void ImageProcessor::run() {
 
   // NOTE(sw): notice that we need to send an info to karen when we are done
   // processing frames, without the line below, karen does not know when to stop
-  if (m_config.should_analyze) {
+  if (m_config.should_analyze && m_steering_shared_memory) {
     steering_analyze(0, 0.0, 0.0, false);
   }
 
@@ -142,15 +146,12 @@ void ImageProcessor::process_frame() {
     // NOTE(sw): we are running log_steering and steering_analyze only when the
     // flag is set it might be a better idea to separate those two functions
     // into two separate flags for more flexilibty, so:
-    if (m_config.should_analyze) {
-      steering_analyze(sample_time_point, actual_steering, steering_angle,
-                       true);
+    if (m_config.should_analyze && m_steering_shared_memory) {
+      steering_analyze(sample_time_point, actual_steering, steering_angle, true);
     }
 
     if (m_config.should_generate_plot) {
       log_steering(sample_time_point, actual_steering, steering_angle);
-      // steering_analyze(sample_time_point, actual_steering, steering_angle,
-      // true);
     }
 
     // filter out actual steering angles where the value is 0
@@ -211,7 +212,7 @@ void ImageProcessor::steering_analyze(int64_t timestamp, float actual,
   auto logger = Logger::get_instance().get_logger();
 
   SteeringData data = {timestamp, predicted, actual, has_more ? 1 : 0};
-  if (!m_steering_shared_memory.write(data)) {
+  if (!m_steering_shared_memory->write(data)) {
     logger->error("Failed to write steering data to shared memory");
   }
 }

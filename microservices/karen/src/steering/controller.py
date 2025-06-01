@@ -1,7 +1,7 @@
 import time
 import logging
 
-from typing import Callable, Optional, Protocol, List
+from typing import Optional, Protocol, List
 
 from sqlalchemy.orm import Session
 
@@ -9,7 +9,7 @@ from schemas.video_feed_frame_data import VideoFeedFrameDataCreate
 
 from crud.video_feed_frame_data import bulk_create_frame_data
 
-from steering.shared_memory import read_steering_data
+from steering.shared_memory import SteeringSharedMemory
 from steering.schemas import SteeringData
 
 _logger = logging.getLogger(__name__)
@@ -30,8 +30,8 @@ class SteeringDataControllerProtocol(Protocol):
 
 
 class SteeringDataController:
-    def __init__(self, read_steering_callback: Callable[[], Optional[SteeringData]] = read_steering_data, flush_interval_sec: float = 5.0, max_batch_size: int = 100):
-        self._read_data_callback = read_steering_callback
+    def __init__(self, flush_interval_sec: float = 5.0, max_batch_size: int = 100):
+        self._shared_memory = SteeringSharedMemory()
 
         self._batch: List[VideoFeedFrameDataCreate] = []
         self._last_steering_ts = None
@@ -42,20 +42,24 @@ class SteeringDataController:
         self._batch_size = max_batch_size
 
     def collect(self, video_feed_id: str) -> Optional[SteeringData]:
-        steering_data: Optional[SteeringData] = self._read_data_callback()
+        steering_data: Optional[SteeringData] = self._shared_memory.read_steering_data()
         if not steering_data:
+            self._shared_memory.cleanup()
+            _logger.warning("Empty Steering Data object received")
             return None
+
+        if not steering_data.has_more_data:
+            self._shared_memory.cleanup()
+            _logger.info("No more data incoming flag received from the producer")
+            return steering_data
 
         if steering_data.timestamp == 0:
             _logger.warning("Received timestamp with value '0'. Skipping that reading.")
-            # NOTE(sw): kind of a hack... when timestamp is 0 it means that cpp is done sending values
-            # to the shared memory. steering_data has to be returned early without being added to the batch
-            # to signal that not more that is coming
             return steering_data 
 
         current_steering_ts = steering_data.timestamp
         if current_steering_ts == self._last_steering_ts:
-            return None
+            return steering_data
 
         self._last_steering_ts = current_steering_ts
         frame_data = VideoFeedFrameDataCreate(

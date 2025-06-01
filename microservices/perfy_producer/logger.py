@@ -11,7 +11,7 @@ def setup_logging() -> None:
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(
         logging.Formatter(
-            "[Producer] [%(levelname)s] [%(asctime)s] %(name)s: %(message)s"
+            "[PRODUCER] [%(levelname)s] [%(asctime)s] %(name)s: %(message)s"
         )
     )
     console_handler.setLevel(logging.DEBUG)

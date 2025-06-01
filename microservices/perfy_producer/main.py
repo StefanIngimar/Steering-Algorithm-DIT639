@@ -151,10 +151,15 @@ def main() -> None:
     while shared_memory.read(1)[0] == 1:
         time.sleep(0.001)
 
-    # TODO: lets use struct.pack for this
-    shared_memory.write(b"\x00", offset=0)
-    shared_memory.write(b"\x01", offset=1)
+    header = struct.pack(">BBIQd", 0, 1, 0, 0, 0.0)
+    shared_memory.write(header, offset=0)
+    
     shared_memory.detach()
+    try:
+        shared_memory.remove()
+        logger.info(f"Shared memory with key '{SHM_KEY}' removed")
+    except sysv_ipc.ExistentialError:
+        logger.warning(f"Shared memory with key '{SHM_KEY}' already removed")
 
     logger.info(f"Done. Sent '{shared_frames}' frames")
     logger.debug(f"Found ground steering angles: {read_ground_steering_angles}")

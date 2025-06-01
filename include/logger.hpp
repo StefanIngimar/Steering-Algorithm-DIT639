@@ -31,7 +31,7 @@ private:
         logger->set_level(spdlog::level::debug);
         spdlog::register_logger(logger);
 
-        logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [thread %t] %v");
+        logger->set_pattern("[NUTMEG] [%Y-%m-%d %H:%M:%S.%e] [%l] %v");
 
         m_logger = logger;
     }
