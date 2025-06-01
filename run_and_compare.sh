@@ -7,7 +7,7 @@ REC_DIR="microservices/perfy_producer/res"
 REC_FILES=("$REC_DIR"/*.rec)
 
 STEERING_SHM_DECIMAL=1193737
-STEERING_SEM_DECIMAL=6636321  # 0x654321
+STEERING_SEM_DECIMAL=6636321 # 0x654321
 
 # Build Nutmeg once outside the loop
 echo "[*] Building Nutmeg image once..."
