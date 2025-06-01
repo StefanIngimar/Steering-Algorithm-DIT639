@@ -55,6 +55,15 @@ for rec_file in "${REC_FILES[@]}"; do
   python3 microservices/perfy_producer/main.py --file "$rec_file" &
   PRODUCER_PID=$!
 
+  echo "[*] Creating token file for shared memory..."
+  TOKEN_FILE="/tmp/img"
+  if [ ! -f "$TOKEN_FILE" ]; then
+    touch "$TOKEN_FILE"
+    echo "[*] Token file created at $TOKEN_FILE"
+  else
+    echo "[*] Token file already exists at $TOKEN_FILE"
+  fi
+
   echo "[*] Launching Nutmeg on host..."
   ./build/nutmeg --cid=253 --name=img --width=640 --height=480 --analyze &
   NUTMEG_PID=$!
@@ -82,6 +91,7 @@ for rec_file in "${REC_FILES[@]}"; do
   chmod +x scripts/stop_services.sh
   ./scripts/stop_services.sh
 
+  rm -f /tmp/img
   echo "===== Done with: $rec_file ====="
 done
 
