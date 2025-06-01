@@ -9,6 +9,9 @@ REC_FILES=("$REC_DIR"/*.rec)
 STEERING_SHM_DECIMAL=1193737
 STEERING_SEM_DECIMAL=6636321 # 0x654321
 
+echo "[*] Test creating shared memory token file"
+touch /tmp/img
+
 # Build Nutmeg once outside the loop
 echo "[*] Building Nutmeg image once..."
 docker build -f Dockerfile -t nutmeg .
@@ -63,27 +66,27 @@ for rec_file in "${REC_FILES[@]}"; do
   ./microservices/perfy_bridge/build/perfy &
   BRIDGE_PID=$!
 
-  sleep 15
+  #sleep 15
 
-  # echo "[*] Waiting for shared memory (key: 0x123e89 / $STEERING_SHM_DECIMAL)..."
-  # timeout 60 bash -c "
-  #   while ! ipcs -m | awk '{print \$2}' | grep -q '^$STEERING_SHM_DECIMAL\$'; do
-  #     sleep 0.5
-  #   done
-  # " || {
-  #   echo "[ERROR] Shared memory with key 0x123e89 not available within timeout"
-  #   exit 1
-  # }
+  echo "[*] Waiting for shared memory (key: 0x123e89 / $STEERING_SHM_DECIMAL)..."
+  timeout 60 bash -c "
+     while ! ipcs -m | awk '{print \$2}' | grep -q '^$STEERING_SHM_DECIMAL\$'; do
+       sleep 0.5
+     done
+   " || {
+    echo "[ERROR] Shared memory with key 0x123e89 not available within timeout"
+    exit 1
+  }
 
-  # echo "[*] Waiting for semaphore (key: 0x654321 / $STEERING_SEM_DECIMAL)..."
-  # timeout 60 bash -c "
-  #   while ! ipcs -s | awk '{print \$2}' | grep -q '^$STEERING_SEM_DECIMAL\$'; do
-  #     sleep 0.5
-  #   done
-  # " || {
-  #   echo "[ERROR] Semaphore with key 0x654321 not available within timeout"
-  #   exit 1
-  # }
+  echo "[*] Waiting for semaphore (key: 0x654321 / $STEERING_SEM_DECIMAL)..."
+  timeout 60 bash -c "
+     while ! ipcs -s | awk '{print \$2}' | grep -q '^$STEERING_SEM_DECIMAL\$'; do
+       sleep 0.5
+     done
+   " || {
+    echo "[ERROR] Semaphore with key 0x654321 not available within timeout"
+    exit 1
+  }
 
   echo "[*] Starting Karen with $rec_file and commit ID: $COMMIT_ID"
   PYTHONPATH=microservices/karen/src \
