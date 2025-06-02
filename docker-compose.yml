@@ -1,4 +1,27 @@
 services:
+  vehicle-view:
+    image: chrberger/opendlv-vehicle-view:v0.0.64
+    volumes:
+      - ./res/video_feeds:/opt/vehicle-view/recordings
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8081:8081"
+    network_mode: host
+    ipc: host
+
+  h264-decoder:
+    build:
+      context: https://github.com/chalmers-revere/opendlv-video-h264-decoder.git#v0.0.5
+      dockerfile: Dockerfile
+    image: h26decoder:v0.0.5
+    command: ["--cid=253", "--name=img"]
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp:/tmp
+    network_mode: host
+    ipc: host
+
   producer:
     build: ./microservices/perfy_producer
     command: ["python3", "main.py", "--file", "res/${RECORDING_FILE}"]

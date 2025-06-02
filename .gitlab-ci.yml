@@ -123,8 +123,7 @@ performance-analysis:
     - pip install setuptools wheel
     - pwd
     - ls -la
-    - chmod +x run_and_compare.sh
-    - ./run_and_compare.sh
+    - python3 scripts/analyze.py
   rules:
     - when: always
 
