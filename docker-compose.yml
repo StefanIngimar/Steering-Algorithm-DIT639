@@ -16,7 +16,7 @@ services:
     image: h264decoder:v0.0.5
     command: ["--cid=253", "--name=img"]
     environment:
-      - DISPLAY=${DISPLAY}
+      - DISPLAY=${DISPLAY:-:0}
     volumes:
       - /tmp:/tmp
     network_mode: host
@@ -50,11 +50,11 @@ services:
       "--name=img",
       "--width=640",
       "--height=480",
-      "--verbose",
+    # "--verbose",
       "--analyze"
     ]
     environment:
-      - DISPLAY=${DISPLAY}
+      - DISPLAY=${DISPLAY:-:0}
     volumes:
       - /tmp:/tmp
     network_mode: host
