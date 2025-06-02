@@ -130,7 +130,7 @@ performance-analysis:
     - python3 scripts/analyze.py
   rules:
     - when: always
-  privileged: true
+  #privileged: true
 
 # This section describes what shall be done to deploy artefacts from the project.
 #test
