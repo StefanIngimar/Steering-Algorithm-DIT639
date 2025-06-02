@@ -4,14 +4,14 @@ import os
 
 RECORDINGS = [
     "CID-140-recording-2020-03-18_144821-selection.rec",
-    # "CID-140-recording-2020-03-18_145043-selection.rec",
-    # "CID-140-recording-2020-03-18_145233-selection.rec",
-    # "CID-140-recording-2020-03-18_145641-selection.rec",
-    # "CID-140-recording-2020-03-18_150001-selection.rec",
+    "CID-140-recording-2020-03-18_145043-selection.rec",
+    "CID-140-recording-2020-03-18_145233-selection.rec",
+    "CID-140-recording-2020-03-18_145641-selection.rec",
+    "CID-140-recording-2020-03-18_150001-selection.rec",
 ]
 
 # TODO: random for now, change later!
-COMMIT_ID = uuid.uuid4()
+COMMIT_ID = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
 
 for rec_file in RECORDINGS:
     print(f"Running with recording file '{rec_file}'")
