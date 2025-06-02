@@ -13,7 +13,7 @@ services:
     build:
       context: https://github.com/chalmers-revere/opendlv-video-h264-decoder.git#v0.0.5
       dockerfile: Dockerfile
-    image: h26decoder:v0.0.5
+    image: h264decoder:v0.0.5
     command: ["--cid=253", "--name=img"]
     environment:
       - DISPLAY=${DISPLAY}
@@ -29,6 +29,9 @@ services:
       - ./microservices/perfy_producer/res:/res
     network_mode: host
     ipc: host
+    depends_on:
+      - vehicle-view
+      - h264-decoder
 
   bridge:
     build: ./microservices/perfy_bridge
@@ -59,6 +62,7 @@ services:
     depends_on: 
       - producer
       - bridge
+      - h264-decoder
 
   karen:
     build: ./microservices/karen
