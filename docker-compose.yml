@@ -1,0 +1,46 @@
+services:
+  producer:
+    build: ./microservices/perfy_producer
+    command: ["python3", "main.py", "--file", "res/${RECORDING_FILE}"]
+    volumes:
+      - ./microservices/perfy_producer/res:/res
+    network_mode: host
+    ipc: host
+
+  bridge:
+    build: ./microservices/perfy_bridge
+    image: perfy_bridge:latest
+    network_mode: host
+    ipc: host
+    depends_on: 
+      - producer
+
+  nutmeg:
+    build: .
+    image: nutmeg:latest
+    command: [
+      "./nutmeg",
+      "--cid=253",
+      "--name=img",
+      "--width=640",
+      "--height=480",
+      "--verbose",
+      "--analyze"
+    ]
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp:/tmp
+    network_mode: host
+    ipc: host
+    depends_on: 
+      - producer
+      - bridge
+
+  karen:
+    build: ./microservices/karen
+    command: ["python3", "src/main.py", "--commit_id", "${GIT_COMMIT_ID}", "--video_file", "${RECORDING_FILE}"]
+    network_mode: host
+    ipc: host
+    depends_on: 
+      - nutmeg
