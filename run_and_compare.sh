@@ -16,6 +16,9 @@ touch /tmp/img
 echo "[*] Building Nutmeg image once..."
 docker build -f Dockerfile -t nutmeg .
 
+echo "[*] Building Karen image..."
+docker build -f microservices/karen/Dockerfile -t karen:latest microservices/karen
+
 echo "[*] Building services..."
 git clone https://github.com/chalmers-revere/opendlv-video-h264-decoder.git
 docker build -f opendlv-video-h264-decoder/Dockerfile -t h264decoder:v0.0.5 opendlv-video-h264-decoder
@@ -62,16 +65,19 @@ for rec_file in "${REC_FILES[@]}"; do
   sleep 5
 
   echo "[*] Launching Cyber-Perfy Bridge..."
-  #chmod +x microservices/perfy_bridge/run.sh
   ./microservices/perfy_bridge/build/perfy &
   BRIDGE_PID=$!
 
   sleep 15
 
   echo "[*] Starting Karen with $rec_file and commit ID: $COMMIT_ID"
-  PYTHONPATH=microservices/karen/src \
-    python3 microservices/karen/src/main.py \
-    --commit_id "$COMMIT_ID" --video_file "$rec_file"
+  docker run --rm --ipc=host \
+      -v "$(pwd)/microservices/karen":/app \
+      -v "$rec_file":"$rec_file" \
+      -e PYTHONPATH=/app/src \
+      karen:latest \
+      python3 /app/src/main.py \
+      --commit_id "$COMMIT_ID" --video_file "$rec_file"
 
   echo "[*] Karen completed. Cleaning up..."
 

@@ -9,6 +9,6 @@ echo "Starting nutmeg..."
 docker run --rm --net=host --ipc=host \
   -e DISPLAY="$DISPLAY" -v /tmp:/tmp \
   nutmeg:latest --cid=253 --name=img \
-  --width=640 --height=480 --verbose
+  --width=640 --height=480 --verbose --analyze
 
 xhost -

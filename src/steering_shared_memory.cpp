@@ -1,4 +1,5 @@
 #include "steering_shared_memory.hpp"
+#include <cstring>
 #include "logger.hpp"
 #include "cluon-complete.hpp"
 
@@ -36,8 +37,7 @@ SteeringSharedMemory::SteeringSharedMemory(key_t shm_key, size_t shm_size, key_t
     m_is_initialized = true;
 }
 
-SteeringSharedMemory::~SteeringSharedMemory() {
-    auto logger = Logger::get_instance().get_logger();
+SteeringSharedMemory::~SteeringSharedMemory() { auto logger = Logger::get_instance().get_logger();
 
     // detach from shared memory
     if (m_shmaddr != nullptr && m_shmaddr != (void *)-1) {
@@ -75,21 +75,24 @@ SteeringSharedMemory::~SteeringSharedMemory() {
 }
 
 bool SteeringSharedMemory::write(const SteeringData &data) {
+    auto logger = Logger::get_instance().get_logger();
+
     if (!m_is_initialized) {
+        logger->warn("Shared memory is not initialized");
         return false;
     }
 
     struct sembuf lock_op = {0, -1, 0};
     struct sembuf unlock_op = {0, 1, 0};
     if (semop(m_semid, &lock_op, 1) == -1) {
-        std::cerr << "Failed to lock semaphore: " << strerror(errno) << std::endl;
+        logger->error("Failed to lock semaphore: {}", strerror(errno));
         return false;
     }
 
     std::memcpy(m_shmaddr, &data, sizeof(SteeringData));
 
     if (semop(m_semid, &unlock_op, 1) == -1) {
-        std::cerr << "Failed to unlock semaphore: " << strerror(errno) << std::endl;
+        logger->error("Failed to unlock semaphore: {}", strerror(errno));
         return false;
     }
 
