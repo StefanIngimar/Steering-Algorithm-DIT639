@@ -7,8 +7,15 @@ import time
 from steering.controller import SteeringDataController
 from plotting.commit_comparison import generate_plots
 from video_processor import VideoProcessor
-READY_FILE = "/res/.ready"
-print("[KAREN] Waiting for producer to finish..")
+
+def wait_for_ready_signal(ready_path, timeout=60):
+    print("[KAREN] Waiting for producer to finish..")
+    for _ in range(timeout):
+        if os.path.exists(ready_path):
+            print("[KAREN] Detected .ready file. Proceeding to genereate plots")
+            return True
+        time.sleep(1)
+    raise TimeoutError("Timeout waiting for .ready signal file")
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -22,14 +29,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    for _ in range(120):
-        if os.path.exists(READY_FILE):
-            print("[KAREN] Detected .ready file. Proceeding to genereate plots")
-            break
-        time.sleep(1)
-    else:
-        print("[KAREN] Timout waithing for producer .ready signal")
-        return
+    ready_path = "/res/.ready"
+    wait_for_ready_signal(ready_path)
 
     setup_logging()
 
@@ -43,6 +44,8 @@ def main() -> None:
     
     with db.new_session() as session:
         generate_plots(session=session)
+
+    os.remove(ready_path)
 
 
 if __name__ == "__main__":
