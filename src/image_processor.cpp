@@ -23,6 +23,7 @@
 #include "ground_steering_message_handler.hpp"
 #include "logger.hpp"
 #include "object_detector.hpp"
+#include "processing_status_message_handler.hpp"
 
 ImageProcessor::ImageProcessor(
     const Config &config, std::shared_ptr<cluon::OD4Session> od4,
@@ -35,6 +36,7 @@ ImageProcessor::ImageProcessor(
       m_shared_memory(std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
       m_path_finder(std::move(path_finder)),
       m_gs_handler(gs_handler),
+      m_ps_handler(ProcessingStatusMessageHandler()),
       m_steering_shared_memory(nullptr),
       m_processed_frames(0),
       m_correctly_calculated_steering_angle(0) {
@@ -49,6 +51,8 @@ ImageProcessor::ImageProcessor(
     logger->info("[ImageProcessor] Creating an instance of steering shared memory for data comparison");
     m_steering_shared_memory = std::make_unique<SteeringSharedMemory>(0x123e89, sizeof(SteeringData), 0x654321);
   }
+
+  m_ps_handler.setup(*od4);
 };
 
 void ImageProcessor::run() {
@@ -57,6 +61,11 @@ void ImageProcessor::run() {
   logger->info("ImageProcessor: Starting image processing");
   while (m_od4->isRunning()) {
     try {
+      if (m_ps_handler.get_status() == ProcessStatus::DONE) {
+        logger->info("Received 'done' status from the producer. Exiting the main loop.'");
+        break;
+      }
+
       process_frame();
       m_processed_frames += 1;
     } catch (const std::exception &e) {

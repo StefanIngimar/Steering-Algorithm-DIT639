@@ -25,6 +25,10 @@ message opendlv.sim.Frame [id = 1001] {
   float yaw [id = 6];
 }
 
+message opendlv.sim.ProcessingStatus [id = 1099] {
+    string status [id = 1];
+}
+
 message opendlv.sim.KinematicState [id = 1002] {
   float vx [id = 1];
   float vy [id = 2];

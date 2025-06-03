@@ -4,6 +4,7 @@
 
 #include "config.hpp"
 #include "ground_steering_message_handler.hpp"
+#include "processing_status_message_handler.hpp"
 #include "object_detector.hpp"
 #include "path_finder.hpp"
 #include "steering_shared_memory.hpp"
@@ -33,7 +34,9 @@ class ImageProcessor {
 
   std::unique_ptr<cluon::SharedMemory> m_shared_memory;
   std::unique_ptr<PathFinder> m_path_finder;
+
   std::shared_ptr<GroundSteeringMessageHandler> m_gs_handler;
+  ProcessingStatusMessageHandler m_ps_handler;
 
   std::unique_ptr<SteeringSharedMemory> m_steering_shared_memory;
 

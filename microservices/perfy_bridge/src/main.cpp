@@ -143,10 +143,11 @@ int main(){
     logger->info("Started cluon OD4 session with CID '{}'", cluon_cid);
 
     uint32_t frame_count = 0;
+    ParsedHeader result;
     while (true) {
         uint8_t* data = reinterpret_cast<uint8_t*>(shm_ptr);
 
-        ParsedHeader result = parse_header(data, MAX_H264_FRAME_SIZE);
+        result = parse_header(data, MAX_H264_FRAME_SIZE);
 
         if (result.status == TERMINATION_SIGNAL) {
             break;
@@ -168,10 +169,29 @@ int main(){
 
         frame_count += 1;
         if (frame_count % 100 == 0) {
-            logger->debug("Received {} frames", frame_count);
+            logger->info("Received {} frames", frame_count);
         }
     }
     logger->info("Done. Received {} frames", frame_count);
+
+    auto now = std::chrono::system_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch());
+    int64_t now_us = duration.count();
+
+    cluon::data::TimeStamp cluon_ts;
+    cluon_ts.seconds(static_cast<int32_t>(now_us / 1000000));
+    cluon_ts.microseconds(static_cast<int32_t>(now_us % 1000000));
+
+    opendlv::sim::ProcessingStatus status_msg;
+    status_msg.status("done");
+    od4.send(status_msg, cluon_ts, 0);
+    
+    // NOTE(sw): that is basically a hack... not super proud... after the 'done' processing status is sent, we still need
+    // to send one more frame to nutmeg. This prevents the situation when the shared memory is waiting indefinitely - since all frames were
+    // already sent there will be no more data coming to the shared memory creating an infinite loop.
+    opendlv::proxy::ImageReading msg;
+    msg.data(std::string(result.frame_data.begin(), result.frame_data.end())).fourcc("h264").width(640).height(480);
+    od4.send(msg, cluon_ts, 0);
 
     logger->info("Detaching from shared memory with key {}", ss.str());
     shmdt(shm_ptr);
