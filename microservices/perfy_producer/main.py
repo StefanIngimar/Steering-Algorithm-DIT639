@@ -163,6 +163,8 @@ def main() -> None:
 
     logger.info(f"Done. Sent '{shared_frames}' frames")
     logger.debug(f"Found ground steering angles: {read_ground_steering_angles}")
+    with open("/res/.ready", "w") as f:
+        f.write("done\n")
 
 
 if __name__ == "__main__":

@@ -3,11 +3,12 @@ import argparse
 from db.database import Sqlite 
 
 from core.logger import setup_logging
-
+import time
 from steering.controller import SteeringDataController
 from plotting.commit_comparison import generate_plots
 from video_processor import VideoProcessor
-
+READY_FILE = "/res/.ready"
+print("[KAREN] Waiting for producer to finish..")
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -20,6 +21,15 @@ def main() -> None:
         "--video_file", type=str, required=True, help="Video file name that is currently used by the image processing application"
     )
     args = parser.parse_args()
+
+    for _ in range(120):
+        if os.path.exists(READY_FILE):
+            print("[KAREN] Detected .ready file. Proceeding to genereate plots")
+            break
+        time.sleep(1)
+    else:
+        print("[KAREN] Timout waithing for producer .ready signal")
+        return
 
     setup_logging()
 
