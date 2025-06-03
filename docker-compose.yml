@@ -70,7 +70,6 @@ services:
     network_mode: host
     volumes:
       - ./output/plots:/app/data/plots
-      - ./microservices/perfy_producer/res:/res
     ipc: host
     depends_on: 
       - nutmeg

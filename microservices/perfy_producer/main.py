@@ -161,10 +161,8 @@ def main() -> None:
     except sysv_ipc.ExistentialError:
         logger.warning(f"Shared memory with key '{SHM_KEY}' already removed")
 
-    logger.info(f"Done. Sent '{shared_frames}' frames")
+    logger.info(f"Done. eent '{shared_frames}' frames")
     logger.debug(f"Found ground steering angles: {read_ground_steering_angles}")
-    with open("/res/.ready", "w") as f:
-        f.write("done\n")
 
 
 if __name__ == "__main__":

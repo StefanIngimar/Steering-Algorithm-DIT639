@@ -20,18 +20,11 @@ for rec_file in RECORDINGS:
         f.write(f"RECORDING_FILE={rec_file}\n")
         f.write(f"GIT_COMMIT_ID={COMMIT_ID}\n")
 
-    ready_path = "microservices/perfy_producer/res/.ready"
-    if os.path.exists(ready_path):
-        os.remove(ready_path)
-
     try:
         subprocess.run([
-        "docker", "compose", "up", "--build"
+        "docker", "compose", "up", "--build", "--abort-on-container-exit"
         ], check=True)
         
-        print("[HOST] Waiting briefly for karen to finish plots..")
-        time.sleep(5)
-
         subprocess.run([
             "docker", "compose", "down", "--remove-orphans"
         ], check=True)
