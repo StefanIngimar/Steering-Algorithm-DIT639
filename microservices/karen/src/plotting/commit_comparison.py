@@ -17,6 +17,7 @@ def generate_plots(session: Session) -> None:
     """
     Generate comparison plots for the last two commits. 
     """
+    print(">>> Inside generate_plots")
     try:
         _logger.info("Getting two last commits data")
         commit_data = get_last_two_commits_data(db=session)

@@ -28,6 +28,8 @@ def main() -> None:
     processor = VideoProcessor(db=db, data_controller=data_controller)
 
     processor.process(commit_id=args.commit_id, video_file_name=args.video_file)
+
+    print(">>>>> Finished processing, about to generate plots")
     
     with db.new_session() as session:
         generate_plots(session=session)

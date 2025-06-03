@@ -68,6 +68,8 @@ services:
     build: ./microservices/karen
     command: ["python3", "src/main.py", "--commit_id", "${GIT_COMMIT_ID}", "--video_file", "${RECORDING_FILE}"]
     network_mode: host
+    volumes:
+      - ./output/plots:/app/data/plots
     ipc: host
     depends_on: 
       - nutmeg
