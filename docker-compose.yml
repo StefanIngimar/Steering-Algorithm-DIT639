@@ -1,13 +1,13 @@
 services:
-  vehicle-view:
-    image: chrberger/opendlv-vehicle-view:v0.0.64
-    volumes:
-      - ./res/video_feeds:/opt/vehicle-view/recordings
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "8081:8081"
-    network_mode: host
-    ipc: host
+  #  vehicle-view:
+  #    image: chrberger/opendlv-vehicle-view:v0.0.64
+  #    volumes:
+  #      - ./res/video_feeds:/opt/vehicle-view/recordings
+  #      - /var/run/docker.sock:/var/run/docker.sock
+  #    ports:
+  #      - "8081:8081"
+  #    network_mode: host
+  #    ipc: host
 
   h264-decoder:
     build:
@@ -30,7 +30,6 @@ services:
     network_mode: host
     ipc: host
     depends_on:
-      - vehicle-view
       - h264-decoder
 
   bridge:

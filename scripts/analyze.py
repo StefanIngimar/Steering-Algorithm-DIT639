@@ -21,7 +21,7 @@ for rec_file in RECORDINGS:
     env["GIT_COMMIT_ID"] = str(COMMIT_ID)
 
     subprocess.run([
-        "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "--abort-on-container-exit"
+        "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "--exit-code-from", "karen",
     ], check=True, env=env)
 
     subprocess.run(["docker", "compose", "down", "--remove-orphans"], check=True)
