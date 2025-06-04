@@ -24,5 +24,16 @@ for rec_file in RECORDINGS:
         "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "--exit-code-from", "karen",
     ], check=True, env=env)
 
+    subprocess.run([
+    "docker", "run", "--rm",
+    "-e", f"GIT_COMMIT_ID={COMMIT_ID}",
+    "-e", f"RECORDING_FILE={rec_file}",
+    "-v", f"{os.getcwd()}/data:/app/data",
+    "2025-group-04-karen",
+    "python", "karen-plot.py",
+    "--commit_id", str(COMMIT_ID),
+    "--video_file", rec_file
+])
+
     subprocess.run(["docker", "compose", "down", "--remove-orphans"], check=True)
 
