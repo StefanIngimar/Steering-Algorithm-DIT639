@@ -39,10 +39,6 @@ for rec_file in RECORDINGS:
     ], check=False)  
 
     subprocess.run([
-        "docker", "compose", "-f", "docker-compose.yml", "wait", "karen"
-    ], check=True)
- 
-    subprocess.run([
     "docker", "compose", "-f", "docker-compose.yml", "down", "--remove-orphans"
     ], check=True)
 
