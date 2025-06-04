@@ -1,6 +1,7 @@
 import uuid
 import subprocess
 import os
+import time
 
 RECORDINGS = [
     "CID-140-recording-2020-03-18_144821-selection.rec",
