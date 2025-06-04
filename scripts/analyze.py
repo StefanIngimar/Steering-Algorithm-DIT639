@@ -25,22 +25,31 @@ for rec_file in RECORDINGS:
     #    "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "--exit-code-from", "karen"
     #], check=True, env=env)
 
-    subprocess.run([
+    compose_proc = subprocess.Popen([
         "docker", "compose", "-f", "docker-compose.yml", "up", "--build"
-    ], check=True, env=env)
+    ], env=env)
 
-    result = subprocess.run([
-        "docker", "compose", "-f", "docker-compose.yml", "ps", "--status=exited"
-    ], capture_output=True, text=True)
+    print("[INFO] Launched containers, monitoring nutmeg...")
 
-    if "nutmeg" in result.stdout:
-        subprocess.run([
-            "docker", "compose", "-f", "docker-compose.yml", "stop", "h264-decoder",
-        ], check=True)
+    while True:
+        result = subprocess.run([
+            "docker", "compose", "-f", "docker-compose.yml", "ps", "--status=exited"
+        ], capture_output=True, text=True)
 
+        if "nutmeg" in result.stdout:
+            print("[INFO] Nutmeg exited. Stopping h264-decoder...")
+            subprocess.run([
+                "docker", "compose", "-f", "docker-compose.yml", "stop", "h264-decoder"
+            ], check=True)
+            break
+        time.sleep(2)
+
+    compose_proc.wait()
+
+    print("[INFO] Cleaning up containers...")
     subprocess.run([
-    "docker", "compose", "-f", "docker-compose.yml", "down", "--remove-orphans"
-    ], check=True)
+        "docker", "compose", "-f", "docker-compose.yml", "down", "--remove-orphans"
+    ], check=True) 
 
     #subprocess.run(["docker", "compose", "down", "--remove-orphans"], check=True)
 
