@@ -32,6 +32,7 @@ for rec_file in RECORDINGS:
     "docker", "run", "--rm",
     "-e", f"GIT_COMMIT_ID={COMMIT_ID}",
     "-e", f"RECORDING_FILE={rec_file}",
+    "-e", "PYTHONPATH=/app/src",
     "-v", f"{os.getcwd()}/data:/app/data",
     "2025-group-04-karen",
     "python", "src/plotting/commit_comparison.py",
