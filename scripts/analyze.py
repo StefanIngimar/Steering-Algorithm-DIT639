@@ -10,15 +10,19 @@ RECORDINGS = [
     # "CID-140-recording-2020-03-18_150001-selection.rec",
 ]
 
-# COMMIT_ID = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
-COMMIT_ID = uuid.uuid4()
+COMMIT_ID = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
+#COMMIT_ID = uuid.uuid4()
 
 for rec_file in RECORDINGS:
     print(f"Running with recording file '{rec_file}'")
 
-    env = os.environ.copy()
-    env["RECORDING_FILE"] = rec_file
-    env["GIT_COMMIT_ID"] = str(COMMIT_ID)
+    #env = os.environ.copy()
+    #env["RECORDING_FILE"] = rec_file
+    #env["GIT_COMMIT_ID"] = str(COMMIT_ID)
+    with open(".env", "w") as f:
+        f.write(f"RECORDING_FILE={rec_file}\n")
+        f.write(f"GIT_COMMIT_ID={COMMIT_ID}\n")
+
 
     subprocess.run([
         "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "--exit-code-from", "karen",
