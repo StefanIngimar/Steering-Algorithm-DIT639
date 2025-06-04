@@ -17,10 +17,13 @@ COMMIT_ID = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).dec
 for rec_file in RECORDINGS:
     print(f"Running with recording file '{rec_file}'")
 
-    env = os.environ.copy()
-    env["RECORDING_FILE"] = rec_file
-    env["GIT_COMMIT_ID"] = str(COMMIT_ID)
+    # env = os.environ.copy()
+    # env["RECORDING_FILE"] = rec_file
+    # env["GIT_COMMIT_ID"] = str(COMMIT_ID)
 
+    with open(".env", "w") as f:
+        f.write(f"RECORDING_FILE={rec_file}\n")
+        f.write(f"GIT_COMMIT_ID={COMMIT_ID}\n")
 
     #subprocess.run([
     #    "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "--exit-code-from", "karen"
@@ -28,7 +31,7 @@ for rec_file in RECORDINGS:
 
     compose_proc = subprocess.Popen([
         "docker", "compose", "-f", "docker-compose.yml", "up", "--build"
-    ], env=env)
+    ])
 
     print("[INFO] Launched containers, monitoring nutmeg...")
 
@@ -53,4 +56,6 @@ for rec_file in RECORDINGS:
     ], check=True) 
 
     #subprocess.run(["docker", "compose", "down", "--remove-orphans"], check=True)
+
+os.remove(".env")
 
