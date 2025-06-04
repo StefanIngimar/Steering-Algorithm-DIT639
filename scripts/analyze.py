@@ -29,6 +29,15 @@ for rec_file in RECORDINGS:
         "docker", "compose", "-f", "docker-compose.yml", "up", "--build"
     ], check=True, env=env)
 
+    result = subprocess.run([
+        "docker", "compose", "-f", "docker-compose.yml", "ps", "--status=exited", "--format", "json"
+    ], capture_output=True, text=True)
+
+    if '"Name": "nutmeg"' in result.stdout:
+        subprocess.run([
+            "docker", "compose", "-f", "docker-compose.yml", "stop", "h264decoder:v0.0.5"
+        ], check=True)
+
     subprocess.run([
     "docker", "compose", "-f", "docker-compose.yml", "down", "--remove-orphans"
     ], check=True)
