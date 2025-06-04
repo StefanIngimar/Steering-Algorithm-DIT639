@@ -33,9 +33,8 @@ for rec_file in RECORDINGS:
     "docker", "compose", "-f", "docker-compose.yml", "wait", "karen"
     ], check=True)
 
-    for service in ["producer", "bridge", "nutmeg", "h264-decoder", "karen"]:
     subprocess.run([
-        "docker", "compose", "-f", "docker-compose.yml", "logs", service
+        "docker", "compose", "-f", "docker-compose.yml", "logs"
     ], check=True)
  
     subprocess.run([
