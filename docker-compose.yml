@@ -70,6 +70,7 @@ services:
     network_mode: host
     volumes:
       - ./output/plots:/app/data/plots
+      - ./microservices/karen/data/app.db:/app/data/app.db
     environment:
       - GIT_COMMIT_ID=${GIT_COMMIT_ID}
       - RECORDING_FILE=${RECORDING_FILE}
