@@ -30,7 +30,7 @@ for rec_file in RECORDINGS:
     "-e", f"RECORDING_FILE={rec_file}",
     "-v", f"{os.getcwd()}/data:/app/data",
     "2025-group-04-karen",
-    "python", "karen-plot.py",
+    "python", "src/plotting/commit_comparison.py",
     "--commit_id", str(COMMIT_ID),
     "--video_file", rec_file
 ])
