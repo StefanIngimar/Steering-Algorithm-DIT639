@@ -26,7 +26,7 @@ for rec_file in RECORDINGS:
 
     subprocess.run([
         "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "--exit-code-from", "karen",
-    ], check=True, env=env)
+    ], check=True)
 
     subprocess.run([
     "docker", "run", "--rm",
