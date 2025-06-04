@@ -70,6 +70,9 @@ services:
     network_mode: host
     volumes:
       - ./output/plots:/app/data/plots
+    environment:
+      - GIT_COMMIT_ID=${GIT_COMMIT_ID}
+      - RECORDING_FILE=${RECORDING_FILE}
     ipc: host
     depends_on: 
       - nutmeg
