@@ -26,15 +26,20 @@ for rec_file in RECORDINGS:
     #], check=True, env=env)
 
     subprocess.run([
-    "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "-d"
+        "docker", "compose", "-f", "docker-compose.yml", "up", "--build", "-d"
     ], check=True, env=env)
 
     subprocess.run([
-    "docker", "compose", "-f", "docker-compose.yml", "wait", "karen"
+        "docker", "compose", "-f", "docker-compose.yml", "wait", "nutmeg"
     ], check=True)
 
+    print("Nutmeg finished. Giving Karen time to finish plotting...")
     subprocess.run([
-        "docker", "compose", "-f", "docker-compose.yml", "logs"
+        "docker", "compose", "-f", "docker-compose.yml", "logs", "karen"
+    ], check=False)  
+
+    subprocess.run([
+        "docker", "compose", "-f", "docker-compose.yml", "wait", "karen"
     ], check=True)
  
     subprocess.run([
