@@ -7,7 +7,7 @@ if DEBUG:
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     # DATABASE_URL = f"sqlite:///{os.path.abspath(os.path.join(BASE_DIR, '../../data/app.db'))}"
-    DATABASE_URL = "sqlite:////data/app.db"
+    DATABASE_URL = "sqlite:////app/data/app.db"
 
 # This has to match what nutmeg is using for communication
 STEERING_SHM_KEY = 0x123e89
