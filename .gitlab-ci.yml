@@ -134,6 +134,12 @@ performance-analysis:
     - python3 scripts/analyze.py
   rules:
     - when: always
+  artifacts:
+    name: "performance-plots"
+    paths:
+      - output/plots/*.png
+    expire_in: 1 week
+    when: always
   #privileged: true
 
 # This section describes what shall be done to deploy artefacts from the project.
