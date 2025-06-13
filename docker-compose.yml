@@ -1,0 +1,80 @@
+services:
+  #  vehicle-view:
+  #    image: chrberger/opendlv-vehicle-view:v0.0.64
+  #    volumes:
+  #      - ./res/video_feeds:/opt/vehicle-view/recordings
+  #      - /var/run/docker.sock:/var/run/docker.sock
+  #    ports:
+  #      - "8081:8081"
+  #    network_mode: host
+  #    ipc: host
+
+  h264-decoder:
+    build:
+      context: https://github.com/chalmers-revere/opendlv-video-h264-decoder.git#v0.0.5
+      dockerfile: Dockerfile
+    image: h264decoder:v0.0.5
+    command: ["--cid=253", "--name=img"]
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+    volumes:
+      - /tmp:/tmp
+    network_mode: host
+    ipc: host
+
+  producer:
+    build: ./microservices/perfy_producer
+    command: ["python3", "main.py", "--file", "res/${RECORDING_FILE}"]
+    volumes:
+      - ./microservices/perfy_producer/res:/res
+    network_mode: host
+    ipc: host
+    depends_on:
+      - h264-decoder
+
+  bridge:
+    build: ./microservices/perfy_bridge
+    image: perfy_bridge:latest
+    network_mode: host
+    ipc: host
+    depends_on: 
+      - producer
+
+  nutmeg:
+    build: .
+    image: nutmeg:latest
+    command: [
+      "./nutmeg",
+      "--cid=253",
+      "--name=img",
+      "--width=640",
+      "--height=480",
+    # "--verbose",
+      "--analyze"
+    ]
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+    volumes:
+      - /tmp:/tmp
+    network_mode: host
+    ipc: host
+    depends_on: 
+      - producer
+      - bridge
+      - h264-decoder
+
+  karen:
+    build: ./microservices/karen
+    image: 2025-group-04-karen
+    command: [ "bash", "-c", "sleep 1 && python3 src/main.py --commit_id ${GIT_COMMIT_ID} --video_file ${RECORDING_FILE}" ]
+    network_mode: host
+    volumes:
+      - ./output/plots:/app/data/plots
+      - ./microservices/karen/data/app.db:/app/data/app.db
+    environment:
+      - GIT_COMMIT_ID=${GIT_COMMIT_ID}
+      - RECORDING_FILE=${RECORDING_FILE}
+    ipc: host
+    depends_on: 
+      - nutmeg
+    restart: "on-failure"

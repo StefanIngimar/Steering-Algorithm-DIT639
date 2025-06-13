@@ -1,5 +1,10 @@
 #include "image_processor.hpp"
 
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/sem.h>
+#include <unistd.h>
+
 #include <cerrno>
 #include <chrono>
 #include <cstdint>
@@ -18,6 +23,7 @@
 #include "ground_steering_message_handler.hpp"
 #include "logger.hpp"
 #include "object_detector.hpp"
+#include "processing_status_message_handler.hpp"
 
 ImageProcessor::ImageProcessor(
     const Config &config, std::shared_ptr<cluon::OD4Session> od4,
@@ -27,10 +33,11 @@ ImageProcessor::ImageProcessor(
     : m_config(config),
       m_od4(od4),
       m_detector(std::move(detector)),
-      m_shared_memory(
-          std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
+      m_shared_memory(std::make_unique<cluon::SharedMemory>(config.shared_memory_name)),
       m_path_finder(std::move(path_finder)),
       m_gs_handler(gs_handler),
+      m_ps_handler(ProcessingStatusMessageHandler()),
+      m_steering_shared_memory(nullptr),
       m_processed_frames(0),
       m_correctly_calculated_steering_angle(0) {
   auto logger = Logger::get_instance().get_logger();
@@ -39,6 +46,13 @@ ImageProcessor::ImageProcessor(
         "[ImageProcessor] No object detector was provided - object "
         "detection will be omitted");
   }
+
+  if (m_config.should_analyze) {
+    logger->info("[ImageProcessor] Creating an instance of steering shared memory for data comparison");
+    m_steering_shared_memory = std::make_unique<SteeringSharedMemory>(0x123e89, sizeof(SteeringData), 0x654321);
+  }
+
+  m_ps_handler.setup(*od4);
 };
 
 void ImageProcessor::run() {
@@ -47,6 +61,11 @@ void ImageProcessor::run() {
   logger->info("ImageProcessor: Starting image processing");
   while (m_od4->isRunning()) {
     try {
+      if (m_ps_handler.get_status() == ProcessStatus::DONE) {
+        logger->info("Received 'done' status from the producer. Exiting the main loop.'");
+        break;
+      }
+
       process_frame();
       m_processed_frames += 1;
     } catch (const std::exception &e) {
@@ -75,6 +94,12 @@ void ImageProcessor::run() {
     logger->info("Correctness score: {:.2f}%", correctness);
   } else {
     logger->info("No non-zero steering values to calculate correctness");
+  }
+
+  // NOTE(sw): notice that we need to send an info to karen when we are done
+  // processing frames, without the line below, karen does not know when to stop
+  if (m_config.should_analyze && m_steering_shared_memory) {
+    steering_analyze(0, 0.0, 0.0, false);
   }
 
   logger->info("ImageProcessor: Closing image processing");
@@ -127,14 +152,19 @@ void ImageProcessor::process_frame() {
       steering_angle = m_path_finder->calculate_steering_angle(midpoint, image);
     }
 
-    std::cout << "group_04;" << sample_time_point << ";" << steering_angle << std::endl;
+    // NOTE(sw): we are running log_steering and steering_analyze only when the
+    // flag is set it might be a better idea to separate those two functions
+    // into two separate flags for more flexilibty, so:
+    if (m_config.should_analyze && m_steering_shared_memory) {
+      steering_analyze(sample_time_point, actual_steering, steering_angle, true);
+    }
 
     if (m_config.should_generate_plot) {
       log_steering(sample_time_point, actual_steering, steering_angle);
     }
 
     // filter out actual steering angles where the value is 0
-    if (std::abs(actual_steering) >= 1e-6) {
+    if (std::abs(actual_steering) > 1e-4) {
       m_evaluated_frames += 1;
       if (std::abs(steering_angle - actual_steering) <= 0.09f) {
         m_correctly_calculated_steering_angle += 1;
@@ -183,6 +213,17 @@ void ImageProcessor::log_steering(int64_t timestamp, float actual,
     written = true;
   }
   outputFile << timestamp << ";" << predicted << ";" << actual << "\n";
+}
+
+// included has_more field. to send the end of data message, pass false
+void ImageProcessor::steering_analyze(int64_t timestamp, float actual,
+                                      float predicted, bool has_more) {
+  auto logger = Logger::get_instance().get_logger();
+
+  SteeringData data = {timestamp, predicted, actual, has_more ? 1 : 0};
+  if (!m_steering_shared_memory->write(data)) {
+    logger->error("Failed to write steering data to shared memory");
+  }
 }
 
 void ImageProcessor::annotate_image(cv::Mat &image, int64_t timestamp,

@@ -4,15 +4,19 @@
 
 #include "config.hpp"
 #include "ground_steering_message_handler.hpp"
+#include "processing_status_message_handler.hpp"
 #include "object_detector.hpp"
 #include "path_finder.hpp"
+#include "steering_shared_memory.hpp"
 
 class ImageProcessor {
  public:
-  ImageProcessor(const Config &config, std::shared_ptr<cluon::OD4Session> od4,
-                 std::unique_ptr<ObjectDetector> detector,
-                 std::unique_ptr<PathFinder> path_finder,
-                 std::shared_ptr<GroundSteeringMessageHandler> gs_handler);
+    ImageProcessor(
+        const Config &config, std::shared_ptr<cluon::OD4Session> od4,
+        std::unique_ptr<ObjectDetector> detector,
+        std::unique_ptr<PathFinder> path_finder,
+        std::shared_ptr<GroundSteeringMessageHandler> gs_handler
+    );
 
   void run();
 
@@ -30,13 +34,18 @@ class ImageProcessor {
 
   std::unique_ptr<cluon::SharedMemory> m_shared_memory;
   std::unique_ptr<PathFinder> m_path_finder;
+
   std::shared_ptr<GroundSteeringMessageHandler> m_gs_handler;
+  ProcessingStatusMessageHandler m_ps_handler;
+
+  std::unique_ptr<SteeringSharedMemory> m_steering_shared_memory;
 
   uint64_t m_processed_frames;
   uint64_t m_correctly_calculated_steering_angle;
   uint64_t m_evaluated_frames = 0;
   void process_frame();
   void log_steering(int64_t timestamp, float predicted, float actual);
+  void steering_analyze(int64_t, float actual, float predicted, bool has_more);
   void annotate_image(cv::Mat &image, int64_t timestamp, float actual_steering,
                       float steering_angle) const;
 };
